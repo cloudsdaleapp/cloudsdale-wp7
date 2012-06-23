@@ -1,0 +1,16 @@
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\Bin\Debug\ApplicationIcon.png
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\Bin\Debug\Background.png
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\Bin\Debug\Cloudsdale.dll
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\Bin\Debug\Cloudsdale.pdb
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\Bin\Debug\AppManifest.xaml
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\Bin\Debug\Cloudsdale.xap
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\Bin\Debug\Microsoft.Phone.Controls.dll
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\Bin\Debug\Microsoft.Phone.Controls.xml
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\obj\Debug\App.g.i.cs
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\obj\Debug\Clouds.g.i.cs
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\obj\Debug\Home.g.i.cs
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\obj\Debug\MainPage.g.i.cs
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\obj\Debug\Cloudsdale.g.resources
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\obj\Debug\Cloudsdale.dll
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\obj\Debug\Cloudsdale.pdb
+C:\Users\Administrator\Dropbox\CSharp\Projects\Cloudsdale\Cloudsdale\obj\Debug\XapCacheFile.xml

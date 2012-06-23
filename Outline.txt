@@ -1,0 +1,24 @@
+﻿Outline for the Cloudsdale App for Windows Phone
+
+- Login page
+	- Email box
+	- Password box
+	- Login button
+	- Facebook Connect button
+	- Twitter Connect button
+- Home page
+	- Home tab
+		- Cloudsdale home; Displays twitter feed and basic info
+	- Explore tab
+		- Allows searching and adding of clouds
+	- Clouds tab
+		- Lists all clouds you have joined
+- Cloud page
+	- Chat tab
+		- Display cloud chatter
+	- Media tab
+		- Displays media sent through the channel
+	- Ponies tab
+		- Displays all ponies in the current cloud
+- Settings page
+	- Allows changing cloudsdale settings
