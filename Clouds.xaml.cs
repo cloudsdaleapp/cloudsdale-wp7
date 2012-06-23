@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
 using System.Linq;
 
@@ -15,6 +16,20 @@ namespace Cloudsdale {
             AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
                 new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
             AddChat("Connorcpu", "> Left anglebracket test",
+                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
+            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
+                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
+            AddChat("Connor", "This is a big 'ole test chat, just to check that the system is working ;)",
+                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
+            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
+                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
+            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
+                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
+            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
+                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
+            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
+                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
+            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
                 new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
             AddMedia("I'm gonna do an internet!", new Uri("http://www.youtube.com/watch?v=mdaCXH5gT_w"), new Uri("http://c775850.r50.cf2.rackcdn.com/previews/4fe49f50cff4e82ffc003b33/thumb_93d4929498-preview.png"));
         }
@@ -77,7 +92,8 @@ namespace Cloudsdale {
                 Text = chat,
                 FontSize = 16,
                 TextWrapping = TextWrapping.Wrap,
-                Foreground = new SolidColorBrush(Colors.Black)
+                Foreground = new SolidColorBrush(Colors.Black),
+                FontFamily = new FontFamily("Verdana"),
             };
             if (chat.StartsWith(">")) {
                 chatbox.Foreground = new SolidColorBrush(Color.FromArgb(255,100,155,100));
@@ -103,7 +119,8 @@ namespace Cloudsdale {
                 Text = chat,
                 FontSize = 16,
                 TextWrapping = TextWrapping.Wrap,
-                Foreground = new SolidColorBrush(Colors.Black)
+                Foreground = new SolidColorBrush(Colors.Black),
+                FontFamily = new FontFamily("Verdana"),
             };
             if (chat.StartsWith(">")) {
                 chatbox.Foreground = new SolidColorBrush(Color.FromArgb(255, 100, 155, 100));
@@ -132,7 +149,8 @@ namespace Cloudsdale {
                 FontSize = 18,
                 TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(130, 0, 0, 0),
-                Foreground = new SolidColorBrush(Colors.Black)
+                Foreground = new SolidColorBrush(Colors.Black),
+                FontFamily = new FontFamily("Verdana"),
             };
             grid.Children.Add(titlebox);
 
@@ -163,6 +181,14 @@ namespace Cloudsdale {
         }
         public void ClearMedia() {
             MediaList.Items.Clear();
+        }
+
+        private void PhoneApplicationPageOrientationChanged(object sender, OrientationChangedEventArgs e) {
+            if (e.Orientation == PageOrientation.PortraitUp) {
+                cloudPivot.Background = (Brush) Resources["PortraitBackground"];
+            } else {
+                cloudPivot.Background = (Brush) Resources["LandscapeBackground"];
+            }
         }
     }
 }

@@ -87,6 +87,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Page Include="XamlResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -124,6 +128,7 @@
     <Content Include="Images\Icons\search.png" />
     <Content Include="Images\Icons\settings.png" />
     <Content Include="Images\Icons\add.png" />
+    <Content Include="LICENSE.txt" />
     <Content Include="Outline.txt" />
     <Content Include="SplashScreenImage.jpg" />
   </ItemGroup>

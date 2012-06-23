@@ -11,24 +11,21 @@
     FontFamily="Comic Sans MS"
     FontSize="28"
     Foreground="Black"
-    SupportedOrientations="Portrait"  Orientation="Portrait"
-    shell:SystemTray.IsVisible="True">
-
+    SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
+    shell:SystemTray.IsVisible="True" OrientationChanged="PhoneApplicationPageOrientationChanged">
+    
+    <phone:PhoneApplicationPage.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="XamlResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </phone:PhoneApplicationPage.Resources>
+    
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="#FF2A71EB">
         <!--Pivot Control-->
-        <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot">
-            <controls:Pivot.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Color="#FFD0D0D0" Offset="0" />
-                    <GradientStop Color="#FFD0D0D0" Offset="0.075" />
-                    <GradientStop Color="#FF3AA1FB" Offset="0.075" />
-                    <GradientStop Color="#FF1A91DB" Offset="0.10" />
-                    <GradientStop Color="#FF2A81DB" Offset="0.15" />
-                    <GradientStop Color="#FFF0F0F0" Offset="0.15" />
-                    <GradientStop Color="#FFF0F0F0" Offset="1" />
-                </LinearGradientBrush>
-            </controls:Pivot.Background>
+        <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot" Background="{StaticResource PortraitBackground}">
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" FontFamily="Comic Sans MS" FontSize="48"/>
