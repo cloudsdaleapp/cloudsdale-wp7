@@ -10,7 +10,7 @@
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     FontFamily="Comic Sans MS"
     FontSize="28"
-    Foreground="White"
+    Foreground="Black"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True">
 
@@ -18,6 +18,17 @@
     <Grid x:Name="LayoutRoot" Background="#FF2A71EB">
         <!--Pivot Control-->
         <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot">
+            <controls:Pivot.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#FFD0D0D0" Offset="0" />
+                    <GradientStop Color="#FFD0D0D0" Offset="0.075" />
+                    <GradientStop Color="#FF3AA1FB" Offset="0.075" />
+                    <GradientStop Color="#FF1A91DB" Offset="0.10" />
+                    <GradientStop Color="#FF2A81DB" Offset="0.15" />
+                    <GradientStop Color="#FFF0F0F0" Offset="0.15" />
+                    <GradientStop Color="#FFF0F0F0" Offset="1" />
+                </LinearGradientBrush>
+            </controls:Pivot.Background>
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" FontFamily="Comic Sans MS" FontSize="48"/>
@@ -25,9 +36,19 @@
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem x:Name="chatTab" Header="Chat">
                 <Grid>
-                    <ScrollViewer x:Name="ChatScroller">
+                    <ScrollViewer x:Name="ChatScroller" Margin="0,0,0,65">
                         <ItemsControl x:Name="Chats" />
                     </ScrollViewer>
+                    <Grid VerticalAlignment="Bottom" Height="100" Margin="-12,0">
+                        <Grid.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#FFF0F0F0" Offset="0.0" />
+                                <GradientStop Color="#FFC7C7C7" Offset="0.4" />
+                                <GradientStop Color="#FFC7C7C7" Offset="1" />
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <TextBox VerticalAlignment="Bottom" />
+                    </Grid>
                 </Grid>
             </controls:PivotItem>
             <controls:PivotItem x:Name="mediaTab" Header="Media">

@@ -14,7 +14,16 @@
     shell:SystemTray.IsVisible="True">
 
     <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="#FF2A71EB">
+    <Grid x:Name="LayoutRoot">
+        <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#FF909090" Offset="0" />
+                    <GradientStop Color="#FF404040" Offset="0.055" />
+                    <GradientStop Color="#FF2A91EB" Offset="0.055" />
+                    <GradientStop Color="#FF0A81CB" Offset="0.1" />
+                    <GradientStop Color="#FF1A61AB" Offset="0.3" />
+                </LinearGradientBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -28,7 +37,7 @@
 
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-            <TextBox Name="UserBox" VerticalAlignment="Top" Margin="40,150,0,0" />
+            <TextBox InputScope="EmailNameOrAddress" Name="UserBox" VerticalAlignment="Top" Margin="40,150,0,0" />
             <PasswordBox Name="PassBox" VerticalAlignment="Top" Margin="40,275,0,0" />
             <Button VerticalAlignment="Bottom" Margin="111,0,111,200" Height="75" Content="Login" Click="LoginClick" />
             <TextBlock Text="Email" FontSize="48" Margin="0,97,0,444" />
