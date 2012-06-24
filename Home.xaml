@@ -22,14 +22,11 @@
         </ResourceDictionary>
     </phone:PhoneApplicationPage.Resources>
 
-    <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="#FF2A71EB">
-        <controls:Pivot Title="Cloudsdale" Background="{StaticResource PortraitBackground}">
+    <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackground}">
+        <controls:Pivot Title="Cloudsdale">
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
-                    <Grid>
-                        <TextBlock Text="{Binding}" FontFamily="Comic Sans MS" FontSize="48"/>
-                    </Grid>
+                    <TextBlock Text="{Binding}" FontFamily="Comic Sans MS" FontSize="48"/>
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem Header="Home">
@@ -110,5 +107,5 @@
             </controls:PivotItem>
         </controls:Pivot>
     </Grid>
-    
+
 </phone:PhoneApplicationPage>

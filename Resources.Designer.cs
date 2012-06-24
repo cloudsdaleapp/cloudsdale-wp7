@@ -61,11 +61,65 @@ namespace Cloudsdale {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://push01.cloudsdale.org/push.
+        ///   Looks up a localized string similar to 213007855430354.
+        /// </summary>
+        internal static string facebookAppId {
+            get {
+                return ResourceManager.GetString("facebookAppId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://assets.cloudsdale.org/assets/fallback/.
+        /// </summary>
+        internal static string fallbackBaseUrl {
+            get {
+                return ResourceManager.GetString("fallbackBaseUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to $2a$10$7Pfcv89Q9c/9WMAk6ySfhu.
+        /// </summary>
+        internal static string InternalToken {
+            get {
+                return ResourceManager.GetString("InternalToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/sessions.
+        /// </summary>
+        internal static string loginUrl {
+            get {
+                return ResourceManager.GetString("loginUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {{&quot;oauth&quot;:{{&quot;client_type&quot;:&quot;android&quot;,&quot;provider&quot;:&quot;{0}&quot;,&quot;token&quot;:&quot;{1}&quot;,&quot;uid&quot;:&quot;{2}&quot;}}}}.
+        /// </summary>
+        internal static string OAuthFormat {
+            get {
+                return ResourceManager.GetString("OAuthFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://push01.cloudsdale.org:80/push.
         /// </summary>
         internal static string pushUrl {
             get {
                 return ResourceManager.GetString("pushUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string sendEndpoint {
+            get {
+                return ResourceManager.GetString("sendEndpoint", resourceCulture);
             }
         }
     }

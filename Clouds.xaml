@@ -21,11 +21,9 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </phone:PhoneApplicationPage.Resources>
-    
-    <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="#FF2A71EB">
-        <!--Pivot Control-->
-        <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot" Background="{StaticResource PortraitBackground}">
+
+    <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackground}">
+        <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot">
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" FontFamily="Comic Sans MS" FontSize="48"/>
@@ -64,5 +62,5 @@
             </controls:PivotItem>
         </controls:Pivot>
     </Grid>
-    
+
 </phone:PhoneApplicationPage>

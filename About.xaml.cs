@@ -8,15 +8,13 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 
 namespace Cloudsdale {
-    public partial class Connecting : PhoneApplicationPage {
-        public Connecting() {
+    public partial class About : PhoneApplicationPage {
+        public About() {
             InitializeComponent();
-            Dispatcher.BeginInvoke(() => Connection.Connect(this));
         }
     }
 }

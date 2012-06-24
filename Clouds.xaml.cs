@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -15,21 +16,7 @@ namespace Cloudsdale {
             AddPony("Connorcpu", new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
             AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
                 new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
-            AddChat("Connorcpu", "> Left anglebracket test",
-                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
-            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
-                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
-            AddChat("Connor", "This is a big 'ole test chat, just to check that the system is working ;)",
-                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
-            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
-                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
-            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
-                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
-            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
-                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
-            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
-                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
-            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
+            AddChat("Connorcpu", "> Left anglebracket test\n> Green\nNot Green\n> Green",
                 new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
             AddMedia("I'm gonna do an internet!", new Uri("http://www.youtube.com/watch?v=mdaCXH5gT_w"), new Uri("http://c775850.r50.cf2.rackcdn.com/previews/4fe49f50cff4e82ffc003b33/thumb_93d4929498-preview.png"));
         }
@@ -61,8 +48,11 @@ namespace Cloudsdale {
             }
         }
 
-        public void AddChat(string name, string chat, Uri avatar) {
+        public void AddChat(string name, string chat, Uri avatar, bool recursive = false) {
+            if (string.IsNullOrWhiteSpace(chat)) return;
             if (AppendChatToLast(name, chat)) return;
+            var lines = chat.Split('\n');
+            chat = lines[0].Trim();
 
             while (Chats.Items.Count > 50) {
                 Chats.Items.RemoveAt(0);
@@ -101,10 +91,21 @@ namespace Cloudsdale {
             stack.Children.Add(chatbox);
             grid.Children.Add(stack);
             Chats.Items.Add(grid);
-            Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(ChatScroller.ScrollableHeight));
+
+            if (lines.Length > 1) {
+                var sb = new StringBuilder();
+                for (var i = 1; i < lines.Length; ++i) {
+                    sb.Append(lines[i] + "\n");
+                }
+                AppendChatToLast(name, sb.ToString(), true);
+            }
+
+            if (!recursive)
+                Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(ChatScroller.ScrollableHeight));
         }
 
-        private bool AppendChatToLast(string name, string chat) {
+        private bool AppendChatToLast(string name, string chat, bool recursive = false) {
+            if (string.IsNullOrWhiteSpace(chat)) return true;
             if (Chats.Items.Count < 1) return false;
             var grid = Chats.Items.Last() as Grid;
             if (grid == null) return false;
@@ -114,6 +115,9 @@ namespace Cloudsdale {
             var stacks = grid.Children.OfType<StackPanel>().ToArray();
             if (stacks.Length != 1) return false;
             var stack = stacks[0];
+
+            var lines = chat.Split('\n');
+            chat = lines[0].Trim();
 
             var chatbox = new TextBlock {
                 Text = chat,
@@ -125,8 +129,18 @@ namespace Cloudsdale {
             if (chat.StartsWith(">")) {
                 chatbox.Foreground = new SolidColorBrush(Color.FromArgb(255, 100, 155, 100));
             }
-
             stack.Children.Add(chatbox);
+
+            if (lines.Length > 1) {
+                var sb = new StringBuilder();
+                for (var i = 1; i < lines.Length; ++i) {
+                    sb.Append(lines[i] + "\n");
+                }
+                AppendChatToLast(name, sb.ToString(), true);
+            }
+
+            if (!recursive)
+                Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(ChatScroller.ScrollableHeight));
 
             return true;
         }
