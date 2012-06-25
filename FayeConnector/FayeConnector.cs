@@ -13,21 +13,47 @@ namespace Cloudsdale.FayeConnector {
         private string clientId;
         private readonly List<String> subbedchans = new List<string>();
 
+        /// <summary>
+        /// Callback for handshake completion
+        /// </summary>
         public event EventHandler<FayeEventArgs> HandshakeComplete;
+        /// <summary>
+        /// Callback for handshake failure
+        /// </summary>
         public event EventHandler<FayeEventArgs> HandshakeFailed;
+        /// <summary>
+        /// Callback for subscription completion
+        /// </summary>
         public event EventHandler<SubscribeEventArgs> SubscriptionComplete;
+        /// <summary>
+        /// Callback for subscription failure
+        /// </summary>
         public event EventHandler<SubscribeEventArgs> SubscriptionFailed;
+        /// <summary>
+        /// Callback for unsubscription completion
+        /// </summary>
         public event EventHandler<UnsubscribeEventArgs> UnsubscriptionComplete;
+        /// <summary>
+        /// Callback for a message received in a subscribed channel
+        /// </summary>
         public event EventHandler<DataReceivedEventArgs> ChannelMessageRecieved; 
 
+        /// <summary>
+        /// Creates a new faye connector
+        /// </summary>
+        /// <param name="address">The websocket address to connect to</param>
         public FayeConnector(string address) {
             this.address = address;
         }
 
+        /// <summary>
+        /// Begins the handshaking process
+        /// </summary>
         public void Handshake() {
             new Thread(HandshakeInternal).Start();
         }
         private void HandshakeInternal() {
+            // If there's an existing socket connected or in the middle of connecting... CRUSH ITS SOUL!
             if (Connecting) {
                 socket.Close();
                 socket = null;
@@ -35,16 +61,17 @@ namespace Cloudsdale.FayeConnector {
                 Disconnect();
             }
 
+            // Lock! This is my object! MINE I TELL YOU!
             lock (are) {
-                if (socket != null && socket.State == WebSocketState.Open | socket.State == WebSocketState.Connecting) {
-                    socket.Close();
-                }
+                // Make a new websocket :3
                 socket = new WebSocket(address);
+                // Open the socket with hacked-on synchronosity
                 socket.Opened += AreSet;
                 socket.Open();
                 are.WaitOne();
                 socket.Opened -= AreSet;
 
+                // Get a response for the handshack (moar hacked-on synchronosity)
                 var handshakeresponse = "";
                 EventHandler<MessageReceivedEventArgs> handshakecallback = ((sender, args) => {
                     handshakeresponse = args.Message;
@@ -54,12 +81,16 @@ namespace Cloudsdale.FayeConnector {
                 socket.Send(FayeResources.Handshake);
                 are.WaitOne();
                 socket.MessageReceived -= handshakecallback;
+
+                // If dat response is a failure... THROW THE CHEEEEESE (and by cheese I mean callback)
                 var response = JsonConvert.DeserializeObject<HandshakeResponse[]>(handshakeresponse);
                 if ((response.Length < 1 || !response[0].successful) && HandshakeFailed != null) {
                     HandshakeFailed(this, new FayeEventArgs(this, handshakeresponse));
+                    return;
                 }
                 clientId = response[0].clientId;
 
+                // Create the infinite loop of meta connects :3
                 var connectdata = FayeResources.Connect.Replace("%CLIENTID%", clientId);
                 socket.MessageReceived += (sender, args) => {
                     try {
@@ -74,6 +105,7 @@ namespace Cloudsdale.FayeConnector {
                 };
                 socket.Send(connectdata);
 
+                // Hook the final callback for the socket and rais the handshake complete :3
                 socket.MessageReceived += MessageCallback;
 
                 if (HandshakeComplete != null) {
@@ -85,6 +117,7 @@ namespace Cloudsdale.FayeConnector {
             are.Set();
         }
 
+        // process dat msg
         private void MessageCallback(object o, MessageReceivedEventArgs args) {
             var messages = SplitMessage(args.Message);
 
@@ -98,6 +131,11 @@ namespace Cloudsdale.FayeConnector {
             }
         }
 
+        /// <summary>
+        /// Split dat array into objects!
+        /// </summary>
+        /// <param name="message">Possible array object</param>
+        /// <returns>the objects :3</returns>
         private static IEnumerable<string> SplitMessage(string message) {
             message = message.Trim().TrimStart('[').TrimEnd(']');
             var split = new List<string>();
@@ -123,8 +161,14 @@ namespace Cloudsdale.FayeConnector {
             return split;
         }
 
+        /// <summary>
+        /// Process dat message :3
+        /// </summary>
+        /// <param name="data">Raw object</param>
+        /// <param name="channel">channel</param>
         private void ProcessMesssage(string data, string channel) {
             switch (channel) {
+                    // subscription callback handling
                 case "/meta/subscribe":
                     var subscribedata = JsonConvert.DeserializeObject<SubscribeResponse>(data);
                     if (!subscribedata.successful) {
@@ -136,6 +180,7 @@ namespace Cloudsdale.FayeConnector {
                             SubscriptionComplete(this, new SubscribeEventArgs(this, data, subscribedata.subscription));
                     }
                     break;
+                    // unsubscription callback handling
                 case "/meta/unsubscribe":
                     var unsubscribedata = JsonConvert.DeserializeObject<UnsubscribeResponse>(data);
                     while (subbedchans.Contains(unsubscribedata.channel)) {
@@ -145,6 +190,7 @@ namespace Cloudsdale.FayeConnector {
                         UnsubscriptionComplete(this, new UnsubscribeEventArgs(this, data, unsubscribedata.channel));
                     }
                     break;
+                    // It's something else. If it's one of the subbed channels, CALL IT IN!
                 default:
                     if (ChannelMessageRecieved == null) break;
                     if (subbedchans.Contains(channel)) {
@@ -154,26 +200,46 @@ namespace Cloudsdale.FayeConnector {
             }
         }
 
+        /// <summary>
+        /// Subscribe.... Get's the people going!
+        /// </summary>
+        /// <param name="channel"></param>
         public void Subscribe(string channel) {
             socket.Send(FayeResources.Subscribe.Replace("%CLIENTID%", clientId).Replace("%CHANNEL%", channel));
         }
 
+        /// <summary>
+        /// Unsubscribe. Foine hoe.... ;_;
+        /// </summary>
+        /// <param name="channel"></param>
         public void Unsubscribe(string channel) {
             socket.Send(FayeResources.Unsubscribe.Replace("%CLIENTID%", clientId).Replace("%CHANNEL%", channel));
         }
 
+        /// <summary>
+        /// SERVER GTFO!
+        /// </summary>
         public void Disconnect() {
             socket.Send(FayeResources.Disconnect.Replace("%CLIENTID%", clientId));
             socket.Close();
             socket = null;
         }
 
+        /// <summary>
+        /// It's connected! :::::::::DDDDDDDDDDD
+        /// </summary>
         public bool Connected {
             get { return socket != null && socket.State == WebSocketState.Open; }
         }
+        /// <summary>
+        /// It's doing its connect thingy :o
+        /// </summary>
         public bool Connecting {
             get { return socket != null && socket.State == WebSocketState.Connecting; }
         }
+        /// <summary>
+        /// IT WENT GTFO!
+        /// </summary>
         public bool Closed {
             get { return !Connected && !Connecting; }
         }
