@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -13,6 +14,8 @@ using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
     public partial class Clouds {
+        public static bool wasoncloud;
+
         public Clouds() {
             InitializeComponent();
             cloudPivot.Title = Connection.CurrentCloud.name;
@@ -27,19 +30,23 @@ namespace Cloudsdale {
                         AddChat(message);
                     }
                     wc.DownloadStringAsync(new Uri(Res.PreviousDropsEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)), new object());
+                    new Thread(() => {
+                        Thread.Sleep(50);
+                        Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(Chats.ActualHeight));
+                    }).Start();
                 } else {
                     var drops = JsonConvert.DeserializeObject<Models.WebDropResponse>(args.Result).result;
                     Array.Reverse(drops);
                     foreach (var drop in drops) {
                         AddMedia(drop);
                     }
-                    Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(Chats.ActualHeight));
                 }
             };
             wc.DownloadStringAsync(new Uri(Res.PreviousMessagesEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)), null);
+            wasoncloud = true;
         }
 
-        private void OnMessage(object sender, FayeConnector.FayeConnector.DataReceivedEventArgs args) {
+        internal void OnMessage(object sender, FayeConnector.FayeConnector.DataReceivedEventArgs args) {
             if (args.Channel == Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id)) {
                 var message = JsonConvert.DeserializeObject<Models.FayeMessageResponse>(args.Data).data;
                 Dispatcher.BeginInvoke(() => AddChat(message));
@@ -127,6 +134,12 @@ namespace Cloudsdale {
                 }
                 AppendChatToLast(chat.user.name, sb.ToString());
             }
+
+            if (Connection.Faye.Connected)
+                new Thread(() => {
+                    Thread.Sleep(50);
+                    Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(Chats.ActualHeight));
+                }).Start();
         }
 
         private bool AppendChatToLast(string name, string chat) {
@@ -163,6 +176,12 @@ namespace Cloudsdale {
                 }
                 AppendChatToLast(name, sb.ToString());
             }
+
+            if (Connection.Faye.Connected)
+                new Thread(() => {
+                    Thread.Sleep(50);
+                    Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(Chats.ActualHeight));
+                }).Start();
 
             return true;
         }
@@ -231,6 +250,7 @@ namespace Cloudsdale {
             Connection.Faye.Unsubscribe(Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
             Connection.Faye.Unsubscribe(Res.FayeDropsChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
             Connection.Faye.ChannelMessageRecieved -= OnMessage;
+            wasoncloud = false;
             base.OnNavigatedFrom(e);
         }
     }
