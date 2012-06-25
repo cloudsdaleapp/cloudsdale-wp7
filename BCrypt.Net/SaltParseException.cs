@@ -22,9 +22,5 @@ namespace BCrypt.Net {
         public SaltParseException(string message, Exception innerException)
             : base(message, innerException) {
         }
-
-        /// <summary>Initializes a new instance of <see cref="SaltParseException"/>.</summary>
-        /// <param name="info">   The information.</param>
-        /// <param name="context">The context.</param>
     }
 }

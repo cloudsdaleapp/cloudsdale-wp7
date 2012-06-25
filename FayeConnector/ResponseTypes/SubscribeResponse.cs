@@ -13,7 +13,7 @@ namespace Cloudsdale.FayeConnector.ResponseTypes {
     public class SubscribeResponse : Response {
         public bool successful;
         public string clientId;
-        public string subscribtion;
+        public string subscription;
         public string error;
     }
     public class UnsubscribeResponse : Response {

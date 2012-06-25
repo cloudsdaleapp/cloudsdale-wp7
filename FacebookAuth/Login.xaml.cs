@@ -54,7 +54,7 @@ namespace Cloudsdale.FacebookAuth {
 
         private void LoginSucceded(string accessToken) {
             var fb = new FacebookClient(accessToken);
-            AutoResetEvent are = new AutoResetEvent(false);
+            var are = new AutoResetEvent(false);
             Dispatcher.BeginInvoke(() => {
                 NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative));
                 are.Set();
@@ -72,7 +72,7 @@ namespace Cloudsdale.FacebookAuth {
                 Connection.FacebookUid = id;
                 Connection.LoginType = 1;
                 are.WaitOne();
-                Connection.Connect((Page) ((PhoneApplicationFrame)Application.Current.RootVisual).Content);
+                Dispatcher.BeginInvoke(() => Connection.Connect((Page) ((PhoneApplicationFrame)Application.Current.RootVisual).Content));
             };
 
             fb.GetAsync("me?fields=id");

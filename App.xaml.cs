@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
@@ -87,7 +85,7 @@ namespace Cloudsdale {
         #region Phone application initialization
 
         // Avoid double-initialization
-        private bool phoneApplicationInitialized = false;
+        private bool phoneApplicationInitialized;
 
         // Do not add any additional code to this method
         private void InitializePhoneApplication() {
@@ -109,7 +107,9 @@ namespace Cloudsdale {
         // Do not add any additional code to this method
         private void CompleteInitializePhoneApplication(object sender, NavigationEventArgs e) {
             // Set the root visual to allow the application to render
+// ReSharper disable RedundantCheckBeforeAssignment
             if (RootVisual != RootFrame)
+// ReSharper restore RedundantCheckBeforeAssignment
                 RootVisual = RootFrame;
 
             // Remove this handler since it is no longer needed

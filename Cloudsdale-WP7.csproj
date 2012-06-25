@@ -79,7 +79,9 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Xml" />
     <Reference Include="mscorlib.extensions" />
-    <Reference Include="WebSocket4Net, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="WebSocket4Net">
+      <HintPath>..\..\WebSocket4Net(0.7).Source\bin\sl40-windowsphone71\Release\WebSocket4Net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="About.xaml.cs">
@@ -118,7 +120,11 @@
     </Compile>
     <Compile Include="Models\Avatar.cs" />
     <Compile Include="Models\Cloud.cs" />
+    <Compile Include="Models\CloudsRequest.cs" />
+    <Compile Include="Models\Drop.cs" />
+    <Compile Include="Models\FayeMessageResponse.cs" />
     <Compile Include="Models\LoginResponse.cs" />
+    <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Prosecution.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserReference.cs" />
@@ -174,14 +180,13 @@
     <Content Include="Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Images\Icons\refresh.png" />
+    <Content Include="Images\Icons\refresh.png" />
     <Content Include="Images\ajax-spinner.gif" />
     <Content Include="Images\cloudsdale-thin-bright-logo.png" />
     <Content Include="Images\ajax-spinner-alt.gif" />
     <Content Include="Images\Icons\search.png" />
     <Content Include="Images\Icons\settings.png" />
     <Content Include="Images\Icons\add.png" />
-    <Content Include="LICENSE.txt" />
     <Content Include="Outline.txt" />
     <Content Include="SplashScreenImage.jpg" />
   </ItemGroup>

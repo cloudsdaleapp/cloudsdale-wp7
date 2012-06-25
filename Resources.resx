@@ -136,10 +136,34 @@
   <data name="fallbackBaseUrl" xml:space="preserve">
     <value>http://assets.cloudsdale.org/assets/fallback/</value>
   </data>
-  <data name="sendEndpoint" xml:space="preserve">
-    <value />
+  <data name="SendEndpoint" xml:space="preserve">
+    <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/chat/messages</value>
   </data>
   <data name="getUserEndpoint" xml:space="preserve">
     <value>http://www.cloudsdale.org/v1/users/{0}.json</value>
+  </data>
+  <data name="PopularCloudsEndpoint" xml:space="preserve">
+    <value>http://www.cloudsdale.org/v1/clouds/popular.json</value>
+  </data>
+  <data name="RecentCloudsEndpoint" xml:space="preserve">
+    <value>http://www.cloudsdale.org/v1/clouds/recent.json</value>
+  </data>
+  <data name="SearchCloudsEndpoint" xml:space="preserve">
+    <value>http://www.cloudsdale.org/v1/clouds/search.json?q={query}</value>
+  </data>
+  <data name="UserCloudsEndpoint" xml:space="preserve">
+    <value>http://www.cloudsdale.org/v1/users/{userid}/clouds</value>
+  </data>
+  <data name="FayeMessageChannel" xml:space="preserve">
+    <value>/clouds/{cloudid}/chat/messages</value>
+  </data>
+  <data name="PreviousDropsEndpoint" xml:space="preserve">
+    <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/drops.json</value>
+  </data>
+  <data name="PreviousMessagesEndpoint" xml:space="preserve">
+    <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/chat/messages.json</value>
+  </data>
+  <data name="FayeDropsChannel" xml:space="preserve">
+    <value>/clouds/{cloudid}/drops</value>
   </data>
 </root>

@@ -33,9 +33,58 @@
 
             </controls:PivotItem>
             <controls:PivotItem Header="Clouds">
-                <ScrollViewer>
-                    <ItemsControl x:Name="CloudList" />
-                </ScrollViewer>
+                <Grid>
+                    <ScrollViewer Margin="0,0,0,50">
+                        <ItemsControl x:Name="CloudList" />
+                    </ScrollViewer>
+                    <Button VerticalAlignment="Bottom" BorderBrush="Transparent" Margin="0,0,0,2" 
+                            Height="50" Padding="-25" Width="50" >
+                        <Image Source="/Images/Icons/refresh.png" Width="50" Height="50" />
+                        <Button.Style>
+                            <Style TargetType="ButtonBase">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource PhoneForegroundBrush}"/>
+                                <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+                                <Setter Property="BorderThickness" Value="{StaticResource PhoneBorderThickness}"/>
+                                <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
+                                <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMediumLarge}"/>
+                                <Setter Property="Padding" Value="10,3,10,5"/>
+
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ButtonBase">
+                                            <Grid Background="Transparent">
+                                                <VisualStateManager.VisualStateGroups>
+                                                    <VisualStateGroup x:Name="CommonStates">
+                                                        <VisualState x:Name="Normal"/>
+                                                        <VisualState x:Name="MouseOver"/>
+                                                        <VisualState x:Name="Disabled"/>
+
+                                                        <!-- the following visual state describes the behaviour you are observing -->
+                                                        <VisualState x:Name="Pressed">
+                                                            <Storyboard>
+                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentContainer" Storyboard.TargetProperty="Projection">
+                                                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                                                        <DiscreteObjectKeyFrame.Value>
+                                                                            <PlaneProjection RotationX="30" CenterOfRotationX="-0.2" />
+                                                                        </DiscreteObjectKeyFrame.Value>
+                                                                    </DiscreteObjectKeyFrame>
+                                                                </ObjectAnimationUsingKeyFrames>
+                                                            </Storyboard>
+                                                        </VisualState>
+                                                    </VisualStateGroup>
+                                                </VisualStateManager.VisualStateGroups>
+                                                <Border x:Name="ButtonBackground" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" Background="{TemplateBinding Background}" Margin="{StaticResource PhoneTouchTargetOverhang}" >
+                                                    <ContentControl x:Name="ContentContainer" Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Padding="{TemplateBinding Padding}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                                </Border>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Grid>
             </controls:PivotItem>
             <controls:PivotItem Header="Explore" Foreground="Black">
                 <Grid>
@@ -48,7 +97,8 @@
                             </LinearGradientBrush>
                         </Grid.Background>
                         <TextBox VerticalAlignment="Top" Margin="0,0,75,0" />
-                        <Button VerticalAlignment="Top" HorizontalAlignment="Right" BorderBrush="Transparent" Margin="0,-9">
+                        <Button VerticalAlignment="Top" HorizontalAlignment="Right" 
+                                BorderBrush="Transparent" Margin="0,-9">
                             <Image Source="/Images/Icons/search.png" Width="50" />
                             <Button.Style>
                                 <Style TargetType="ButtonBase">
@@ -76,7 +126,7 @@
                                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentContainer" Storyboard.TargetProperty="Projection">
                                                                         <DiscreteObjectKeyFrame KeyTime="0">
                                                                             <DiscreteObjectKeyFrame.Value>
-                                                                                <PlaneProjection RotationX="20" RotationY="-20" CenterOfRotationX="-0.1" CenterOfRotationY="-0.1" />
+                                                                                <PlaneProjection RotationX="30" CenterOfRotationX="-0.2" />
                                                                             </DiscreteObjectKeyFrame.Value>
                                                                         </DiscreteObjectKeyFrame>
                                                                     </ObjectAnimationUsingKeyFrames>
@@ -95,11 +145,64 @@
                             </Button.Style>
                         </Button>
                     </Grid>
-                    <ScrollViewer Margin="0,50,0,0">
+                    <ScrollViewer Margin="0,50,0,50">
                         <StackPanel x:Name="searchResults">
                             <TextBlock Text="Loading..." />
                         </StackPanel>
                     </ScrollViewer>
+                    <Button VerticalAlignment="Bottom" BorderBrush="Transparent" Margin="0,0,0,2" 
+                            Height="50" Padding="-25" Width="50" Click="ExploreRefreshClick" >
+                        <Image Source="/Images/Icons/refresh.png" Width="50" Height="50" />
+                        <Button.Style>
+                            <Style TargetType="ButtonBase">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource PhoneForegroundBrush}"/>
+                                <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+                                <Setter Property="BorderThickness" Value="{StaticResource PhoneBorderThickness}"/>
+                                <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
+                                <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMediumLarge}"/>
+                                <Setter Property="Padding" Value="10,3,10,5"/>
+
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ButtonBase">
+                                            <Grid Background="Transparent">
+                                                <VisualStateManager.VisualStateGroups>
+                                                    <VisualStateGroup x:Name="CommonStates">
+                                                        <VisualState x:Name="Normal"/>
+                                                        <VisualState x:Name="MouseOver"/>
+                                                        <VisualState x:Name="Disabled"/>
+
+                                                        <!-- the following visual state describes the behaviour you are observing -->
+                                                        <VisualState x:Name="Pressed">
+                                                            <Storyboard>
+                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentContainer" Storyboard.TargetProperty="Projection">
+                                                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                                                        <DiscreteObjectKeyFrame.Value>
+                                                                            <PlaneProjection RotationX="30" CenterOfRotationX="-0.2" />
+                                                                        </DiscreteObjectKeyFrame.Value>
+                                                                    </DiscreteObjectKeyFrame>
+                                                                </ObjectAnimationUsingKeyFrames>
+                                                            </Storyboard>
+                                                        </VisualState>
+                                                    </VisualStateGroup>
+                                                </VisualStateManager.VisualStateGroups>
+                                                <Border x:Name="ButtonBackground" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" Background="{TemplateBinding Background}" Margin="{StaticResource PhoneTouchTargetOverhang}" >
+                                                    <ContentControl x:Name="ContentContainer" Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Padding="{TemplateBinding Padding}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                                </Border>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Popular" 
+                            Foreground="Black" BorderBrush="Black" Width="175" Margin="30,-8" 
+                            Click="PopularClick" />
+                    <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Recent" 
+                            Foreground="Black" BorderBrush="Black" Width="175" Margin="30,-8" 
+                            Click="RecentClick" />
                 </Grid>
             </controls:PivotItem>
             <controls:PivotItem Header="Settings">

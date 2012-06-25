@@ -15,7 +15,7 @@ namespace Cloudsdale.Models {
     public class UserReference {
         public string id;
 
-        public User User {
+        public User FullUser {
             get {
                 var wc = new WebClient();
                 var mre = new ManualResetEvent(false);

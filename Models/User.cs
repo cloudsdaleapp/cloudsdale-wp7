@@ -11,21 +11,23 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
 namespace Cloudsdale.Models {
-    public class User {
+    public class SimpleUser : UserReference {
         public string name;
+        public Avatar avatar;
+        public string role;
+    }
+
+    public class User : SimpleUser {
         public string time_zone;
         public DateTime member_since;
         public DateTime suspended_until;
         public string reason_for_suspension;
-        public string id;
-        public Avatar avatar;
         public bool is_registered;
         public bool is_transient;
         public bool is_banned;
         public bool is_member_of_a_cloud;
         public bool has_an_avatar;
         public bool has_read_tnc;
-        public string role;
         public Prosecution[] prosecutions;
     }
 

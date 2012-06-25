@@ -79,6 +79,24 @@ namespace Cloudsdale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /clouds/{cloudid}/drops.
+        /// </summary>
+        internal static string FayeDropsChannel {
+            get {
+                return ResourceManager.GetString("FayeDropsChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /clouds/{cloudid}/chat/messages.
+        /// </summary>
+        internal static string FayeMessageChannel {
+            get {
+                return ResourceManager.GetString("FayeMessageChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/users/{0}.json.
         /// </summary>
         internal static string getUserEndpoint {
@@ -115,6 +133,33 @@ namespace Cloudsdale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/popular.json.
+        /// </summary>
+        internal static string PopularCloudsEndpoint {
+            get {
+                return ResourceManager.GetString("PopularCloudsEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/{cloudid}/drops.json.
+        /// </summary>
+        internal static string PreviousDropsEndpoint {
+            get {
+                return ResourceManager.GetString("PreviousDropsEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/{cloudid}/chat/messages.json.
+        /// </summary>
+        internal static string PreviousMessagesEndpoint {
+            get {
+                return ResourceManager.GetString("PreviousMessagesEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ws://push01.cloudsdale.org:80/push.
         /// </summary>
         internal static string pushUrl {
@@ -124,11 +169,38 @@ namespace Cloudsdale {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/recent.json.
         /// </summary>
-        internal static string sendEndpoint {
+        internal static string RecentCloudsEndpoint {
             get {
-                return ResourceManager.GetString("sendEndpoint", resourceCulture);
+                return ResourceManager.GetString("RecentCloudsEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/search.json?q={query}.
+        /// </summary>
+        internal static string SearchCloudsEndpoint {
+            get {
+                return ResourceManager.GetString("SearchCloudsEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/{cloudid}/chat/messages.
+        /// </summary>
+        internal static string SendEndpoint {
+            get {
+                return ResourceManager.GetString("SendEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/users/{userid}/clouds.
+        /// </summary>
+        internal static string UserCloudsEndpoint {
+            get {
+                return ResourceManager.GetString("UserCloudsEndpoint", resourceCulture);
             }
         }
     }

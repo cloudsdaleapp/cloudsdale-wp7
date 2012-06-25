@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -7,14 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using Cloudsdale.Models;
-using CodeTitans.Bayeux;
 using Microsoft.Phone.Controls;
 using Newtonsoft.Json;
 
@@ -30,7 +22,7 @@ namespace Cloudsdale {
         public static string CloudsdaleClientId;
         public static LoggedInUser CurrentCloudsdaleUser;
 
-        private static FayeConnector.FayeConnector connector;
+        public static FayeConnector.FayeConnector Faye;
 
         public static void Connect(Page page = null) {
             switch (LoginType) {
@@ -51,9 +43,9 @@ namespace Cloudsdale {
                     return;
             }
 
-            connector = new FayeConnector.FayeConnector(Resources.pushUrl);
+            Faye = new FayeConnector.FayeConnector(Resources.pushUrl);
 
-            connector.HandshakeComplete += (sender, args) => {
+            Faye.HandshakeComplete += (sender, args) => {
                 if (page == null) {
                     var phoneApplicationFrame = Application.Current.RootVisual as PhoneApplicationFrame;
                     if (phoneApplicationFrame != null)
@@ -64,7 +56,7 @@ namespace Cloudsdale {
                 }
             };
 
-            connector.Handshake();
+            Faye.Handshake();
         }
 
         static void FacebookLogin(Page page) {

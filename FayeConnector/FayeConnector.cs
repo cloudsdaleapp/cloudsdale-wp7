@@ -130,15 +130,18 @@ namespace Cloudsdale.FayeConnector {
                     var subscribedata = JsonConvert.DeserializeObject<SubscribeResponse>(data);
                     if (!subscribedata.successful) {
                         if (SubscriptionFailed != null)
-                            SubscriptionFailed(this, new SubscribeEventArgs(this, subscribedata.error, subscribedata.subscribtion));
+                            SubscriptionFailed(this, new SubscribeEventArgs(this, subscribedata.error, subscribedata.subscription));
                     } else {
-                        subbedchans.Add(subscribedata.channel);
+                        subbedchans.Add(subscribedata.subscription);
                         if (SubscriptionComplete != null)
-                            SubscriptionComplete(this, new SubscribeEventArgs(this, data, subscribedata.subscribtion));
+                            SubscriptionComplete(this, new SubscribeEventArgs(this, data, subscribedata.subscription));
                     }
                     break;
                 case "/meta/unsubscribe":
                     var unsubscribedata = JsonConvert.DeserializeObject<UnsubscribeResponse>(data);
+                    while (subbedchans.Contains(unsubscribedata.channel)) {
+                        subbedchans.Remove(unsubscribedata.channel);
+                    }
                     if (UnsubscriptionComplete != null) {
                         UnsubscriptionComplete(this, new UnsubscribeEventArgs(this, data, unsubscribedata.channel));
                     }
@@ -146,8 +149,7 @@ namespace Cloudsdale.FayeConnector {
                 default:
                     if (ChannelMessageRecieved == null) break;
                     if (subbedchans.Contains(channel)) {
-                        var mdata = JsonConvert.DeserializeObject<EventResponse>(data);
-                        ChannelMessageRecieved(this, new DataReceivedEventArgs(this, mdata.data, channel));
+                        ChannelMessageRecieved(this, new DataReceivedEventArgs(this, data, channel));
                     }
                     break;
             }

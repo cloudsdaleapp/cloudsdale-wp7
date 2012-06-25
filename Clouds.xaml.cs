@@ -7,12 +7,26 @@ using System.Windows.Media.Imaging;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
 using System.Linq;
+using Newtonsoft.Json;
+using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
     public partial class Clouds {
         public Clouds() {
             InitializeComponent();
             cloudPivot.Title = Connection.CurrentCloud.name;
+            Connection.Faye.ChannelMessageRecieved += OnMessage;
+            Connection.Faye.Subscribe(Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
+
+        }
+
+        private void OnMessage(object sender, FayeConnector.FayeConnector.DataReceivedEventArgs args) {
+            if (args.Channel == Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id)) {
+                var message = JsonConvert.DeserializeObject<Models.FayeMessageResponse>(args.Data).data;
+                Dispatcher.BeginInvoke(() => AddChat(message));
+            } else if (args.Channel == Res.FayeDropsChannel.Replace("{cloudid}", Connection.CurrentCloud.id)) {
+                
+            }
         }
 
         public void AddPony(string name, Uri imageurl) {
@@ -42,11 +56,11 @@ namespace Cloudsdale {
             }
         }
 
-        public void AddChat(string name, string chat, Uri avatar, bool recursive = false) {
-            if (string.IsNullOrWhiteSpace(chat)) return;
-            if (AppendChatToLast(name, chat)) return;
-            var lines = chat.Split('\n');
-            chat = lines[0].Trim();
+        public void AddChat(Models.Message chat, bool recursive = false) {
+            if (string.IsNullOrWhiteSpace(chat.content)) return;
+            if (AppendChatToLast(chat.user.name, chat.content)) return;
+            var lines = chat.content.Split('\n');
+            var msg = lines[0].Trim();
 
             while (Chats.Items.Count > 50) {
                 Chats.Items.RemoveAt(0);
@@ -55,7 +69,7 @@ namespace Cloudsdale {
                 Margin = new Thickness(0, 0, 0, 5)
             };
             var img = new Image {
-                Source = new BitmapImage(avatar),
+                Source = new BitmapImage(chat.user.avatar.Chat),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
                 Width = 50,
@@ -63,7 +77,7 @@ namespace Cloudsdale {
             };
             grid.Children.Add(img);
             var ponyname = new TextBlock {
-                Text = name,
+                Text = chat.user.name,
                 FontSize = 18,
                 Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x5F, 0x8F, 0xCF)),
                 Margin = new Thickness(60, 0, 0, 0)
@@ -73,13 +87,13 @@ namespace Cloudsdale {
                 Margin = new Thickness(60, 20, 0, 0)
             };
             var chatbox = new TextBlock {
-                Text = chat,
+                Text = msg,
                 FontSize = 16,
                 TextWrapping = TextWrapping.Wrap,
                 Foreground = new SolidColorBrush(Colors.Black),
                 FontFamily = new FontFamily("Verdana"),
             };
-            if (chat.StartsWith(">")) {
+            if (msg.StartsWith(">")) {
                 chatbox.Foreground = new SolidColorBrush(Color.FromArgb(255,100,155,100));
             }
             stack.Children.Add(chatbox);
@@ -91,7 +105,7 @@ namespace Cloudsdale {
                 for (var i = 1; i < lines.Length; ++i) {
                     sb.Append(lines[i] + "\n");
                 }
-                AppendChatToLast(name, sb.ToString(), true);
+                AppendChatToLast(chat.user.name, sb.ToString(), true);
             }
 
             if (!recursive)
@@ -197,6 +211,12 @@ namespace Cloudsdale {
             } else {
                 cloudPivot.Background = (Brush) Resources["LandscapeBackground"];
             }
+        }
+
+        protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e) {
+            Connection.Faye.Unsubscribe(Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
+            Connection.Faye.ChannelMessageRecieved -= OnMessage;
+            base.OnNavigatedFrom(e);
         }
     }
 }

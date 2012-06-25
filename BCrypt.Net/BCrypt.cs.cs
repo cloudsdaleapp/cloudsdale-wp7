@@ -436,7 +436,7 @@ namespace BCrypt.Net {
 
             // Determinthe starting offset and validate the salt
             int startingOffset;
-            char minor = (char)0;
+            var minor = (char)0;
             if (salt[0] != '$' || salt[1] != '2')
                 throw new SaltParseException("Invalid salt version");
             if (salt[2] == '$')
@@ -617,15 +617,14 @@ namespace BCrypt.Net {
         /// <param name="blockArray">An array containing the two 32-bit half blocks.</param>
         /// <param name="offset">    The position in the array of the blocks.</param>
         private void Encipher(uint[] blockArray, int offset) {
-            uint round,
-                     n,
-                     block = blockArray[offset],
+            uint round;
+            uint block = blockArray[offset],
                      r = blockArray[offset + 1];
 
             block ^= _P[0];
             for (round = 0; round <= BLOWFISH_NUM_ROUNDS - 2; ) {
                 // Feistel substitution on left word
-                n = _S[(block >> 24) & 0xff];
+                var n = _S[(block >> 24) & 0xff];
                 n += _S[0x100 | ((block >> 16) & 0xff)];
                 n ^= _S[0x200 | ((block >> 8) & 0xff)];
                 n += _S[0x300 | (block & 0xff)];
