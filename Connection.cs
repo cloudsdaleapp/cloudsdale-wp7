@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Newtonsoft.Json;
@@ -24,7 +25,7 @@ namespace Cloudsdale {
 
         public static FayeConnector.FayeConnector Faye;
 
-        public static void Connect(Page page = null) {
+        public static void Connect(Page page = null, Dispatcher dispatcher = null) {
             switch (LoginType) {
                 case 0:
                     break;
@@ -47,9 +48,13 @@ namespace Cloudsdale {
 
             Faye.HandshakeComplete += (sender, args) => {
                 if (page == null) {
-                    var phoneApplicationFrame = Application.Current.RootVisual as PhoneApplicationFrame;
-                    if (phoneApplicationFrame != null)
-                        phoneApplicationFrame.Navigate(new Uri("/Home.xaml", UriKind.Relative));
+                    if (dispatcher != null) {
+                        dispatcher.BeginInvoke(() => {
+                            var phoneApplicationFrame = Application.Current.RootVisual as PhoneApplicationFrame;
+                            if (phoneApplicationFrame != null)
+                                phoneApplicationFrame.Navigate(new Uri("/Home.xaml", UriKind.Relative));
+                        });
+                    }
                 } else {
                     page.Dispatcher.BeginInvoke(
                         () => page.NavigationService.Navigate(new Uri("/Home.xaml", UriKind.Relative)));

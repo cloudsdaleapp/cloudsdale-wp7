@@ -31,9 +31,6 @@
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem x:Name="chatTab" Header="Chat">
                 <Grid>
-                    <ScrollViewer x:Name="ChatScroller" Margin="0,0,0,65">
-                        <ItemsControl x:Name="Chats" />
-                    </ScrollViewer>
                     <Grid VerticalAlignment="Bottom" Height="100" Margin="-12,0">
                         <Grid.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -44,9 +41,12 @@
                         </Grid.Background>
                         <TextBox VerticalAlignment="Bottom" />
                     </Grid>
+                    <ScrollViewer x:Name="ChatScroller" Margin="0,0,0,65">
+                        <ItemsControl x:Name="Chats" />
+                    </ScrollViewer>
                 </Grid>
             </controls:PivotItem>
-            <controls:PivotItem x:Name="mediaTab" Header="Media">
+            <controls:PivotItem x:Name="mediaTab" Header="Drops">
                 <Grid>
                     <ScrollViewer>
                         <ItemsControl x:Name="MediaList" />

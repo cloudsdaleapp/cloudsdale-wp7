@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using Cloudsdale.FayeConnector.ResponseTypes;
 
 namespace Cloudsdale.Models {
     public class Drop {
@@ -15,5 +16,13 @@ namespace Cloudsdale.Models {
         public string title;
         public string id;
         public Uri preview;
+    }
+
+    public class WebDropResponse {
+        public Drop[] result;
+    }
+
+    public class FayeDropResponse : Response {
+        public Drop data;
     }
 }

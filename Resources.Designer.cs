@@ -115,6 +115,24 @@ namespace Cloudsdale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/{cloudid}/users.
+        /// </summary>
+        internal static string JoinCloudEndpoint {
+            get {
+                return ResourceManager.GetString("JoinCloudEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/{cloudid}/users/{userid}.
+        /// </summary>
+        internal static string LeaveCloudEndpoint {
+            get {
+                return ResourceManager.GetString("LeaveCloudEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/sessions.
         /// </summary>
         internal static string loginUrl {

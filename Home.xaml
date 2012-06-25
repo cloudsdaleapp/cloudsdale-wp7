@@ -146,9 +146,9 @@
                         </Button>
                     </Grid>
                     <ScrollViewer Margin="0,50,0,50">
-                        <StackPanel x:Name="searchResults">
+                        <ItemsControl x:Name="searchResults">
                             <TextBlock Text="Loading..." />
-                        </StackPanel>
+                        </ItemsControl>
                     </ScrollViewer>
                     <Button VerticalAlignment="Bottom" BorderBrush="Transparent" Margin="0,0,0,2" 
                             Height="50" Padding="-25" Width="50" Click="ExploreRefreshClick" >

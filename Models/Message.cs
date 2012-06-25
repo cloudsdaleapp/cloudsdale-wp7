@@ -17,6 +17,10 @@ namespace Cloudsdale.Models {
         public Topic topic;
     }
 
+    public class WebMessageResponse {
+        public Message[] result;
+    }
+
     public class Topic {
         public string type;
         public string id;
