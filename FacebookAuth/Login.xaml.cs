@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using Facebook;
+using Microsoft.Phone.Controls;
 
 namespace Cloudsdale.FacebookAuth {
     public partial class Login {
@@ -51,6 +54,11 @@ namespace Cloudsdale.FacebookAuth {
 
         private void LoginSucceded(string accessToken) {
             var fb = new FacebookClient(accessToken);
+            AutoResetEvent are = new AutoResetEvent(false);
+            Dispatcher.BeginInvoke(() => {
+                NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative));
+                are.Set();
+            });
 
             fb.GetCompleted += (o, e) => {
                 if (e.Error != null) {
@@ -63,7 +71,8 @@ namespace Cloudsdale.FacebookAuth {
 
                 Connection.FacebookUid = id;
                 Connection.LoginType = 1;
-                Dispatcher.BeginInvoke(() => NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative)));
+                are.WaitOne();
+                Connection.Connect((Page) ((PhoneApplicationFrame)Application.Current.RootVisual).Content);
             };
 
             fb.GetAsync("me?fields=id");

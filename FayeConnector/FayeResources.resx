@@ -117,29 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="facebookAppId" xml:space="preserve">
-    <value>213007855430354</value>
-    <comment>dev 213007855430354 production 255258867845902</comment>
+  <data name="Connect" xml:space="preserve">
+    <value>[{"channel":"/meta/connect","clientId":"%CLIENTID%","connectionType":"websocket"}]</value>
   </data>
-  <data name="InternalToken" xml:space="preserve">
-    <value>$2a$10$7Pfcv89Q9c/9WMAk6ySfhu</value>
+  <data name="Disconnect" xml:space="preserve">
+    <value>[{"channel":"/meta/disconnect","clientId":"%CLIENTID%"}]</value>
   </data>
-  <data name="OAuthFormat" xml:space="preserve">
-    <value>{{"oauth":{{"client_type":"android","provider":"{0}","token":"{1}","uid":"{2}"}}}}</value>
+  <data name="Handshake" xml:space="preserve">
+    <value>[{"channel":"/meta/handshake","version":"1.0","supportedConnectionTypes":["websocket"]}]</value>
   </data>
-  <data name="pushUrl" xml:space="preserve">
-    <value>ws://push01.cloudsdale.org:80/push</value>
+  <data name="Subscribe" xml:space="preserve">
+    <value>[{"channel":"/meta/subscribe","clientId":"%CLIENTID%","subscription":"%CHANNEL%"}]</value>
   </data>
-  <data name="loginUrl" xml:space="preserve">
-    <value>http://www.cloudsdale.org/v1/sessions</value>
-  </data>
-  <data name="fallbackBaseUrl" xml:space="preserve">
-    <value>http://assets.cloudsdale.org/assets/fallback/</value>
-  </data>
-  <data name="sendEndpoint" xml:space="preserve">
-    <value />
-  </data>
-  <data name="getUserEndpoint" xml:space="preserve">
-    <value>http://www.cloudsdale.org/v1/users/{0}.json</value>
+  <data name="Unsubscribe" xml:space="preserve">
+    <value>[{"channel":"/meta/unsubscribe","clientId":"%CLIENTID%","subscription":"%CHANNEL%"}]</value>
   </data>
 </root>

@@ -37,9 +37,9 @@
             <PasswordBox Name="PassBox" VerticalAlignment="Top" Margin="40,265,0,0" />
             <TextBlock Text="Email" FontSize="48" Margin="0,97,0,444" />
             <TextBlock Text="Password" FontSize="48" Margin="0,212,0,328" />
-            <Button VerticalAlignment="Bottom" Margin="111,0,111,185" Height="75" Content="Login" Click="LoginClick" />
-            <Button VerticalAlignment="Bottom" Margin="2,0,0,120" Height="75" Content="Facebook" Click="FacebookClick" HorizontalAlignment="Left" Width="234" />
-            <Button IsEnabled="False" VerticalAlignment="Bottom" Margin="220,0,2,120" Height="75" Content="Twitter" Click="TwitterClick" />
+            <Button x:Name="emailbtn" VerticalAlignment="Bottom" Margin="111,0,111,185" Height="75" Content="Login" Click="LoginClick" />
+            <Button x:Name="fbbtn" VerticalAlignment="Bottom" Margin="2,0,0,120" Height="75" Content="Facebook" Click="FacebookClick" HorizontalAlignment="Left" Width="234" />
+            <Button x:Name="twitterbtn" IsEnabled="False" VerticalAlignment="Bottom" Margin="220,0,2,120" Height="75" Content="Twitter" Click="TwitterClick" />
         </Grid>
     </Grid>
 

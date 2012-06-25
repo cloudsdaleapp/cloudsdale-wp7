@@ -16,22 +16,23 @@ using System.Windows.Shapes;
 using Cloudsdale.Models;
 using CodeTitans.Bayeux;
 using Microsoft.Phone.Controls;
+using Newtonsoft.Json;
 
 namespace Cloudsdale {
+    /// <summary>
+    /// Static class to aid in the static connection data that should be maintained for all things done with respect to the server
+    /// </summary>
     public static class Connection {
-        public static string CurrentCloudId;
-        public static string CurrentCloudName;
+        public static Cloud CurrentCloud;
         public static string FacebookUid;
         public static int LoginType;
-        public static object LoginResult;
+        public static LoginResponse LoginResult;
         public static string CloudsdaleClientId;
-        public static User CurrentCloudsdaleUser;
+        public static LoggedInUser CurrentCloudsdaleUser;
 
-        private static BayeuxConnection bayeux;
+        private static FayeConnector.FayeConnector connector;
 
         public static void Connect(Page page = null) {
-            if (bayeux != null && bayeux.State == BayeuxConnectionState.Connected) return;
-
             switch (LoginType) {
                 case 0:
                     break;
@@ -50,80 +51,82 @@ namespace Cloudsdale {
                     return;
             }
 
-            var data = (Dictionary<string, object>)LoginResult;
-            var result = (Dictionary<string, object>)data["result"];
-            CloudsdaleClientId = (string)result["client_id"];
-            var user = (Dictionary<string, object>)result["user"];
-            CurrentCloudsdaleUser = new User(user);
+            connector = new FayeConnector.FayeConnector(Resources.pushUrl);
 
-            bayeux = new BayeuxConnection(Resources.pushUrl);
-            bayeux.Connected += Connected;
-            bayeux.ConnectionFailed += (sender, args) => Debug.WriteLine("Failed to connect");
-            bayeux.DataFailed += (sender, args) => Debug.WriteLine("Data receive failed");
-            bayeux.DataReceived += (sender, args) => Debug.WriteLine("Data received: " + args.Data);
-            bayeux.Disconnected += (sender, args) => Debug.WriteLine("Connection lost");
-            bayeux.ResponseReceived += (sender, args) => Debug.WriteLine("Response received: " + args.Message);
-            Debug.WriteLine("Beginning handshake...");
-            bayeux.Handshake();
-        }
+            connector.HandshakeComplete += (sender, args) => {
+                if (page == null) {
+                    var phoneApplicationFrame = Application.Current.RootVisual as PhoneApplicationFrame;
+                    if (phoneApplicationFrame != null)
+                        phoneApplicationFrame.Navigate(new Uri("/Home.xaml", UriKind.Relative));
+                } else {
+                    page.Dispatcher.BeginInvoke(
+                        () => page.NavigationService.Navigate(new Uri("/Home.xaml", UriKind.Relative)));
+                }
+            };
 
-        static void Connected(object sender, BayeuxConnectionEventArgs e) {
-            Debug.WriteLine("Handshake complete. Beginning subscribe...");
-            bayeux.Connect();
-            bayeux.Subscribe("/clouds/4fd8328bcff4e82543000229/chat/messages");
+            connector.Handshake();
         }
 
         static void FacebookLogin(Page page) {
 #if !DEBUG
             try {
 #endif
-                var token = BCrypt.Net.BCrypt.HashPassword(FacebookUid + "facebook", Resources.InternalToken);
-                var oauth = string.Format(Resources.OAuthFormat, "facebook", token, FacebookUid);
-                var are = new AutoResetEvent(false);
-                var data = Encoding.UTF8.GetBytes(oauth);
-                var request = WebRequest.CreateHttp(Resources.loginUrl);
-                request.Accept = "application/json";
-                request.Method = "POST";
-                request.ContentType = "application/json";
-                request.Headers["Content-Length"] = data.Length.ToString();
-                request.BeginGetRequestStream(ar => {
-                    var stream = request.EndGetRequestStream(ar);
-                    stream.Write(data, 0, data.Length);
-                    stream.Close();
-                    are.Set();
-                }, null);
-                are.WaitOne();
-                Debug.WriteLine("Getting response...");
-                request.BeginGetResponse(ar => {
-                    Debug.WriteLine("Got response");
-                    string responseData;
-                    try {
-                        var response = request.EndGetResponse(ar);
-                        var stream = response.GetResponseStream();
-                        var sr = new StreamReader(stream);
-                        responseData = sr.ReadToEnd();
-                        sr.Close();
-                        response.Close();
-                    } catch (WebException ex) {
-                        if (ex.Message == "The remote server returned an error: NotFound.") {
-                            page.Dispatcher.BeginInvoke(() => MessageBox.Show("Login failed!"));
-                        } else {
-                            Debug.WriteLine(ex);
-                            page.Dispatcher.BeginInvoke(() => MessageBox.Show("Unkown error connecting to the server"));
-                        }
-                        page.Dispatcher.BeginInvoke(() => page.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative)));
-                        return;
-                    } catch (Exception ex) {
+            var token = BCrypt.Net.BCrypt.HashPassword(FacebookUid + "facebook", Resources.InternalToken);
+            var oauth = string.Format(Resources.OAuthFormat, "facebook", token, FacebookUid);
+            var are = new AutoResetEvent(false);
+            var data = Encoding.UTF8.GetBytes(oauth);
+            var request = WebRequest.CreateHttp(Resources.loginUrl);
+            request.Accept = "application/json";
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Headers["Content-Length"] = data.Length.ToString();
+            request.BeginGetRequestStream(ar => {
+                var stream = request.EndGetRequestStream(ar);
+                stream.Write(data, 0, data.Length);
+                stream.Close();
+                are.Set();
+            }, null);
+            are.WaitOne();
+            Debug.WriteLine("Getting response...");
+            request.BeginGetResponse(ar => {
+                Debug.WriteLine("Got response");
+                string responseData;
+                try {
+                    var response = request.EndGetResponse(ar);
+                    var stream = response.GetResponseStream();
+                    var sr = new StreamReader(stream);
+                    responseData = sr.ReadToEnd();
+                    sr.Close();
+                    response.Close();
+                } catch (WebException ex) {
+                    if (ex.Message == "The remote server returned an error: NotFound.") {
+                        page.Dispatcher.BeginInvoke(() => MessageBox.Show("Login failed!"));
+                    } else {
                         Debug.WriteLine(ex);
                         page.Dispatcher.BeginInvoke(() => MessageBox.Show("Unkown error connecting to the server"));
-                        page.Dispatcher.BeginInvoke(() => page.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative)));
-                        return;
                     }
-                    var json = new CodeTitans.JSon.JSonReader();
-                    LoginType = 0;
-                    LoginResult = json.Read(responseData);
-                    Connect(page);
-                }, null);
+                    page.Dispatcher.BeginInvoke(() => page.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative)));
+                    return;
+                } catch (Exception ex) {
+                    Debug.WriteLine(ex);
+                    page.Dispatcher.BeginInvoke(() => MessageBox.Show("Unkown error connecting to the server"));
+                    page.Dispatcher.BeginInvoke(() => page.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative)));
+                    return;
+                }
+                var json = new CodeTitans.JSon.JSonReader();
+                LoginType = 0;
+                var settings = new JsonSerializerSettings {
+                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                    Error = (sender, args) => page.Dispatcher.BeginInvoke(() => {
+                        MessageBox.Show("Error receiving data from the server");
+                        page.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                    })
+                };
+                LoginResult = JsonConvert.DeserializeObject<LoginResponse>(responseData, settings);
+                CloudsdaleClientId = LoginResult.result.client_id;
+                CurrentCloudsdaleUser = LoginResult.result.user;
+                Connect(page);
+            }, null);
 #if !DEBUG
             } catch (Exception ex) {
                 Debug.WriteLine(ex);

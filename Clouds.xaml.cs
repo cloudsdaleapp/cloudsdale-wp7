@@ -12,13 +12,7 @@ namespace Cloudsdale {
     public partial class Clouds {
         public Clouds() {
             InitializeComponent();
-            cloudPivot.Title = Connection.CurrentCloudName;
-            AddPony("Connorcpu", new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
-            AddChat("Connorcpu", "This is a big 'ole test chat, just to check that the system is working ;)",
-                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
-            AddChat("Connorcpu", "> Left anglebracket test\n> Green\nNot Green\n> Green",
-                new Uri("http://c775850.r50.cf2.rackcdn.com/avatars/4f4db65448f155761c001d9d/thumb_9145e3d94a-avatar.png"));
-            AddMedia("I'm gonna do an internet!", new Uri("http://www.youtube.com/watch?v=mdaCXH5gT_w"), new Uri("http://c775850.r50.cf2.rackcdn.com/previews/4fe49f50cff4e82ffc003b33/thumb_93d4929498-preview.png"));
+            cloudPivot.Title = Connection.CurrentCloud.name;
         }
 
         public void AddPony(string name, Uri imageurl) {

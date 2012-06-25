@@ -16,7 +16,6 @@ namespace Cloudsdale {
     public partial class Connecting : PhoneApplicationPage {
         public Connecting() {
             InitializeComponent();
-            Dispatcher.BeginInvoke(() => Connection.Connect(this));
         }
     }
 }

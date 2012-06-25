@@ -14,7 +14,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
+using Newtonsoft.Json;
 
 namespace Cloudsdale {
     public partial class MainPage {
@@ -33,6 +35,8 @@ namespace Cloudsdale {
         }
 
         private void LoginClick(object sender, RoutedEventArgs e) {
+            fbbtn.IsEnabled = false;
+            emailbtn.IsEnabled = false;
             EmailLogin();
             using (var iso = IsolatedStorageFile.GetUserStoreForApplication()) {
                 using (var file = iso.OpenFile("userpass", FileMode.OpenOrCreate, FileAccess.Write)) {
@@ -92,10 +96,21 @@ namespace Cloudsdale {
                     Dispatcher.BeginInvoke(() => MessageBox.Show("Unkown error connecting to the server"));
                     return;
                 }
-                var json = new CodeTitans.JSon.JSonReader();
                 Connection.LoginType = 0;
-                Connection.LoginResult = json.Read(responseData);
-                Dispatcher.BeginInvoke(() => NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative)));
+                var settings = new JsonSerializerSettings {
+                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                    Error = (sender, args) => Dispatcher.BeginInvoke(() => {
+                        MessageBox.Show("Error receiving data from the server");
+                        NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                    })
+                };
+                Connection.LoginResult = JsonConvert.DeserializeObject<LoginResponse>(responseData, settings);
+                Connection.CloudsdaleClientId = Connection.LoginResult.result.client_id;
+                Connection.CurrentCloudsdaleUser = Connection.LoginResult.result.user;
+                Dispatcher.BeginInvoke(() => {
+                    NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative));
+                    Connection.Connect((Page)((PhoneApplicationFrame)Application.Current.RootVisual).Content);
+                });
             }, null);
         }
 

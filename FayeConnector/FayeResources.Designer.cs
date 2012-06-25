@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Cloudsdale {
+namespace Cloudsdale.FayeConnector {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace Cloudsdale {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    internal class FayeResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal FayeResources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Cloudsdale {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Cloudsdale.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Cloudsdale.FayeConnector.FayeResources", typeof(FayeResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,74 +61,47 @@ namespace Cloudsdale {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 213007855430354.
+        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/connect&quot;,&quot;clientId&quot;:&quot;%CLIENTID%&quot;,&quot;connectionType&quot;:&quot;websocket&quot;}].
         /// </summary>
-        internal static string facebookAppId {
+        internal static string Connect {
             get {
-                return ResourceManager.GetString("facebookAppId", resourceCulture);
+                return ResourceManager.GetString("Connect", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://assets.cloudsdale.org/assets/fallback/.
+        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/disconnect&quot;,&quot;clientId&quot;:&quot;%CLIENTID%&quot;}].
         /// </summary>
-        internal static string fallbackBaseUrl {
+        internal static string Disconnect {
             get {
-                return ResourceManager.GetString("fallbackBaseUrl", resourceCulture);
+                return ResourceManager.GetString("Disconnect", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/users/{0}.json.
+        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/handshake&quot;,&quot;version&quot;:&quot;1.0&quot;,&quot;supportedConnectionTypes&quot;:[&quot;websocket&quot;]}].
         /// </summary>
-        internal static string getUserEndpoint {
+        internal static string Handshake {
             get {
-                return ResourceManager.GetString("getUserEndpoint", resourceCulture);
+                return ResourceManager.GetString("Handshake", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to $2a$10$7Pfcv89Q9c/9WMAk6ySfhu.
+        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/subscribe&quot;,&quot;clientId&quot;:&quot;%CLIENTID%&quot;,&quot;subscription&quot;:&quot;%CHANNEL%&quot;}].
         /// </summary>
-        internal static string InternalToken {
+        internal static string Subscribe {
             get {
-                return ResourceManager.GetString("InternalToken", resourceCulture);
+                return ResourceManager.GetString("Subscribe", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/sessions.
+        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/unsubscribe&quot;,&quot;clientId&quot;:&quot;%CLIENTID%&quot;,&quot;subscription&quot;:&quot;%CHANNEL%&quot;}].
         /// </summary>
-        internal static string loginUrl {
+        internal static string Unsubscribe {
             get {
-                return ResourceManager.GetString("loginUrl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {{&quot;oauth&quot;:{{&quot;client_type&quot;:&quot;android&quot;,&quot;provider&quot;:&quot;{0}&quot;,&quot;token&quot;:&quot;{1}&quot;,&quot;uid&quot;:&quot;{2}&quot;}}}}.
-        /// </summary>
-        internal static string OAuthFormat {
-            get {
-                return ResourceManager.GetString("OAuthFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ws://push01.cloudsdale.org:80/push.
-        /// </summary>
-        internal static string pushUrl {
-            get {
-                return ResourceManager.GetString("pushUrl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string sendEndpoint {
-            get {
-                return ResourceManager.GetString("sendEndpoint", resourceCulture);
+                return ResourceManager.GetString("Unsubscribe", resourceCulture);
             }
         }
     }

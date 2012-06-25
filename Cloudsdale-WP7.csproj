@@ -61,12 +61,25 @@
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Interop" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Json.NET\Bin\WindowsPhone\Signed\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.ClientEngine.Common">
+      <HintPath>..\..\WebSocket4Net(0.7).Source\Reference\SuperSocket.ClientEngine\WP71\Debug\SuperSocket.ClientEngine.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.ClientEngine.Core">
+      <HintPath>..\..\WebSocket4Net(0.7).Source\Reference\SuperSocket.ClientEngine\WP71\Debug\SuperSocket.ClientEngine.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.ClientEngine.Protocol">
+      <HintPath>..\..\WebSocket4Net(0.7).Source\Reference\SuperSocket.ClientEngine\WP71\Debug\SuperSocket.ClientEngine.Protocol.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="system" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
     <Reference Include="System.Xml" />
     <Reference Include="mscorlib.extensions" />
+    <Reference Include="WebSocket4Net, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="About.xaml.cs">
@@ -87,14 +100,28 @@
     <Compile Include="FacebookAuth\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FayeConnector\FayeConnector.cs" />
+    <Compile Include="FayeConnector\FayeResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FayeResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="FayeConnector\ResponseTypes\EventResponse.cs" />
+    <Compile Include="FayeConnector\ResponseTypes\HandshakeResponse.cs" />
+    <Compile Include="FayeConnector\ResponseTypes\Response.cs" />
+    <Compile Include="FayeConnector\ResponseTypes\SubscribeResponse.cs" />
     <Compile Include="Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\Avatar.cs" />
     <Compile Include="Models\Cloud.cs" />
+    <Compile Include="Models\LoginResponse.cs" />
+    <Compile Include="Models\Prosecution.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -159,11 +186,16 @@
     <Content Include="SplashScreenImage.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="FayeConnector\FayeResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FayeResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
