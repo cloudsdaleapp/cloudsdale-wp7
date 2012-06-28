@@ -48,13 +48,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CodeTitans.Phone.Bayeux">
-      <HintPath>..\..\CodeTitansBin\bin\winphone7\1.x\CodeTitans.Phone.Bayeux.dll</HintPath>
-    </Reference>
-    <Reference Include="CodeTitans.Phone.Core">
-      <HintPath>..\..\CodeTitansBin\bin\winphone7\1.x\CodeTitans.Phone.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="CodeTitans.Phone.JSon, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Facebook">
       <HintPath>..\..\FacebookCSharpSDK-5.5.0-beta.bin\sl3-wp\Facebook.dll</HintPath>
     </Reference>
@@ -126,6 +119,7 @@
     <Compile Include="Models\LoginResponse.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Prosecution.cs" />
+    <Compile Include="Models\SentMessage.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

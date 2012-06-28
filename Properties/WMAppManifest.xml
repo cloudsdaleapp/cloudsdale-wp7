@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2009/deployment" AppPlatformVersion="7.1">
-  <App xmlns="" ProductID="{f39d8142-51c2-4507-bcaf-6fc61511dced}" Title="Cloudsdale" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal"  Author="Cloudsdale author" Description="Sample description" Publisher="Cloudsdale">
+  <App xmlns="" ProductID="{f39d8142-51c2-4507-bcaf-6fc61511dced}" Title="Cloudsdale" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal"  Author="Connorcpu" Description="Chat service. More info can be found on your PC at www.cloudsdale.org" Publisher="Cloudsdale">
     <IconPath IsRelative="true" IsResource="false">ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_GAMERSERVICES"/>

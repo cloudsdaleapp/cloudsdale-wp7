@@ -11,13 +11,13 @@ namespace BCrypt.Net {
         }
 
         /// <summary>Initializes a new instance of <see cref="SaltParseException"/>.</summary>
-        /// <param name="message">The message.</param>
+        /// <param name="message">The content.</param>
         public SaltParseException(string message)
             : base(message) {
         }
 
         /// <summary>Initializes a new instance of <see cref="SaltParseException"/>.</summary>
-        /// <param name="message">       The message.</param>
+        /// <param name="message">       The content.</param>
         /// <param name="innerException">The inner exception.</param>
         public SaltParseException(string message, Exception innerException)
             : base(message, innerException) {

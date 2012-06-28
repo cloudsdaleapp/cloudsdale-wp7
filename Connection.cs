@@ -64,6 +64,22 @@ namespace Cloudsdale {
             Faye.Handshake();
         }
 
+        public static void SendMessage(string cloud, string message) {
+            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new SentMessage {content = message, client_id = Faye.ClientId}));
+            var request = WebRequest.CreateHttp(Resources.SendEndpoint.Replace("{cloudid}", cloud));
+            request.Accept = "application/json";
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Headers["Content-Length"] = data.Length.ToString();
+            request.Headers["X-Auth-Token"] = CurrentCloudsdaleUser.auth_token;
+            request.BeginGetRequestStream(ar => {
+                var reqs = request.EndGetRequestStream(ar);
+                reqs.Write(data, 0, data.Length);
+                reqs.Close();
+                request.BeginGetResponse(a => request.EndGetResponse(a).Close(), null);
+            }, null);
+        }
+
         static void FacebookLogin(Page page) {
 #if !DEBUG
             try {
@@ -110,7 +126,6 @@ namespace Cloudsdale {
                     page.Dispatcher.BeginInvoke(() => page.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative)));
                     return;
                 }
-                var json = new CodeTitans.JSon.JSonReader();
                 LoginType = 0;
                 var settings = new JsonSerializerSettings {
                     DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,

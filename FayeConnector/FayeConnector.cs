@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Windows;
 using Cloudsdale.FayeConnector.ResponseTypes;
+using Microsoft.Phone.Controls;
 using Newtonsoft.Json;
 using WebSocket4Net;
 
@@ -11,6 +13,9 @@ namespace Cloudsdale.FayeConnector {
         private WebSocket socket;
         private readonly AutoResetEvent are = new AutoResetEvent(false);
         private string clientId;
+        public string ClientId {
+            get { return clientId; }
+        }
         private readonly List<String> subbedchans = new List<string>();
 
         /// <summary>
@@ -34,7 +39,7 @@ namespace Cloudsdale.FayeConnector {
         /// </summary>
         public event EventHandler<UnsubscribeEventArgs> UnsubscriptionComplete;
         /// <summary>
-        /// Callback for a message received in a subscribed channel
+        /// Callback for a content received in a subscribed channel
         /// </summary>
         public event EventHandler<DataReceivedEventArgs> ChannelMessageRecieved; 
 
@@ -50,9 +55,14 @@ namespace Cloudsdale.FayeConnector {
         /// Begins the handshaking process
         /// </summary>
         public void Handshake() {
-            new Thread(HandshakeInternal).Start();
+            new Thread(() => HandshakeInternal(() => Deployment.Current.Dispatcher.BeginInvoke(() => {
+                MessageBox.Show("Can't connect to cloudsdale");
+                // ReSharper disable PossibleNullReferenceException
+                (Application.Current.RootVisual as PhoneApplicationFrame).Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                // ReSharper restore PossibleNullReferenceException
+            }))).Start();
         }
-        private void HandshakeInternal() {
+        private void HandshakeInternal(Action timeout) {
             // If there's an existing socket connected or in the middle of connecting... CRUSH ITS SOUL!
             if (Connecting) {
                 socket.Close();
@@ -68,7 +78,7 @@ namespace Cloudsdale.FayeConnector {
                 // Open the socket with hacked-on synchronosity
                 socket.Opened += AreSet;
                 socket.Open();
-                are.WaitOne();
+                if (!are.WaitOne(5000)) 
                 socket.Opened -= AreSet;
 
                 // Get a response for the handshack (moar hacked-on synchronosity)
@@ -162,7 +172,7 @@ namespace Cloudsdale.FayeConnector {
         }
 
         /// <summary>
-        /// Process dat message :3
+        /// Process dat content :3
         /// </summary>
         /// <param name="data">Raw object</param>
         /// <param name="channel">channel</param>

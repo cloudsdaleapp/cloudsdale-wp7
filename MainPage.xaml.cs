@@ -118,5 +118,11 @@ namespace Cloudsdale {
         private void TwitterLogin() {
 
         }
+
+        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
+            fbbtn.IsEnabled = true;
+            emailbtn.IsEnabled = true;
+            base.OnNavigatedTo(e);
+        }
     }
 }

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
 using System.Linq;
@@ -25,7 +28,7 @@ namespace Cloudsdale {
             var wc = new WebClient();
             wc.DownloadStringCompleted += (sender, args) => {
                 if (args.UserState == null) {
-                    var messages = JsonConvert.DeserializeObject<Models.WebMessageResponse>(args.Result).result;
+                    var messages = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result).result;
                     foreach (var message in messages) {
                         AddChat(message);
                     }
@@ -35,7 +38,7 @@ namespace Cloudsdale {
                         Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(Chats.ActualHeight));
                     }).Start();
                 } else {
-                    var drops = JsonConvert.DeserializeObject<Models.WebDropResponse>(args.Result).result;
+                    var drops = JsonConvert.DeserializeObject<WebDropResponse>(args.Result).result;
                     Array.Reverse(drops);
                     foreach (var drop in drops) {
                         AddMedia(drop);
@@ -48,27 +51,27 @@ namespace Cloudsdale {
 
         internal void OnMessage(object sender, FayeConnector.FayeConnector.DataReceivedEventArgs args) {
             if (args.Channel == Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id)) {
-                var message = JsonConvert.DeserializeObject<Models.FayeMessageResponse>(args.Data).data;
+                var message = JsonConvert.DeserializeObject<FayeMessageResponse>(args.Data).data;
                 Dispatcher.BeginInvoke(() => AddChat(message));
             } else if (args.Channel == Res.FayeDropsChannel.Replace("{cloudid}", Connection.CurrentCloud.id)) {
-                var drop = JsonConvert.DeserializeObject<Models.FayeDropResponse>(args.Data).data;
+                var drop = JsonConvert.DeserializeObject<FayeDropResponse>(args.Data).data;
                 Dispatcher.BeginInvoke(() => AddMedia(drop));
             }
         }
 
-        public void AddPony(string name, Uri imageurl) {
+        public void AddPony(SimpleUser user) {
             var grid = new Grid {
                 Height = 50,
                 Margin = new Thickness(0, 0, 0, 10)
             };
             var img = new Image {
-                Source = new BitmapImage(imageurl),
+                Source = new BitmapImage(user.avatar.Normal),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Width = 50
             };
             grid.Children.Add(img);
             var ponyname = new TextBlock {
-                Text = name,
+                Text = user.name,
                 FontSize = 34,
                 Margin = new Thickness(60, 0, 0, 0),
                 Foreground = new SolidColorBrush(Colors.Black)
@@ -83,11 +86,17 @@ namespace Cloudsdale {
             }
         }
 
-        public void AddChat(Models.Message chat, bool recursive = false) {
+        private readonly Regex _backslashN = new Regex("([^\\\\]|^)\\\\n");
+        private readonly Regex _backslashT = new Regex("([^\\\\]|^)\\\\t");
+
+        public void AddChat(Message chat, bool recursive = false) {
             if (string.IsNullOrWhiteSpace(chat.content)) return;
             if (AppendChatToLast(chat.user.name, chat.content)) return;
+            chat.content = _backslashN.Replace(chat.content, "\n");
             var lines = chat.content.Split('\n');
             var msg = lines[0].Trim();
+            chat.content = _backslashT.Replace(chat.content, "    ");
+            chat.content = chat.content.Replace("\\\\", "\\");
 
             while (Chats.Items.Count > 50) {
                 Chats.Items.RemoveAt(0);
@@ -110,6 +119,16 @@ namespace Cloudsdale {
                 Margin = new Thickness(60, 0, 0, 0)
             };
             grid.Children.Add(ponyname);
+            var tzi = TimeZoneInfo.Local;
+            var tso = new TimeSpan(1, 0, 0);
+            var timestamp = new TextBlock {
+                Text = (chat.timestamp + tzi.BaseUtcOffset + tso).ToShortTimeString(),
+                FontSize = 14,
+                Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x6F, 0x8F, 0x8F)),
+                Margin = new Thickness(0, 0, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+            grid.Children.Add(timestamp);
             var stack = new StackPanel {
                 Margin = new Thickness(60, 20, 0, 0)
             };
@@ -147,15 +166,18 @@ namespace Cloudsdale {
             if (Chats.Items.Count < 1) return false;
             var grid = Chats.Items.Last() as Grid;
             if (grid == null) return false;
-            var tbs = grid.Children.OfType<TextBlock>().ToArray();
+            var tbs = grid.Children.OfType<TextBlock>().Where(tb => Math.Abs(tb.FontSize - 18f) < 1).ToArray();
             if (tbs.Length != 1) return false;
             if (tbs[0].Text != name) return false;
             var stacks = grid.Children.OfType<StackPanel>().ToArray();
             if (stacks.Length != 1) return false;
             var stack = stacks[0];
 
+            chat = _backslashN.Replace(chat, "\n");
             var lines = chat.Split('\n');
             chat = lines[0].Trim();
+            chat = _backslashT.Replace(chat, "    ");
+            chat = chat.Replace("\\\\", "\\");
 
             var chatbox = new TextBlock {
                 Text = chat,
@@ -186,7 +208,7 @@ namespace Cloudsdale {
             return true;
         }
 
-        public void AddMedia(Models.Drop drop) {
+        public void AddMedia(Drop drop) {
             var grid = new Grid {
                 Margin = new Thickness(0,0,0,5)
             };
@@ -210,7 +232,9 @@ namespace Cloudsdale {
             grid.Children.Add(titlebox);
 
             var baseproj = grid.Projection;
+            var buttondownpoints = new StylusPointCollection();
             grid.MouseLeftButtonDown += (sender, args) => {
+                buttondownpoints = args.StylusDevice.GetStylusPoints(LayoutRoot);
                 var proj = new PlaneProjection {
                     RotationX = 15,
                     RotationY = -15,
@@ -219,6 +243,14 @@ namespace Cloudsdale {
             };
             grid.MouseLeftButtonUp += (sender, args) => {
                 grid.Projection = baseproj;
+                var points = args.StylusDevice.GetStylusPoints(LayoutRoot);
+                if (points.Count > 0 && buttondownpoints.Count > 0) {
+                    if (points[0].X < buttondownpoints[0].X - 25 ||
+                        points[0].X > buttondownpoints[0].X + 25 ||
+                        points[0].Y < buttondownpoints[0].Y - 25 ||
+                        points[0].Y > buttondownpoints[0].Y + 25)
+                        return;
+                }
                 Dispatcher.BeginInvoke(() => new WebBrowserTask { Uri = drop.url }.Show());
             };
             grid.MouseLeave += (sender, args) => {
@@ -252,6 +284,13 @@ namespace Cloudsdale {
             Connection.Faye.ChannelMessageRecieved -= OnMessage;
             wasoncloud = false;
             base.OnNavigatedFrom(e);
+        }
+
+        private void SendBoxKeyDown(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Enter) {
+                Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text);
+                SendBox.Text = "";
+            }
         }
     }
 }
