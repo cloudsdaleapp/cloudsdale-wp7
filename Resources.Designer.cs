@@ -61,6 +61,19 @@ namespace Cloudsdale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to \bf([u]+)ck
+        ///\bsh([i]+)t\b
+        ///\bpenis|cock|dick([\w]+)|pussy|faggot\b
+        ///\b([n]+)([i]+)([g]+)([e]+)([r]+)\b
+        ///\bass.
+        /// </summary>
+        internal static string BasicProfanityFilter {
+            get {
+                return ResourceManager.GetString("BasicProfanityFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to d71ed537.
         /// </summary>
         internal static string BugsenseApiKey {

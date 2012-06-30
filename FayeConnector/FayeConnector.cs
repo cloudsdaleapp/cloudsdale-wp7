@@ -238,6 +238,7 @@ namespace Cloudsdale.FayeConnector {
         /// SERVER GTFO!
         /// </summary>
         public void Disconnect() {
+            if (Closed) return;
             socket.Send(FayeResources.Disconnect.Replace("%CLIENTID%", clientId));
             socket.Close();
             socket = null;

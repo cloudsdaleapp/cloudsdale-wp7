@@ -101,6 +101,9 @@
       <DependentUpon>Connecting.xaml</DependentUpon>
     </Compile>
     <Compile Include="Connection.cs" />
+    <Compile Include="Controls\CountDisplay.xaml.cs">
+      <DependentUpon>CountDisplay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FacebookAuth\FBOANegotiator.cs" />
     <Compile Include="FacebookAuth\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
@@ -122,6 +125,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Managers\GenericBinding.cs" />
     <Compile Include="Managers\MessageCacheController.cs" />
     <Compile Include="Models\Avatar.cs" />
     <Compile Include="Models\Cloud.cs" />
@@ -141,6 +145,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Settings\ChatFilter.cs" />
     <Page Include="About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -150,6 +155,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Account\SetPassword.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\CountDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -203,6 +212,7 @@
     <Content Include="Images\Icons\settings.png" />
     <Content Include="Images\Icons\add.png" />
     <Content Include="Outline.txt" />
+    <Resource Include="Settings\BasicProfanityFilter.txt" />
     <Content Include="SplashScreenImage.jpg" />
   </ItemGroup>
   <ItemGroup>

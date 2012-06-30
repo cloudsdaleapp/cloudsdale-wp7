@@ -119,6 +119,7 @@ namespace Cloudsdale {
             var msg = lines[0].Trim();
             chat.content = _backslashT.Replace(chat.content, "    ");
             chat.content = chat.content.Replace("\\\\", "\\");
+            chat.content = Settings.ChatFilter.Filter(chat.content);
 
             while (Chats.Items.Count > 75) {
                 Chats.Items.RemoveAt(0);
@@ -162,7 +163,7 @@ namespace Cloudsdale {
                 FontFamily = new FontFamily("Verdana"),
             };
             if (msg.StartsWith(">")) {
-                chatbox.Foreground = new SolidColorBrush(Color.FromArgb(255,100,155,100));
+                chatbox.Foreground = new SolidColorBrush(Color.FromArgb(255, 50, 130, 50));
             }
             stack.Children.Add(chatbox);
             grid.Children.Add(stack);
@@ -200,6 +201,7 @@ namespace Cloudsdale {
             chat = lines[0].Trim();
             chat = _backslashT.Replace(chat, "    ");
             chat = chat.Replace("\\\\", "\\");
+            chat = Settings.ChatFilter.Filter(chat);
 
             var chatbox = new TextBlock {
                 Text = chat,
@@ -209,7 +211,7 @@ namespace Cloudsdale {
                 FontFamily = new FontFamily("Verdana"),
             };
             if (chat.StartsWith(">")) {
-                chatbox.Foreground = new SolidColorBrush(Color.FromArgb(255, 100, 155, 100));
+                chatbox.Foreground = new SolidColorBrush(Color.FromArgb(255, 50, 130, 50));
             }
             stack.Children.Add(chatbox);
 
@@ -321,8 +323,8 @@ namespace Cloudsdale {
                     return Color.FromArgb(0xFF, 0xFF, 0x1F, 0x1F);
                 case "admin":
                     return Color.FromArgb(0xFF, 0x1F, 0x7F, 0x1F);
-                case "mod":
-                    return Color.FromArgb(0xFF, 0xFF, 0xCF, 0x1F);
+                case "moderator":
+                    return Color.FromArgb(0xFF, 0xFF, 0xAF, 0x1F);
                 default:
                     return defaultColor;
             }
