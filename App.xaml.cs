@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Windows;
 using System.Windows.Navigation;
+using BugSense;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Newtonsoft.Json;
@@ -20,8 +22,8 @@ namespace Cloudsdale {
         /// Constructor for the Application object.
         /// </summary>
         public App() {
-            // Global handler for uncaught exceptions. 
-            UnhandledException += Application_UnhandledException;
+            BugSenseHandler.Instance.Init(this, Res.BugsenseApiKey);
+            BugSenseHandler.Instance.UnhandledException += Application_UnhandledException;
 
             // Standard Silverlight initialization
             InitializeComponent();
@@ -58,58 +60,67 @@ namespace Cloudsdale {
         // Code to execute when the application is activated (brought to foreground)
         // This code will not execute when the application is first launched
         private void Application_Activated(object sender, ActivatedEventArgs e) {
-            if (RootFrame.Content is MainPage || RootFrame.Content is Connecting || RootFrame.Content is FacebookAuth.Login) return;
-            Connection.Faye = new FayeConnector.FayeConnector(Res.pushUrl);
-            var are = new AutoResetEvent(false);
-            bool fail = false;
-            Connection.Faye.HandshakeComplete += (o, args) => are.Set();
-            Connection.Faye.HandshakeFailed += (o, args) => {
-                fail = true;
-                are.Set();
-            };
-            Connection.Faye.Handshake();
-            if (fail) {
-                RootFrame.Navigate(new Uri("MainPage.xaml", UriKind.Relative));
-                return;
-            }
-            if (RootFrame.Content is Clouds) {
-                var clouds = RootFrame.Content as Clouds;
-                clouds.Chats.Items.Clear();
-                clouds.MediaList.Items.Clear();
-                var wc = new WebClient();
-                wc.DownloadStringCompleted += (sender0, args) => {
-                    if (args.UserState == null) {
-                        var messages = JsonConvert.DeserializeObject<Models.WebMessageResponse>(args.Result).result;
-                        foreach (var message in messages) {
-                            clouds.AddChat(message);
-                        }
-                        wc.DownloadStringAsync(new Uri(Res.PreviousDropsEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)), new object());
-                        are.WaitOne();
-                        Connection.Faye.Subscribe(Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
-                    } else {
-                        var drops = JsonConvert.DeserializeObject<Models.WebDropResponse>(args.Result).result;
-                        Array.Reverse(drops);
-                        foreach (var drop in drops) {
-                            clouds.AddMedia(drop);
-                        }
-                        RootFrame.Dispatcher.BeginInvoke(() => clouds.ChatScroller.ScrollToVerticalOffset(clouds.Chats.ActualHeight));
-                        Connection.Faye.Subscribe(Res.FayeDropsChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
-                    }
-                };
-                wc.DownloadStringAsync(new Uri(Res.PreviousMessagesEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)), null);
+            try {
 
-                Connection.Faye.ChannelMessageRecieved += (RootFrame.Content as Clouds).OnMessage;
+                if (RootFrame.Content is MainPage || RootFrame.Content is Connecting || RootFrame.Content is FacebookAuth.Login) return;
+                Connection.Faye = new FayeConnector.FayeConnector(Res.pushUrl);
+                var are = new AutoResetEvent(false);
+                bool fail = false;
+                Connection.Faye.HandshakeComplete += (o, args) => are.Set();
+                Connection.Faye.HandshakeFailed += (o, args) => {
+                    fail = true;
+                    are.Set();
+                };
+                Connection.Faye.Handshake();
+                if (fail) {
+                    RootFrame.Navigate(new Uri("MainPage.xaml", UriKind.Relative));
+                    return;
+                }
+                if (RootFrame.Content is Clouds) {
+                    var clouds = RootFrame.Content as Clouds;
+                    clouds.Chats.Items.Clear();
+                    clouds.MediaList.Items.Clear();
+                    var wc = new WebClient();
+                    wc.DownloadStringCompleted += (sender0, args) => {
+                        if (args.UserState == null) {
+                            var messages = JsonConvert.DeserializeObject<Models.WebMessageResponse>(args.Result).result;
+                            foreach (var message in messages) {
+                                clouds.AddChat(message);
+                            }
+                            wc.DownloadStringAsync(new Uri(Res.PreviousDropsEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)), new object());
+                            are.WaitOne();
+                            Connection.Faye.Subscribe(Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
+                        } else {
+                            var drops = JsonConvert.DeserializeObject<Models.WebDropResponse>(args.Result).result;
+                            Array.Reverse(drops);
+                            foreach (var drop in drops) {
+                                clouds.AddMedia(drop);
+                            }
+                            RootFrame.Dispatcher.BeginInvoke(() => clouds.ChatScroller.ScrollToVerticalOffset(clouds.Chats.ActualHeight));
+                            Connection.Faye.Subscribe(Res.FayeDropsChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
+                        }
+                    };
+                    wc.DownloadStringAsync(new Uri(Res.PreviousMessagesEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)), null);
+
+                    Connection.Faye.ChannelMessageRecieved += (RootFrame.Content as Clouds).OnMessage;
+                }
+            } catch {
+                RootFrame.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
             }
         }
 
         // Code to execute when the application is deactivated (sent to background)
         // This code will not execute when the application is closing
         private void Application_Deactivated(object sender, DeactivatedEventArgs e) {
+            if (Connection.Faye != null)
+                Connection.Faye.Disconnect();
         }
 
         // Code to execute when the application is closing (eg, user hit Back)
         // This code will not execute when the application is deactivated
         private void Application_Closing(object sender, ClosingEventArgs e) {
+            if (Connection.Faye != null)
+                Connection.Faye.Disconnect();
         }
 
         // Code to execute if a navigation fails
@@ -122,10 +133,9 @@ namespace Cloudsdale {
 
         // Code to execute on Unhandled Exceptions
         private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e) {
-            if (System.Diagnostics.Debugger.IsAttached) {
-                // An unhandled exception has occurred; break into the debugger
-                System.Diagnostics.Debugger.Break();
-            }
+#if DEBUG
+            Debugger.Break();
+#endif
         }
 
         #region Phone application initialization
@@ -153,9 +163,9 @@ namespace Cloudsdale {
         // Do not add any additional code to this method
         private void CompleteInitializePhoneApplication(object sender, NavigationEventArgs e) {
             // Set the root visual to allow the application to render
-// ReSharper disable RedundantCheckBeforeAssignment
+            // ReSharper disable RedundantCheckBeforeAssignment
             if (RootVisual != RootFrame)
-// ReSharper restore RedundantCheckBeforeAssignment
+                // ReSharper restore RedundantCheckBeforeAssignment
                 RootVisual = RootFrame;
 
             // Remove this handler since it is no longer needed

@@ -61,6 +61,33 @@ namespace Cloudsdale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to d71ed537.
+        /// </summary>
+        internal static string BugsenseApiKey {
+            get {
+                return ResourceManager.GetString("BugsenseApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1.0.0.
+        /// </summary>
+        internal static string CurrentApiVersion {
+            get {
+                return ResourceManager.GetString("CurrentApiVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to $2a$10$7Pfcv89Q9c/9WMAk6ySfhu.
+        /// </summary>
+        internal static string EncryptionComplexifier {
+            get {
+                return ResourceManager.GetString("EncryptionComplexifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 213007855430354.
         /// </summary>
         internal static string facebookAppId {
@@ -97,7 +124,16 @@ namespace Cloudsdale {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/users/{0}.json.
+        ///   Looks up a localized string similar to /clouds/{cloudid}/users.
+        /// </summary>
+        internal static string FayeUsersChannel {
+            get {
+                return ResourceManager.GetString("FayeUsersChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/users/{0}.
         /// </summary>
         internal static string getUserEndpoint {
             get {

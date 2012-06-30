@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -10,35 +11,40 @@ using System.Windows.Controls;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Newtonsoft.Json;
+using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
     public partial class MainPage {
         // Constructor
         public MainPage() {
             InitializeComponent();
-            using (var iso = IsolatedStorageFile.GetUserStoreForApplication())
-                if (iso.FileExists("userpass"))
-                    using (var file = iso.OpenFile("userpass", FileMode.Open, FileAccess.Read))
-                    using (var sw = new StreamReader(file)) {
-                        var user = sw.ReadLine();
-                        var pass = sw.ReadLine();
-                        if (user != null) UserBox.Text = user;
-                        if (pass != null) PassBox.Password = pass;
-                    }
+            var settings = IsolatedStorageSettings.ApplicationSettings;
+
+            if (settings.Contains("email")) {
+                UserBox.Text = (string) settings["email"];
+            }
+            if (settings.Contains("rempass")) {
+                rempass.IsChecked = (bool?) settings["rempass"];
+                if ((bool)settings["rempass"] && settings.Contains("password")) {
+                    var pdat = ProtectedData.Unprotect((byte[])settings["password"],
+                                                       Encoding.UTF8.GetBytes(Res.EncryptionComplexifier));
+                    PassBox.Password = Encoding.UTF8.GetString(pdat, 0, pdat.Length);
+                }
+            }
         }
 
         private void LoginClick(object sender, RoutedEventArgs e) {
             fbbtn.IsEnabled = false;
             emailbtn.IsEnabled = false;
             EmailLogin();
-            using (var iso = IsolatedStorageFile.GetUserStoreForApplication()) {
-                using (var file = iso.OpenFile("userpass", FileMode.OpenOrCreate, FileAccess.Write)) {
-                    using (var sw = new StreamWriter(file)) {
-                        sw.WriteLine(UserBox.Text);
-                        sw.WriteLine(PassBox.Password);
-                    }
-                }
+            var settings = IsolatedStorageSettings.ApplicationSettings;
+            settings["email"] = UserBox.Text;
+            settings["rempass"] = rempass.IsChecked;
+            if (rempass.IsChecked == true) {
+                settings["password"] = ProtectedData.Protect(Encoding.UTF8.GetBytes(PassBox.Password),
+                                                             Encoding.UTF8.GetBytes(Res.EncryptionComplexifier));
             }
+            settings.Save();
         }
 
         private void FacebookClick(object sender, RoutedEventArgs e) {

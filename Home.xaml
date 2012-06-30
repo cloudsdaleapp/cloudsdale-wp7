@@ -29,8 +29,11 @@
                     <TextBlock Text="{Binding}" FontFamily="Comic Sans MS" FontSize="48"/>
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
-            <controls:PivotItem Header="Home">
-
+            <controls:PivotItem Header="Home" Foreground="#FF2A81DB">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" FontSize="34" Text="Welcome back to cloudsdale!" Margin="0,0,0,20" />
+                    <TextBlock TextWrapping="Wrap" FontSize="18" Text="You have been a member since 00/00/0001" x:Name="MemberSinceBlock" />
+                </StackPanel>
             </controls:PivotItem>
             <controls:PivotItem Header="Clouds">
                 <Grid>

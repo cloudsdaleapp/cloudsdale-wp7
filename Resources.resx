@@ -140,7 +140,7 @@
     <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/chat/messages</value>
   </data>
   <data name="getUserEndpoint" xml:space="preserve">
-    <value>http://www.cloudsdale.org/v1/users/{0}.json</value>
+    <value>http://www.cloudsdale.org/v1/users/{0}</value>
   </data>
   <data name="PopularCloudsEndpoint" xml:space="preserve">
     <value>http://www.cloudsdale.org/v1/clouds/popular.json</value>
@@ -171,5 +171,17 @@
   </data>
   <data name="LeaveCloudEndpoint" xml:space="preserve">
     <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/users/{userid}</value>
+  </data>
+  <data name="FayeUsersChannel" xml:space="preserve">
+    <value>/clouds/{cloudid}/users</value>
+  </data>
+  <data name="BugsenseApiKey" xml:space="preserve">
+    <value>d71ed537</value>
+  </data>
+  <data name="EncryptionComplexifier" xml:space="preserve">
+    <value>$2a$10$7Pfcv89Q9c/9WMAk6ySfhu</value>
+  </data>
+  <data name="CurrentApiVersion" xml:space="preserve">
+    <value>1.0.0</value>
   </data>
 </root>

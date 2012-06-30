@@ -27,11 +27,12 @@ namespace Cloudsdale.Models {
                 wc.DownloadStringAsync(new Uri(string.Format(Resources.getUserEndpoint, id)));
                 mre.WaitOne();
 
-                var settings = new JsonSerializerSettings()
-                {DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate};
-                settings.MissingMemberHandling = MissingMemberHandling.Ignore;
-                settings.NullValueHandling = NullValueHandling.Ignore;
-                settings.CheckAdditionalContent = false;
+                var settings = new JsonSerializerSettings {
+                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                    MissingMemberHandling = MissingMemberHandling.Ignore,
+                    NullValueHandling = NullValueHandling.Ignore,
+                    CheckAdditionalContent = false
+                };
                 try {
                     var res = JsonConvert.DeserializeObject<GetUserResult>(jsonresult, settings);
                     return res.result;

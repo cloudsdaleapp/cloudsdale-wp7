@@ -41,7 +41,7 @@ namespace Cloudsdale.FayeConnector {
         /// <summary>
         /// Callback for a content received in a subscribed channel
         /// </summary>
-        public event EventHandler<DataReceivedEventArgs> ChannelMessageRecieved; 
+        public event EventHandler<DataReceivedEventArgs> ChannelMessageRecieved;
 
         /// <summary>
         /// Creates a new faye connector
@@ -54,13 +54,16 @@ namespace Cloudsdale.FayeConnector {
         /// <summary>
         /// Begins the handshaking process
         /// </summary>
-        public void Handshake() {
-            new Thread(() => HandshakeInternal(() => Deployment.Current.Dispatcher.BeginInvoke(() => {
-                MessageBox.Show("Can't connect to cloudsdale");
-                // ReSharper disable PossibleNullReferenceException
-                (Application.Current.RootVisual as PhoneApplicationFrame).Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
-                // ReSharper restore PossibleNullReferenceException
-            }))).Start();
+        public void Handshake(Action timeoutCallback = null) {
+            if (timeoutCallback == null)
+                timeoutCallback = () => {
+                    MessageBox.Show("Can't connect to cloudsdale");
+                    // ReSharper disable PossibleNullReferenceException
+                    (Application.Current.RootVisual as PhoneApplicationFrame).
+                        Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                    // ReSharper restore PossibleNullReferenceException
+                };
+            new Thread(() => HandshakeInternal(() => Deployment.Current.Dispatcher.BeginInvoke(timeoutCallback))).Start();
         }
         private void HandshakeInternal(Action timeout) {
             // If there's an existing socket connected or in the middle of connecting... CRUSH ITS SOUL!
@@ -78,7 +81,8 @@ namespace Cloudsdale.FayeConnector {
                 // Open the socket with hacked-on synchronosity
                 socket.Opened += AreSet;
                 socket.Open();
-                if (!are.WaitOne(5000)) 
+                if (!are.WaitOne(5000))
+                    timeout();
                 socket.Opened -= AreSet;
 
                 // Get a response for the handshack (moar hacked-on synchronosity)
@@ -108,9 +112,9 @@ namespace Cloudsdale.FayeConnector {
                         if (res.Length < 1) return;
                         if (res[0].channel != "/meta/connect") return;
                         socket.Send(connectdata);
-// ReSharper disable EmptyGeneralCatchClause
+                        // ReSharper disable EmptyGeneralCatchClause
                     } catch {
-// ReSharper restore EmptyGeneralCatchClause
+                        // ReSharper restore EmptyGeneralCatchClause
                     }
                 };
                 socket.Send(connectdata);
@@ -132,13 +136,13 @@ namespace Cloudsdale.FayeConnector {
             var messages = SplitMessage(args.Message);
 
             foreach (var m in messages)
-            try {
-                var c = JsonConvert.DeserializeObject<Response>(m).channel;
-                ProcessMesssage(m, c);
-// ReSharper disable EmptyGeneralCatchClause
-            } catch {
-// ReSharper restore EmptyGeneralCatchClause
-            }
+                try {
+                    var c = JsonConvert.DeserializeObject<Response>(m).channel;
+                    ProcessMesssage(m, c);
+                    // ReSharper disable EmptyGeneralCatchClause
+                } catch {
+                    // ReSharper restore EmptyGeneralCatchClause
+                }
         }
 
         /// <summary>
@@ -178,7 +182,7 @@ namespace Cloudsdale.FayeConnector {
         /// <param name="channel">channel</param>
         private void ProcessMesssage(string data, string channel) {
             switch (channel) {
-                    // subscription callback handling
+                // subscription callback handling
                 case "/meta/subscribe":
                     var subscribedata = JsonConvert.DeserializeObject<SubscribeResponse>(data);
                     if (!subscribedata.successful) {
@@ -190,7 +194,7 @@ namespace Cloudsdale.FayeConnector {
                             SubscriptionComplete(this, new SubscribeEventArgs(this, data, subscribedata.subscription));
                     }
                     break;
-                    // unsubscription callback handling
+                // unsubscription callback handling
                 case "/meta/unsubscribe":
                     var unsubscribedata = JsonConvert.DeserializeObject<UnsubscribeResponse>(data);
                     while (subbedchans.Contains(unsubscribedata.channel)) {
@@ -200,7 +204,7 @@ namespace Cloudsdale.FayeConnector {
                         UnsubscriptionComplete(this, new UnsubscribeEventArgs(this, data, unsubscribedata.channel));
                     }
                     break;
-                    // It's something else. If it's one of the subbed channels, CALL IT IN!
+                // It's something else. If it's one of the subbed channels, CALL IT IN!
                 default:
                     if (ChannelMessageRecieved == null) break;
                     if (subbedchans.Contains(channel)) {
@@ -224,6 +228,10 @@ namespace Cloudsdale.FayeConnector {
         /// <param name="channel"></param>
         public void Unsubscribe(string channel) {
             socket.Send(FayeResources.Unsubscribe.Replace("%CLIENTID%", clientId).Replace("%CHANNEL%", channel));
+        }
+
+        public void Publish(string channel, object data) {
+            socket.Send(JsonConvert.SerializeObject(new PublishRequest{channel = channel, data = data}));
         }
 
         /// <summary>
@@ -295,6 +303,10 @@ namespace Cloudsdale.FayeConnector {
                 : base(connector, data) {
                 Channel = channel;
             }
+        }
+
+        ~FayeConnector() {
+            Disconnect();
         }
     }
 }

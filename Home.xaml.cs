@@ -17,6 +17,7 @@ namespace Cloudsdale {
         public Home() {
             comingfromhome = true;
             InitializeComponent();
+            MemberSinceBlock.Text = MemberSinceMessage;
             foreach (var cloud in Connection.CurrentCloudsdaleUser.clouds) {
                 AddCloud(cloud);
             }
@@ -29,6 +30,10 @@ namespace Cloudsdale {
                 }
             };
             wc.DownloadStringAsync(new Uri(Res.PopularCloudsEndpoint));
+        }
+
+        public static string MemberSinceMessage {
+            get { return "You have been a member since " + Connection.CurrentCloudsdaleUser.member_since.ToShortDateString(); }
         }
 
         public void AddCloud(Cloud cloud) {
@@ -145,7 +150,10 @@ namespace Cloudsdale {
         }
 
         private void ExploreRefreshClick(object sender, RoutedEventArgs e) {
+        }
 
+        private void PullClick(object sender, RoutedEventArgs e) {
+            Connection.PullUser();
         }
     }
 }

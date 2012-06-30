@@ -38,7 +38,7 @@ namespace Cloudsdale {
                                 new Uri("/MainPage.xaml", UriKind.Relative)));
                         // ReSharper restore PossibleNullReferenceException
                     }
-                    FacebookLogin(page);
+                    FacebookAuth.FBOANegotiator.FacebookLogin(page);
                     return;
                 default:
                     return;
@@ -65,7 +65,7 @@ namespace Cloudsdale {
         }
 
         public static void SendMessage(string cloud, string message) {
-            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new SentMessage {content = message, client_id = Faye.ClientId}));
+            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new SentMessage { content = message, client_id = Faye.ClientId }));
             var request = WebRequest.CreateHttp(Resources.SendEndpoint.Replace("{cloudid}", cloud));
             request.Accept = "application/json";
             request.Method = "POST";
@@ -80,72 +80,27 @@ namespace Cloudsdale {
             }, null);
         }
 
-        static void FacebookLogin(Page page) {
-#if !DEBUG
-            try {
-#endif
-            var token = BCrypt.Net.BCrypt.HashPassword(FacebookUid + "facebook", Resources.InternalToken);
-            var oauth = string.Format(Resources.OAuthFormat, "facebook", token, FacebookUid);
-            var are = new AutoResetEvent(false);
-            var data = Encoding.UTF8.GetBytes(oauth);
-            var request = WebRequest.CreateHttp(Resources.loginUrl);
+        public static void PullUser() {
+            var request = WebRequest.CreateHttp(Resources.getUserEndpoint.Replace("{0}", CurrentCloudsdaleUser.id));
             request.Accept = "application/json";
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            request.Headers["Content-Length"] = data.Length.ToString();
-            request.BeginGetRequestStream(ar => {
-                var stream = request.EndGetRequestStream(ar);
-                stream.Write(data, 0, data.Length);
-                stream.Close();
-                are.Set();
-            }, null);
-            are.WaitOne();
-            Debug.WriteLine("Getting response...");
+            request.Method = "GET";
+            request.Headers["X-Auth-Token"] = CurrentCloudsdaleUser.auth_token;
             request.BeginGetResponse(ar => {
-                Debug.WriteLine("Got response");
-                string responseData;
-                try {
-                    var response = request.EndGetResponse(ar);
-                    var stream = response.GetResponseStream();
-                    var sr = new StreamReader(stream);
-                    responseData = sr.ReadToEnd();
-                    sr.Close();
-                    response.Close();
-                } catch (WebException ex) {
-                    if (ex.Message == "The remote server returned an error: NotFound.") {
-                        page.Dispatcher.BeginInvoke(() => MessageBox.Show("Login failed!"));
-                    } else {
-                        Debug.WriteLine(ex);
-                        page.Dispatcher.BeginInvoke(() => MessageBox.Show("Unkown error connecting to the server"));
-                    }
-                    page.Dispatcher.BeginInvoke(() => page.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative)));
-                    return;
-                } catch (Exception ex) {
-                    Debug.WriteLine(ex);
-                    page.Dispatcher.BeginInvoke(() => MessageBox.Show("Unkown error connecting to the server"));
-                    page.Dispatcher.BeginInvoke(() => page.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative)));
-                    return;
+                var response = request.EndGetResponse(ar);
+                var data = "";
+                using (var stream = response.GetResponseStream())
+                using (var sr = new StreamReader(stream)) {
+                    data = sr.ReadToEnd();
                 }
-                LoginType = 0;
                 var settings = new JsonSerializerSettings {
                     DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                    Error = (sender, args) => page.Dispatcher.BeginInvoke(() => {
-                        MessageBox.Show("Error receiving data from the server");
-                        page.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
-                    })
+                    MissingMemberHandling = MissingMemberHandling.Ignore,
+                    NullValueHandling = NullValueHandling.Ignore,
+                    CheckAdditionalContent = false
                 };
-                LoginResult = JsonConvert.DeserializeObject<LoginResponse>(responseData, settings);
-                CloudsdaleClientId = LoginResult.result.client_id;
-                CurrentCloudsdaleUser = LoginResult.result.user;
-                Connect(page);
+                JsonConvert.DeserializeObject<User>(data, settings).CopyTo(CurrentCloudsdaleUser);
+
             }, null);
-#if !DEBUG
-            } catch (Exception ex) {
-                Debug.WriteLine(ex);
-                page.Dispatcher.BeginInvoke(() => MessageBox.Show("Unkown error connecting to the server"));
-                page.Dispatcher.BeginInvoke(() => page.NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative)));
-            }
-#endif
         }
     }
 }

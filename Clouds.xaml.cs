@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO.IsolatedStorage;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,10 +23,28 @@ namespace Cloudsdale {
 
         public Clouds() {
             InitializeComponent();
+
+            {
+                var settings = IsolatedStorageSettings.ApplicationSettings;
+                bool autocorrect;
+                if (settings.TryGetValue("ux.autocorrect", out autocorrect) && !autocorrect) {
+                    var scope = new InputScope();
+                    var name = new InputScopeName {NameValue = InputScopeNameValue.Default};
+                    scope.Names.Add(name);
+                    SendBox.InputScope = scope;
+                } else {
+                    var scope = new InputScope();
+                    var name = new InputScopeName {NameValue = InputScopeNameValue.Chat};
+                    scope.Names.Add(name);
+                    SendBox.InputScope = scope;
+                }
+            }
+
             cloudPivot.Title = Connection.CurrentCloud.name;
             Connection.Faye.ChannelMessageRecieved += OnMessage;
             Connection.Faye.Subscribe(Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
             Connection.Faye.Subscribe(Res.FayeDropsChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
+            Connection.Faye.Subscribe(Res.FayeUsersChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
             var wc = new WebClient();
             wc.DownloadStringCompleted += (sender, args) => {
                 if (args.UserState == null) {
@@ -56,6 +76,8 @@ namespace Cloudsdale {
             } else if (args.Channel == Res.FayeDropsChannel.Replace("{cloudid}", Connection.CurrentCloud.id)) {
                 var drop = JsonConvert.DeserializeObject<FayeDropResponse>(args.Data).data;
                 Dispatcher.BeginInvoke(() => AddMedia(drop));
+            } else if (args.Channel == Res.FayeUsersChannel.Replace("{cloudid}", Connection.CurrentCloud.id)) {
+                //Debugger.Break();
             }
         }
 
@@ -98,7 +120,7 @@ namespace Cloudsdale {
             chat.content = _backslashT.Replace(chat.content, "    ");
             chat.content = chat.content.Replace("\\\\", "\\");
 
-            while (Chats.Items.Count > 50) {
+            while (Chats.Items.Count > 75) {
                 Chats.Items.RemoveAt(0);
             }
             var grid = new Grid {
@@ -115,7 +137,7 @@ namespace Cloudsdale {
             var ponyname = new TextBlock {
                 Text = chat.user.name,
                 FontSize = 18,
-                Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x5F, 0x8F, 0xCF)),
+                Foreground = new SolidColorBrush(RoleColor(chat.user.role, Color.FromArgb(0xFF, 0x5F, 0x8F, 0xCF))),
                 Margin = new Thickness(60, 0, 0, 0)
             };
             grid.Children.Add(ponyname);
@@ -290,6 +312,19 @@ namespace Cloudsdale {
             if (e.Key == Key.Enter) {
                 Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text);
                 SendBox.Text = "";
+            }
+        }
+
+        private static Color RoleColor(string role, Color defaultColor = default(Color)) {
+            switch (role) {
+                case "founder":
+                    return Color.FromArgb(0xFF, 0xFF, 0x1F, 0x1F);
+                case "admin":
+                    return Color.FromArgb(0xFF, 0x1F, 0x7F, 0x1F);
+                case "mod":
+                    return Color.FromArgb(0xFF, 0xFF, 0xCF, 0x1F);
+                default:
+                    return defaultColor;
             }
         }
     }

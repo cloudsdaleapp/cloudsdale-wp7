@@ -48,6 +48,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BugSense">
+      <HintPath>..\..\BugSense-WP7-v0.9.9\BugSense\Silverlight\BugSense.dll</HintPath>
+    </Reference>
     <Reference Include="Facebook">
       <HintPath>..\..\FacebookCSharpSDK-5.5.0-beta.bin\sl3-wp\Facebook.dll</HintPath>
     </Reference>
@@ -80,6 +83,12 @@
     <Compile Include="About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Account\SetName.xaml.cs">
+      <DependentUpon>SetName.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Account\SetPassword.xaml.cs">
+      <DependentUpon>SetPassword.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -92,6 +101,7 @@
       <DependentUpon>Connecting.xaml</DependentUpon>
     </Compile>
     <Compile Include="Connection.cs" />
+    <Compile Include="FacebookAuth\FBOANegotiator.cs" />
     <Compile Include="FacebookAuth\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
@@ -103,6 +113,7 @@
     </Compile>
     <Compile Include="FayeConnector\ResponseTypes\EventResponse.cs" />
     <Compile Include="FayeConnector\ResponseTypes\HandshakeResponse.cs" />
+    <Compile Include="FayeConnector\ResponseTypes\PublishRequest.cs" />
     <Compile Include="FayeConnector\ResponseTypes\Response.cs" />
     <Compile Include="FayeConnector\ResponseTypes\SubscribeResponse.cs" />
     <Compile Include="Home.xaml.cs">
@@ -111,9 +122,11 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Managers\MessageCacheController.cs" />
     <Compile Include="Models\Avatar.cs" />
     <Compile Include="Models\Cloud.cs" />
     <Compile Include="Models\CloudsRequest.cs" />
+    <Compile Include="Managers\CloudUserListManager.cs" />
     <Compile Include="Models\Drop.cs" />
     <Compile Include="Models\FayeMessageResponse.cs" />
     <Compile Include="Models\LoginResponse.cs" />
@@ -129,6 +142,14 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Page Include="About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Account\SetName.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Account\SetPassword.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
