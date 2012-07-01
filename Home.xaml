@@ -8,7 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Controls="clr-namespace:Cloudsdale.Controls" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
-    FontFamily="Comic Sans MS"
+    FontFamily="Segoe WP Bold"
     FontSize="28"
     Foreground="Black"
     SupportedOrientations="Portrait"  Orientation="Portrait"
@@ -26,12 +26,11 @@
         <controls:Pivot Title="Cloudsdale">
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" FontFamily="Comic Sans MS" FontSize="48"/>
+                    <TextBlock Text="{Binding}" FontFamily="Segoe WP Bold" FontSize="48"/>
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem Header="Home" Foreground="#FF2A81DB">
                 <StackPanel>
-                    <Controls:CountDisplay x:Name="testcount" />
                     <TextBlock TextWrapping="Wrap" FontSize="34" Text="Welcome back to cloudsdale!" Margin="0,0,0,20" />
                     <TextBlock TextWrapping="Wrap" FontSize="18" Text="You have been a member since 00/00/0001" x:Name="MemberSinceBlock" />
                 </StackPanel>

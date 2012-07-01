@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Cloudsdale.Models {
 
     public class ListUser : UserReference {
-        public string name;
-        public Avatar avatar;
+        public string name { get; set; }
+        public Avatar avatar { get; set; }
         public ListUser AsListUser {
             get { return new ListUser {id = id, name = name, avatar = avatar}; }
         }
@@ -12,6 +15,36 @@ namespace Cloudsdale.Models {
 
     public class SimpleUser : ListUser {
         public string role;
+        
+        public string RoleTag {
+            get {
+                switch (role) {
+                    case "founder":
+                    case "admin":
+                    case "moderator":
+                        return role;
+                }
+                return "";
+            }
+        }
+
+        public Color RoleColor {
+            get {
+                switch (role) {
+                    case "founder":
+                        return Color.FromArgb(0xFF, 0xFF, 0x1F, 0x1F);
+                    case "admin":
+                        return Color.FromArgb(0xFF, 0x1F, 0x7F, 0x1F);
+                    case "moderator":
+                        return Color.FromArgb(0xFF, 0xFF, 0xAF, 0x1F);
+                }
+                return default(Color);
+            }
+        }
+
+        public Brush RoleBrush {
+            get { return new SolidColorBrush(RoleColor); }
+        }
     }
 
     public class User : SimpleUser {

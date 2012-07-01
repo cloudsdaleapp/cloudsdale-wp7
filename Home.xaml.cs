@@ -39,6 +39,7 @@ namespace Cloudsdale {
         }
 
         public void AddCloud(Cloud cloud) {
+            var controller = MessageCacheController.Subscribe(cloud.id);
             var grid = new Grid {
                 Margin = new Thickness(0, 0, 0, 5),
                 Height = 50
@@ -56,6 +57,14 @@ namespace Cloudsdale {
                 Foreground = new SolidColorBrush(Colors.Black)
             };
             grid.Children.Add(cloudname);
+            var unreadnum = new Controls.CountDisplay {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Width = 10,
+                Height = 10
+            };
+            controller.BindMsgCount(unreadnum);
+            grid.Children.Add(unreadnum);
             var baseproj = grid.Projection;
             var buttondownpoints = new StylusPointCollection();
             grid.MouseLeftButtonDown += (sender, args) => {

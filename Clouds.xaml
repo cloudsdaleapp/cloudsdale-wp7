@@ -7,13 +7,14 @@
     xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:my="clr-namespace:Cloudsdale"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
-    FontFamily="Comic Sans MS"
+    FontFamily="Segoe WP Bold"
     FontSize="28"
     Foreground="Black"
     SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True" OrientationChanged="PhoneApplicationPageOrientationChanged">
-    
+
     <phone:PhoneApplicationPage.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -26,7 +27,7 @@
         <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot">
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" FontFamily="Comic Sans MS" FontSize="48"/>
+                    <TextBlock Text="{Binding}" FontFamily="Segoe WP Bold" FontSize="48"/>
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem x:Name="chatTab" Header="Chat">
@@ -39,10 +40,12 @@
                                 <GradientStop Color="#FFC7C7C7" Offset="1" />
                             </LinearGradientBrush>
                         </Grid.Background>
-                        <TextBox VerticalAlignment="Bottom" x:Name="SendBox" KeyDown="SendBoxKeyDown" />
+                        <TextBox VerticalAlignment="Bottom" x:Name="SendBox" 
+                                 KeyDown="SendBoxKeyDown" />
                     </Grid>
-                    <ScrollViewer x:Name="ChatScroller" Margin="0,0,0,65">
-                        <ItemsControl x:Name="Chats" />
+                    <ScrollViewer x:Name="ChatScroller" 
+                                   Margin="0,-20,0,75">
+                        <ItemsControl x:Name="Chats" ItemTemplate="{StaticResource ChatMessageTemplate}" />
                     </ScrollViewer>
                 </Grid>
             </controls:PivotItem>
@@ -56,13 +59,26 @@
             <controls:PivotItem x:Name="peopleTab" Header="Ponies">
                 <Grid>
                     <ScrollViewer>
-                        <ItemsControl x:Name="Ponies" />
+                        <ItemsControl x:Name="Ponies">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Height="50" Margin="0,0,0,10">
+                                        <Image Source="{Binding Path=avatar.Chat}"
+                                               HorizontalAlignment="Left"
+                                               Width="50" Height="50" Stretch="None" />
+                                        <TextBlock Text="{Binding Path=name}"
+                                                   FontSize="34" Foreground="Black"
+                                                   Margin="60,0,0,0"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </ScrollViewer>
                 </Grid>
             </controls:PivotItem>
         </controls:Pivot>
     </Grid>
-    
+
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="False" IsMenuEnabled="False"/>
     </phone:PhoneApplicationPage.ApplicationBar>

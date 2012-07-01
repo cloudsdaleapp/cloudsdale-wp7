@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
@@ -20,8 +21,10 @@ using Res = Cloudsdale.Resources;
 namespace Cloudsdale {
     public partial class Clouds {
         public static bool wasoncloud;
+        public MessageCacheController Controller { get; set; }
 
         public Clouds() {
+            Controller = MessageCacheController.GetCloud(Connection.CurrentCloud.id);
             InitializeComponent();
 
             {
@@ -41,31 +44,45 @@ namespace Cloudsdale {
             }
 
             cloudPivot.Title = Connection.CurrentCloud.name;
-            Connection.Faye.ChannelMessageRecieved += OnMessage;
-            Connection.Faye.Subscribe(Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
-            Connection.Faye.Subscribe(Res.FayeDropsChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
-            Connection.Faye.Subscribe(Res.FayeUsersChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
-            var wc = new WebClient();
-            wc.DownloadStringCompleted += (sender, args) => {
-                if (args.UserState == null) {
-                    var messages = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result).result;
-                    foreach (var message in messages) {
-                        AddChat(message);
-                    }
-                    wc.DownloadStringAsync(new Uri(Res.PreviousDropsEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)), new object());
-                    new Thread(() => {
-                        Thread.Sleep(50);
-                        Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(Chats.ActualHeight));
-                    }).Start();
-                } else {
-                    var drops = JsonConvert.DeserializeObject<WebDropResponse>(args.Result).result;
-                    Array.Reverse(drops);
-                    foreach (var drop in drops) {
-                        AddMedia(drop);
-                    }
-                }
-            };
-            wc.DownloadStringAsync(new Uri(Res.PreviousMessagesEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)), null);
+            Chats.ItemsSource = Controller.Messages;
+            Controller.Messages.CollectionChanged += (sender, args) => 
+                new Thread(() => {
+                    Thread.Sleep(100);
+                    Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(double.PositiveInfinity));
+                }).Start();
+            MediaList.ItemsSource = Controller.Drops;
+            Ponies.ItemsSource = Controller.Users;
+
+            new Thread(() => {
+                Thread.Sleep(100);
+                Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(double.PositiveInfinity));
+            }).Start();
+
+            //Connection.Faye.ChannelMessageRecieved += OnMessage;
+            //Connection.Faye.Subscribe(Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
+            //Connection.Faye.Subscribe(Res.FayeDropsChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
+            //Connection.Faye.Subscribe(Res.FayeUsersChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
+            //var wc = new WebClient();
+            //wc.DownloadStringCompleted += (sender, args) => {
+            //    if (args.UserState == null) {
+            //        var messages = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result).result;
+            //        foreach (var message in messages) {
+            //            AddChat(message);
+            //        }
+            //        wc.DownloadStringAsync(new Uri(Res.PreviousDropsEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)), new object());
+            //        new Thread(() => {
+            //            Thread.Sleep(50);
+            //            Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(Chats.ActualHeight));
+            //        }).Start();
+            //    } else {
+            //        var drops = JsonConvert.DeserializeObject<WebDropResponse>(args.Result).result;
+            //        Array.Reverse(drops);
+            //        foreach (var drop in drops) {
+            //            AddMedia(drop);
+            //        }
+            //    }
+            //};
+            //wc.DownloadStringAsync(new Uri(Res.PreviousMessagesEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)), null);
             wasoncloud = true;
         }
 
@@ -120,7 +137,7 @@ namespace Cloudsdale {
             chat.content = _backslashT.Replace(chat.content, "    ");
             chat.content = chat.content.Replace("\\\\", "\\");
             chat.content = Settings.ChatFilter.Filter(chat.content);
-
+            
             while (Chats.Items.Count > 75) {
                 Chats.Items.RemoveAt(0);
             }
@@ -138,10 +155,19 @@ namespace Cloudsdale {
             var ponyname = new TextBlock {
                 Text = chat.user.name,
                 FontSize = 18,
-                Foreground = new SolidColorBrush(RoleColor(chat.user.role, Color.FromArgb(0xFF, 0x5F, 0x8F, 0xCF))),
+                Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x5F, 0x8F, 0xCF)),
                 Margin = new Thickness(60, 0, 0, 0)
             };
             grid.Children.Add(ponyname);
+            if (NeedRoleTag(chat.user.role, chat.user.name)) {
+                var roletag = new TextBlock {
+                    Text = chat.user.role,
+                    Foreground = new SolidColorBrush(RoleColor(chat.user.role, chat.user.name)),
+                    Margin = new Thickness(70 + ponyname.ActualWidth, 4, 0, 0),
+                    FontSize = 12
+                };
+                grid.Children.Add(roletag);
+            }
             var tzi = TimeZoneInfo.Local;
             var tso = new TimeSpan(1, 0, 0);
             var timestamp = new TextBlock {
@@ -163,7 +189,7 @@ namespace Cloudsdale {
                 FontFamily = new FontFamily("Verdana"),
             };
             if (msg.StartsWith(">")) {
-                chatbox.Foreground = new SolidColorBrush(Color.FromArgb(255, 50, 130, 50));
+                chatbox.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x32, 0x82, 0x32));
             }
             stack.Children.Add(chatbox);
             grid.Children.Add(stack);
@@ -303,9 +329,9 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e) {
-            Connection.Faye.Unsubscribe(Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
-            Connection.Faye.Unsubscribe(Res.FayeDropsChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
-            Connection.Faye.ChannelMessageRecieved -= OnMessage;
+            //Connection.Faye.Unsubscribe(Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
+            //Connection.Faye.Unsubscribe(Res.FayeDropsChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
+            //Connection.Faye.ChannelMessageRecieved -= OnMessage;
             wasoncloud = false;
             base.OnNavigatedFrom(e);
         }
@@ -317,7 +343,16 @@ namespace Cloudsdale {
             }
         }
 
-        private static Color RoleColor(string role, Color defaultColor = default(Color)) {
+        private static bool NeedRoleTag(string role, string name = null) {
+            switch (role) {
+                case "founder":
+                case "admin":
+                case "moderator":
+                    return true;
+            }
+            return name == "Connorcpu";
+        }
+        private static Color RoleColor(string role, string name = null, Color defaultColor = default(Color)) {
             switch (role) {
                 case "founder":
                     return Color.FromArgb(0xFF, 0xFF, 0x1F, 0x1F);
@@ -325,9 +360,8 @@ namespace Cloudsdale {
                     return Color.FromArgb(0xFF, 0x1F, 0x7F, 0x1F);
                 case "moderator":
                     return Color.FromArgb(0xFF, 0xFF, 0xAF, 0x1F);
-                default:
-                    return defaultColor;
             }
+            return name == null ? defaultColor : Color.FromArgb(0xFF, 0xFF, 0x1F, 0x1F);
         }
     }
 }

@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
-    FontFamily="Comic Sans MS"
+    FontFamily="Segoe WP Bold"
     FontSize="28"
     Foreground="#FF404040"
     SupportedOrientations="Portrait" Orientation="Portrait"
@@ -32,7 +32,7 @@
                      Margin="40,145,0,0" />
             <CheckBox VerticalAlignment="Top" HorizontalAlignment="Center" 
                       Margin="0,300,0,0" Content="Remember Password"
-                      Foreground="#FF555555" FontFamily="Comic Sans MS"
+                      Foreground="#FF555555" FontFamily="Segoe WP Bold"
                       FontSize="24" x:Name="rempass"/>
             <PasswordBox Name="PassBox" VerticalAlignment="Top" Margin="40,235,0,0" />
             <TextBlock Text="Email" FontSize="36" Margin="0,105,0,0" Height="50" 

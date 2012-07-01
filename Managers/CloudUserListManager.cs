@@ -1,31 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading;
-using System.Linq;
 using Cloudsdale.Models;
 
 namespace Cloudsdale.Managers {
     public class CloudUserListManager {
-        private readonly Dictionary<string, UserObject> users = new Dictionary<string, UserObject>(); 
+        private readonly Dictionary<string, UserObject> users = new Dictionary<string, UserObject>();
+        private readonly ObservableCollection<ListUser> userlist = new ObservableCollection<ListUser>();
 
-        public event EventHandler<UserUpdateEventArgs> UserExpired;
+        internal CloudUserListManager() {
+        }
 
-        public void Heartbeat(SimpleUser user) {
+        public void Heartbeat(ListUser user) {
             if (users.ContainsKey(user.id)) {
                 Reset(user.id);
             } else {
-                users[user.id] = new UserObject {
+                userlist.Add((users[user.id] = new UserObject {
                     id = user,
                     update = new Timer(o => {
                         users[user.id].Destroy();
                         users.Remove(user.id);
-                        if (UserExpired != null) {
-                            UserExpired(this, new UserUpdateEventArgs {
-                                Message = "HEARTBEAT_TIMEOUT", User = user
-                            });
-                        }
+                        userlist.Remove(user);
                     }, null, 45000, Timeout.Infinite)
-                };
+                }).id);
             }
         }
 
@@ -34,15 +32,15 @@ namespace Cloudsdale.Managers {
         }
 
         private struct UserObject {
-            internal SimpleUser id;
+            internal ListUser id;
             internal Timer update;
             internal void Destroy() {
                 update.Change(Timeout.Infinite, Timeout.Infinite);
             }
         }
 
-        public SimpleUser[] Users {
-            get { return (from user in users.Values select user.id).ToArray(); }
+        public ObservableCollection<ListUser> Users {
+            get { return userlist; }
         }
     }
 
