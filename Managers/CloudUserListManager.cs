@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using Cloudsdale.Models;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Windows;
 
 namespace Cloudsdale.Managers {
     public class CloudUserListManager {
@@ -21,7 +24,7 @@ namespace Cloudsdale.Managers {
                     update = new Timer(o => {
                         users[user.id].Destroy();
                         users.Remove(user.id);
-                        userlist.Remove(user);
+                        Deployment.Current.Dispatcher.BeginInvoke(() => userlist.Remove(user));
                     }, null, 45000, Timeout.Infinite)
                 }).id);
             }

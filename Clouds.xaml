@@ -31,7 +31,7 @@
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem x:Name="chatTab" Header="Chat">
-                <Grid>
+                <Grid Margin="0,-29,0,0">
                     <Grid VerticalAlignment="Bottom" Height="100" Margin="-12,0">
                         <Grid.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -44,20 +44,28 @@
                                  KeyDown="SendBoxKeyDown" />
                     </Grid>
                     <ScrollViewer x:Name="ChatScroller" 
-                                   Margin="0,-20,0,75">
+                                   Margin="0,0,0,75">
                         <ItemsControl x:Name="Chats" ItemTemplate="{StaticResource ChatMessageTemplate}" />
                     </ScrollViewer>
+                    <Grid VerticalAlignment="Top" Height="50" Margin="-12,-1">
+                        <Grid.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#FFC0C0C0" Offset="0.0" />
+                                <GradientStop Color="#00C0C0C0" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                    </Grid>
                 </Grid>
             </controls:PivotItem>
             <controls:PivotItem x:Name="mediaTab" Header="Drops">
-                <Grid>
+                <Grid Margin="0,-12,0,0">
                     <ScrollViewer>
-                        <ItemsControl x:Name="MediaList" />
+                        <ItemsControl x:Name="MediaList" ItemTemplate="{StaticResource DropsModel}" />
                     </ScrollViewer>
                 </Grid>
             </controls:PivotItem>
             <controls:PivotItem x:Name="peopleTab" Header="Ponies">
-                <Grid>
+                <Grid Margin="0,-12,0,0">
                     <ScrollViewer>
                         <ItemsControl x:Name="Ponies">
                             <ItemsControl.ItemTemplate>

@@ -12,10 +12,10 @@ using Cloudsdale.FayeConnector.ResponseTypes;
 
 namespace Cloudsdale.Models {
     public class Drop {
-        public Uri url;
-        public string title;
-        public string id;
-        public Uri preview;
+        public Uri url { get; set; }
+        public string title { get; set; }
+        public string id { get; set; }
+        public Uri preview { get; set; }
     }
 
     public class WebDropResponse {

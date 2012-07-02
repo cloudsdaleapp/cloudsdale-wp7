@@ -49,25 +49,26 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BugSense">
-      <HintPath>..\..\BugSense-WP7-v0.9.9\BugSense\Silverlight\BugSense.dll</HintPath>
+      <HintPath>..\..\..\Dropbox\CSharp\Lib\BugSense.dll</HintPath>
     </Reference>
     <Reference Include="Facebook">
-      <HintPath>..\..\FacebookCSharpSDK-5.5.0-beta.bin\sl3-wp\Facebook.dll</HintPath>
+      <HintPath>..\..\..\Dropbox\CSharp\Lib\Facebook.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Interop" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\Json.NET\Bin\WindowsPhone\Signed\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Dropbox\CSharp\Lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SuperSocket.ClientEngine.Common">
-      <HintPath>..\..\WebSocket4Net(0.7).Source\Reference\SuperSocket.ClientEngine\WP71\Debug\SuperSocket.ClientEngine.Common.dll</HintPath>
+      <HintPath>..\..\..\Dropbox\CSharp\Lib\SuperSocket.ClientEngine.Common.dll</HintPath>
     </Reference>
     <Reference Include="SuperSocket.ClientEngine.Core">
-      <HintPath>..\..\WebSocket4Net(0.7).Source\Reference\SuperSocket.ClientEngine\WP71\Debug\SuperSocket.ClientEngine.Core.dll</HintPath>
+      <HintPath>..\..\..\Dropbox\CSharp\Lib\SuperSocket.ClientEngine.Core.dll</HintPath>
     </Reference>
     <Reference Include="SuperSocket.ClientEngine.Protocol">
-      <HintPath>..\..\WebSocket4Net(0.7).Source\Reference\SuperSocket.ClientEngine\WP71\Debug\SuperSocket.ClientEngine.Protocol.dll</HintPath>
+      <HintPath>..\..\..\Dropbox\CSharp\Lib\SuperSocket.ClientEngine.Protocol.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="system" />
@@ -76,7 +77,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="mscorlib.extensions" />
     <Reference Include="WebSocket4Net">
-      <HintPath>..\..\WebSocket4Net(0.7).Source\bin\sl40-windowsphone71\Release\WebSocket4Net.dll</HintPath>
+      <HintPath>..\..\..\Dropbox\CSharp\Lib\WebSocket4Net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

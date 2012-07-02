@@ -32,7 +32,8 @@ namespace Cloudsdale.Managers {
                         Cache[chansplit[1]].drops.Add(drop);
                         break;
                     case "users":
-                        //Cache[chansplit[1]].users.Heartbeat(null);
+                        var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
+                        Deployment.Current.Dispatcher.BeginInvoke(() => Cache[chansplit[1]].users.Heartbeat(user.data));
                         break;
                     case "chat":
                         var message = JsonConvert.DeserializeObject<FayeMessageResponse>(args.Data).data;
@@ -108,7 +109,7 @@ namespace Cloudsdale.Managers {
                 var last = new Message { user = new SimpleUser { id = "" } };
                 var cache = Cache[cloud];
                 foreach (var m in ms) {
-                    if (m == null || m.user == null || m.content == null) 
+                    if (m == null || m.user == null || m.content == null)
                         continue;
                     if (cache.messages.Count > 0 && last.user.id == m.user.id) {
                         last.content += ("\n" + m.content);
@@ -228,5 +229,10 @@ namespace Cloudsdale.Managers {
         public ObservableCollection<T> Cache {
             get { return cache; }
         }
+    }
+
+    public class FayeResult<T> {
+        public string channel;
+        public T data { get; set; }
     }
 }

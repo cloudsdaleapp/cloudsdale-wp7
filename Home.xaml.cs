@@ -59,9 +59,7 @@ namespace Cloudsdale {
             grid.Children.Add(cloudname);
             var unreadnum = new Controls.CountDisplay {
                 HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top,
-                Width = 10,
-                Height = 10
+                VerticalAlignment = VerticalAlignment.Top
             };
             controller.BindMsgCount(unreadnum);
             grid.Children.Add(unreadnum);

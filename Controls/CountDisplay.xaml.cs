@@ -14,6 +14,7 @@ namespace Cloudsdale.Controls {
     public partial class CountDisplay : UserControl {
         public CountDisplay() {
             InitializeComponent();
+            Visibility = Visibility.Collapsed;
         }
 
         private Managers.GenericBinding<String> binding; 

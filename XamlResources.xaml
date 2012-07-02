@@ -40,8 +40,8 @@
         </Grid>
     </DataTemplate>
     <DataTemplate x:Key="DropsModel">
-        <Grid>
-            <Image DataContext="{Binding}" Source="{Binding Path=preview}" />
+        <Grid Background="BlanchedAlmond">
+            <Image DataContext="{Binding}" Source="{Binding Path=preview}" Width="50" HorizontalAlignment="Left" />
         </Grid>
     </DataTemplate>
 </ResourceDictionary>
