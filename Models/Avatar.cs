@@ -1,4 +1,6 @@
 ﻿using System;
+using Newtonsoft.Json;
+using Cloudsdale.FayeConnector;
 
 namespace Cloudsdale.Models {
     public struct Avatar {

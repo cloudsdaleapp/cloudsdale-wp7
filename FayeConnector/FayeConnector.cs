@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Windows;
 using Cloudsdale.FayeConnector.ResponseTypes;
@@ -230,8 +232,22 @@ namespace Cloudsdale.FayeConnector {
             socket.Send(FayeResources.Unsubscribe.Replace("%CLIENTID%", clientId).Replace("%CHANNEL%", channel));
         }
 
-        public void Publish(string channel, object data) {
-            socket.Send(JsonConvert.SerializeObject(new PublishRequest{channel = channel, data = data}));
+        public void Publish<T>(string channel, T data) {
+            try {
+                var request = new[] { new PublishRequest<T> { channel = channel, data = data, clientId = clientId } };
+                var serializer = JsonSerializer.Create(new JsonSerializerSettings());
+                var builder = new StringWriter();
+                serializer.Serialize(builder, request);
+                socket.Send(builder.ToString());
+            } catch (Exception e) {
+#if DEBUG
+                Debugger.Break();
+#endif
+            }
+        }
+
+        public void SendRaw(string data) {
+            socket.Send(data);
         }
 
         /// <summary>

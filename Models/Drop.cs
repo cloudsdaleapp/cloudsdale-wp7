@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Cloudsdale.FayeConnector.ResponseTypes;
+using Microsoft.Phone.Tasks;
 
 namespace Cloudsdale.Models {
     public class Drop {
@@ -16,6 +17,20 @@ namespace Cloudsdale.Models {
         public string title { get; set; }
         public string id { get; set; }
         public Uri preview { get; set; }
+
+        public void OpenInBrowser() {
+            if (Deployment.Current.Dispatcher.CheckAccess()) {
+                OpenInBrowserInternal();
+            } else {
+                Deployment.Current.Dispatcher.BeginInvoke(OpenInBrowserInternal);
+            }
+        }
+        private void OpenInBrowserInternal() {
+            var task = new WebBrowserTask {
+                Uri = preview
+            };
+            task.Show();
+        }
     }
 
     public class WebDropResponse {

@@ -47,6 +47,11 @@ namespace Cloudsdale {
             Faye = new FayeConnector.FayeConnector(Resources.pushUrl);
 
             Faye.HandshakeComplete += (sender, args) => {
+                if (dispatcher == null)
+                    foreach (var cloud in CurrentCloudsdaleUser.clouds) {
+                        Managers.MessageCacheController.Subscribe(cloud.id);
+                    }
+
                 Managers.MessageCacheController.Init();
                 if (page == null) {
                     if (dispatcher != null) {

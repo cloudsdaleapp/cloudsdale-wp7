@@ -63,49 +63,8 @@ namespace Cloudsdale {
         // This code will not execute when the application is first launched
         private void Application_Activated(object sender, ActivatedEventArgs e) {
             try {
-
-                if (RootFrame.Content is MainPage || RootFrame.Content is Connecting || RootFrame.Content is FacebookAuth.Login) return;
-                Connection.Faye = new FayeConnector.FayeConnector(Res.pushUrl);
-                var are = new AutoResetEvent(false);
-                bool fail = false;
-                Connection.Faye.HandshakeComplete += (o, args) => are.Set();
-                Connection.Faye.HandshakeFailed += (o, args) => {
-                    fail = true;
-                    are.Set();
-                };
-                Connection.Faye.Handshake();
-                if (fail) {
-                    RootFrame.Navigate(new Uri("MainPage.xaml", UriKind.Relative));
-                    return;
-                }
-                if (RootFrame.Content is Clouds) {
-                    var clouds = RootFrame.Content as Clouds;
-                    clouds.Chats.Items.Clear();
-                    clouds.MediaList.Items.Clear();
-                    var wc = new WebClient();
-                    wc.DownloadStringCompleted += (sender0, args) => {
-                        if (args.UserState == null) {
-                            var messages = JsonConvert.DeserializeObject<Models.WebMessageResponse>(args.Result).result;
-                            foreach (var message in messages) {
-                                clouds.AddChat(message);
-                            }
-                            wc.DownloadStringAsync(new Uri(Res.PreviousDropsEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)), new object());
-                            are.WaitOne();
-                            Connection.Faye.Subscribe(Res.FayeMessageChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
-                        } else {
-                            var drops = JsonConvert.DeserializeObject<Models.WebDropResponse>(args.Result).result;
-                            Array.Reverse(drops);
-                            foreach (var drop in drops) {
-                                clouds.AddMedia(drop);
-                            }
-                            RootFrame.Dispatcher.BeginInvoke(() => clouds.ChatScroller.ScrollToVerticalOffset(clouds.Chats.ActualHeight));
-                            Connection.Faye.Subscribe(Res.FayeDropsChannel.Replace("{cloudid}", Connection.CurrentCloud.id));
-                        }
-                    };
-                    wc.DownloadStringAsync(new Uri(Res.PreviousMessagesEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)), null);
-
-                    Connection.Faye.ChannelMessageRecieved += (RootFrame.Content as Clouds).OnMessage;
-                }
+                if (RootFrame.Content is MainPage || RootFrame.Content is FacebookAuth.Login) return;
+                Connection.Connect();
             } catch {
                 RootFrame.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
             }
@@ -114,6 +73,8 @@ namespace Cloudsdale {
         // Code to execute when the application is deactivated (sent to background)
         // This code will not execute when the application is closing
         private void Application_Deactivated(object sender, DeactivatedEventArgs e) {
+            Managers.MessageCacheController.PresenceAnnouncer.Dispose();
+            Managers.MessageCacheController.PresenceAnnouncer = null;
             if (Connection.Faye != null)
                 Connection.Faye.Disconnect();
         }

@@ -8,20 +8,72 @@ using System.Windows;
 using System.Windows.Controls;
 using Cloudsdale.Models;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace Cloudsdale.Managers {
     public class MessageCacheController {
+        internal static Timer PresenceAnnouncer = new Timer(o => {
+            foreach (var cloud in Cache.Keys) {
+                var user = Connection.CurrentCloudsdaleUser.AsListUser;
+                var request = JsonConvert.SerializeObject(new PresenceObject { channel = "/clouds/" + cloud + "/presence", data = user });
+                Connection.Faye.SendRaw(request);
+            }
+        }, null, 5000, 30000);
+
+        public class PresenceObject {
+            public string channel;
+            public PresenceUser data;
+        }
+
+        public class PresenceUser {
+            public string name;
+            public string id;
+            public PresenceAvatar avatar;
+
+            public static implicit operator PresenceUser(ListUser u) {
+                return new PresenceUser {
+                    name = u.name,
+                    id = u.id,
+                    avatar = u.avatar
+                };
+            }
+        }
+
+        public class PresenceAvatar {
+            public string Chat;
+            public string Mini;
+            public string Normal;
+            public string Preview;
+            public string Thumb;
+
+            public static implicit operator PresenceAvatar(Avatar a) {
+                return new PresenceAvatar {
+                    Chat = a.Chat.ToString(),
+                    Mini = a.Mini.ToString(),
+                    Normal = a.Normal.ToString(),
+                    Preview = a.Preview.ToString(),
+                    Thumb = a.Thumb.ToString()
+                };
+            }
+        }
+
         private MessageCacheController() {
         }
         private static readonly Dictionary<string, MessageCacheController> Cache =
             new Dictionary<string, MessageCacheController>();
         public static void Init() {
             Connection.Faye.ChannelMessageRecieved += FayeMessageRecieved;
+            if (PresenceAnnouncer == null) PresenceAnnouncer = new Timer(o => {
+                foreach (var cloud in Cache.Keys) {
+                    var user = Connection.CurrentCloudsdaleUser.AsListUser;
+                    var request = JsonConvert.SerializeObject(new PresenceObject { channel = "/clouds/" + cloud + "/presence", data = user });
+                    Connection.Faye.SendRaw(request);
+                }
+            }, null, 5000, 30000);
         }
+
         static void FayeMessageRecieved(object sender, FayeConnector.FayeConnector.DataReceivedEventArgs args) {
             try {
-
-                //Debug.WriteLine("Faye Message Received");
                 var chansplit = args.Channel.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                 if (chansplit.Length < 3) return;
                 if (chansplit[0] != "clouds") return;
@@ -38,6 +90,9 @@ namespace Cloudsdale.Managers {
                     case "chat":
                         var message = JsonConvert.DeserializeObject<FayeMessageResponse>(args.Data).data;
                         if (message == null || message.user == null || message.content == null) break;
+#if DEBUG
+                        Debug.WriteLine("[{2}] {0}: {1}", message.user.name, message.content, chansplit[1]);
+#endif
                         var cache = Cache[chansplit[1]];
                         if (cache.messages.Count > 0 && cache.messages.LastItem.user.id == message.user.id) {
                             cache.messages.LastItem.content += "\n" + message.content;
@@ -120,7 +175,8 @@ namespace Cloudsdale.Managers {
                 }
                 wc.DownloadStringCompleted -= dlm;
                 wc.DownloadStringCompleted += (o, eventArgs) => {
-                    var drops = JsonConvert.DeserializeObject<WebDropResponse>(args.Result).result;
+                    var result = JsonConvert.DeserializeObject<WebDropResponse>(eventArgs.Result);
+                    var drops = result.result;
                     Array.Reverse(drops);
                     Cache[cloud].drops.Clear();
                     foreach (var d in drops) {
@@ -131,6 +187,7 @@ namespace Cloudsdale.Managers {
             };
             wc.DownloadStringCompleted += dlm;
             wc.DownloadStringAsync(new Uri(Resources.PreviousMessagesEndpoint.Replace("{cloudid}", cloud)));
+
             return Cache[cloud];
         }
 
@@ -138,6 +195,7 @@ namespace Cloudsdale.Managers {
             Connection.Faye.Unsubscribe("/clouds/" + cloud + "/chat/messages");
             Connection.Faye.Unsubscribe("/clouds/" + cloud + "/drops");
             Connection.Faye.Unsubscribe("/clouds/" + cloud + "/users");
+            if (Cache.ContainsKey(cloud)) Cache.Remove(cloud);
         }
     }
 
@@ -172,7 +230,11 @@ namespace Cloudsdale.Managers {
         }
 
         public void Clear() {
-            cache.Clear();
+            if (Deployment.Current.Dispatcher.CheckAccess()) {
+                cache.Clear();
+            } else {
+                Deployment.Current.Dispatcher.BeginInvoke(() => cache.Clear());
+            }
         }
 
         public void RemoveFirst() {

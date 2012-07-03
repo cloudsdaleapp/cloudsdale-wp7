@@ -10,8 +10,8 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
 namespace Cloudsdale.FayeConnector.ResponseTypes {
-    public class PublishRequest {
-        public object data;
+    public class PublishRequest<T> {
+        public T data;
         public string channel;
         public string clientId;
     }

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using Cloudsdale.Models;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Windows;
 
 namespace Cloudsdale.Managers {

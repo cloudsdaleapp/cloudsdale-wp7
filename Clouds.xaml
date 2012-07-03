@@ -31,7 +31,7 @@
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem x:Name="chatTab" Header="Chat">
-                <Grid Margin="0,-29,0,0">
+                <Grid Margin="0,-30,0,0">
                     <Grid VerticalAlignment="Bottom" Height="100" Margin="-12,0">
                         <Grid.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -43,11 +43,7 @@
                         <TextBox VerticalAlignment="Bottom" x:Name="SendBox" 
                                  KeyDown="SendBoxKeyDown" />
                     </Grid>
-                    <ScrollViewer x:Name="ChatScroller" 
-                                   Margin="0,0,0,75">
-                        <ItemsControl x:Name="Chats" ItemTemplate="{StaticResource ChatMessageTemplate}" />
-                    </ScrollViewer>
-                    <Grid VerticalAlignment="Top" Height="50" Margin="-12,-1">
+                    <Grid VerticalAlignment="Top" Height="50" Margin="-12,0">
                         <Grid.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                 <GradientStop Color="#FFC0C0C0" Offset="0.0" />
@@ -55,12 +51,70 @@
                             </LinearGradientBrush>
                         </Grid.Background>
                     </Grid>
+                    <ScrollViewer x:Name="ChatScroller" 
+                                   Margin="0,0,0,64">
+                        <ItemsControl x:Name="Chats" ItemTemplate="{StaticResource ChatMessageTemplate}" />
+                    </ScrollViewer>
                 </Grid>
             </controls:PivotItem>
             <controls:PivotItem x:Name="mediaTab" Header="Drops">
-                <Grid Margin="0,-12,0,0">
+                <Grid Margin="0,-30,0,0">
                     <ScrollViewer>
-                        <ItemsControl x:Name="MediaList" ItemTemplate="{StaticResource DropsModel}" />
+                        <ItemsControl x:Name="MediaList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button BorderBrush="Transparent" Width="456" Padding="-12" Click="DropItemClick" DataContext="{Binding}">
+                                        <Grid Width="456">
+                                            <Image DataContext="{Binding}" Source="{Binding Path=preview}" Width="120" Height="90" HorizontalAlignment="Left" />
+                                            <TextBlock DataContext="{Binding}" Text="{Binding Path=title}" Margin="125,0,0,0" TextWrapping="Wrap" Foreground="Black" FontSize="24" />
+                                        </Grid>
+                                        <Button.Style>
+                                            <Style TargetType="ButtonBase">
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="BorderBrush" Value="{StaticResource PhoneForegroundBrush}"/>
+                                                <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+                                                <Setter Property="BorderThickness" Value="{StaticResource PhoneBorderThickness}"/>
+                                                <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
+                                                <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMediumLarge}"/>
+                                                <Setter Property="Padding" Value="10,3,10,5"/>
+
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="ButtonBase">
+                                                            <Grid Background="Transparent">
+                                                                <VisualStateManager.VisualStateGroups>
+                                                                    <VisualStateGroup x:Name="CommonStates">
+                                                                        <VisualState x:Name="Normal"/>
+                                                                        <VisualState x:Name="MouseOver"/>
+                                                                        <VisualState x:Name="Disabled"/>
+
+                                                                        <!-- the following visual state describes the behaviour you are observing -->
+                                                                        <VisualState x:Name="Pressed">
+                                                                            <Storyboard>
+                                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentContainer" Storyboard.TargetProperty="Projection">
+                                                                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                                                                        <DiscreteObjectKeyFrame.Value>
+                                                                                            <PlaneProjection RotationX="30" CenterOfRotationX="-0.2" />
+                                                                                        </DiscreteObjectKeyFrame.Value>
+                                                                                    </DiscreteObjectKeyFrame>
+                                                                                </ObjectAnimationUsingKeyFrames>
+                                                                            </Storyboard>
+                                                                        </VisualState>
+                                                                    </VisualStateGroup>
+                                                                </VisualStateManager.VisualStateGroups>
+                                                                <Border x:Name="ButtonBackground" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" Background="{TemplateBinding Background}" Margin="{StaticResource PhoneTouchTargetOverhang}" >
+                                                                    <ContentControl x:Name="ContentContainer" Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Padding="{TemplateBinding Padding}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                                                </Border>
+                                                            </Grid>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </ScrollViewer>
                 </Grid>
             </controls:PivotItem>

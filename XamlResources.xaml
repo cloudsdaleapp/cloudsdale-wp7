@@ -26,7 +26,11 @@
     <DataTemplate x:Key="ChatMessageTemplate">
         <Grid>
             <Image DataContext="{Binding Path=user.avatar}" Source="{Binding Path=Chat}" 
-                   HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Height="50"/>
+                   HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Height="50">
+                <Image.Clip>
+                    <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,50,50" />
+                </Image.Clip>
+            </Image>
             <StackPanel Orientation="Horizontal" Margin="60,0">
                 <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=name}" FontSize="18" Foreground="#FF5F8FCF"/>
                 <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=RoleTag}"
@@ -37,11 +41,6 @@
                        VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f"/>
             <ItemsControl DataContext="{Binding}" ItemsSource="{Binding Path=Split}" Margin="60,20,0,0"
                           ItemTemplate="{StaticResource ChatMessageLineTemplate}"/>
-        </Grid>
-    </DataTemplate>
-    <DataTemplate x:Key="DropsModel">
-        <Grid Background="BlanchedAlmond">
-            <Image DataContext="{Binding}" Source="{Binding Path=preview}" Width="50" HorizontalAlignment="Left" />
         </Grid>
     </DataTemplate>
 </ResourceDictionary>
