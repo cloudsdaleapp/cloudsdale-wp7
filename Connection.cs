@@ -53,6 +53,7 @@ namespace Cloudsdale {
                     }
 
                 Managers.MessageCacheController.Init();
+
                 if (page == null) {
                     if (dispatcher != null) {
                         dispatcher.BeginInvoke(() => {

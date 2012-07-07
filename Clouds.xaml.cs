@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO.IsolatedStorage;
+﻿using System.IO.IsolatedStorage;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,29 +7,15 @@ using System.Windows.Media;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Cloudsdale {
     public partial class Clouds {
         public static bool wasoncloud;
         public MessageCacheController Controller { get; set; }
 
-        // XNA Objects
-        public readonly GameTimer timer;
-        private readonly SharedGraphicsDeviceManager graphics = SharedGraphicsDeviceManager.Current;
-        private readonly SpriteBatch spriteBatch;
-
         public Clouds() {
             Controller = MessageCacheController.GetCloud(Connection.CurrentCloud.id);
             InitializeComponent();
-
-            spriteBatch = new SpriteBatch(graphics.GraphicsDevice);
-
-            timer = new GameTimer {UpdateInterval = TimeSpan.FromTicks(333333)};
-            timer.Update += OnUpdate;
-            timer.Draw += OnDraw;
 
             {
                 var settings = IsolatedStorageSettings.ApplicationSettings;
@@ -74,13 +59,9 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
-            graphics.GraphicsDevice.SetSharingMode(true);
-            timer.Start();
         }
 
         protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e) {
-            timer.Stop();
-            graphics.GraphicsDevice.SetSharingMode(false);
             Controller.MarkAsRead();
             wasoncloud = false;
         }
@@ -98,14 +79,6 @@ namespace Cloudsdale {
             var drop = button.DataContext as Drop;
             if (drop == null) return;
             drop.OpenInBrowser();
-        }
-
-        private void OnUpdate(object sender, GameTimerEventArgs e) {
-            
-        }
-
-        private void OnDraw(object sender, GameTimerEventArgs e) {
-
         }
     }
 }

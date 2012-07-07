@@ -7,7 +7,6 @@
     xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:my="clr-namespace:Cloudsdale"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     FontFamily="Segoe WP Bold"
     FontSize="28"
@@ -63,54 +62,16 @@
                         <ItemsControl x:Name="MediaList">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Button BorderBrush="Transparent" Width="456" Padding="-12" Click="DropItemClick" DataContext="{Binding}">
+                                    <Button BorderBrush="Transparent" Width="456" Padding="-12" 
+                                            Click="DropItemClick" DataContext="{Binding}" 
+                                            Style="{StaticResource XTiltButtonStyle}">
                                         <Grid Width="456">
-                                            <Image DataContext="{Binding}" Source="{Binding Path=preview}" Width="120" Height="90" HorizontalAlignment="Left" />
-                                            <TextBlock DataContext="{Binding}" Text="{Binding Path=title}" Margin="125,0,0,0" TextWrapping="Wrap" Foreground="Black" FontSize="24" />
+                                            <Image DataContext="{Binding}" Source="{Binding Path=preview}" 
+                                                   Width="120" Height="90" HorizontalAlignment="Left" />
+                                            <TextBlock DataContext="{Binding}" Text="{Binding Path=title}" 
+                                                       Margin="125,0,0,0" TextWrapping="Wrap" Foreground="Black" 
+                                                       FontSize="24" />
                                         </Grid>
-                                        <Button.Style>
-                                            <Style TargetType="ButtonBase">
-                                                <Setter Property="Background" Value="Transparent"/>
-                                                <Setter Property="BorderBrush" Value="{StaticResource PhoneForegroundBrush}"/>
-                                                <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
-                                                <Setter Property="BorderThickness" Value="{StaticResource PhoneBorderThickness}"/>
-                                                <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
-                                                <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMediumLarge}"/>
-                                                <Setter Property="Padding" Value="10,3,10,5"/>
-
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="ButtonBase">
-                                                            <Grid Background="Transparent">
-                                                                <VisualStateManager.VisualStateGroups>
-                                                                    <VisualStateGroup x:Name="CommonStates">
-                                                                        <VisualState x:Name="Normal"/>
-                                                                        <VisualState x:Name="MouseOver"/>
-                                                                        <VisualState x:Name="Disabled"/>
-
-                                                                        <!-- the following visual state describes the behaviour you are observing -->
-                                                                        <VisualState x:Name="Pressed">
-                                                                            <Storyboard>
-                                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentContainer" Storyboard.TargetProperty="Projection">
-                                                                                    <DiscreteObjectKeyFrame KeyTime="0">
-                                                                                        <DiscreteObjectKeyFrame.Value>
-                                                                                            <PlaneProjection RotationX="30" CenterOfRotationX="-0.2" />
-                                                                                        </DiscreteObjectKeyFrame.Value>
-                                                                                    </DiscreteObjectKeyFrame>
-                                                                                </ObjectAnimationUsingKeyFrames>
-                                                                            </Storyboard>
-                                                                        </VisualState>
-                                                                    </VisualStateGroup>
-                                                                </VisualStateManager.VisualStateGroups>
-                                                                <Border x:Name="ButtonBackground" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0" Background="{TemplateBinding Background}" Margin="{StaticResource PhoneTouchTargetOverhang}" >
-                                                                    <ContentControl x:Name="ContentContainer" Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Padding="{TemplateBinding Padding}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
-                                                                </Border>
-                                                            </Grid>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </Button.Style>
                                     </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -127,7 +88,11 @@
                                     <Grid Height="50" Margin="0,0,0,10">
                                         <Image Source="{Binding Path=avatar.Chat}"
                                                HorizontalAlignment="Left"
-                                               Width="50" Height="50" Stretch="None" />
+                                               Width="50" Height="50">
+                                            <Image.Clip>
+                                                <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,50,50" />
+                                            </Image.Clip>
+                                        </Image>
                                         <TextBlock Text="{Binding Path=name}"
                                                    FontSize="34" Foreground="Black"
                                                    Margin="60,0,0,0"/>

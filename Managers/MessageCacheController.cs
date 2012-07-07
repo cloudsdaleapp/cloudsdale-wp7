@@ -13,9 +13,10 @@ using System.Threading;
 namespace Cloudsdale.Managers {
     public class MessageCacheController {
         internal static Timer PresenceAnnouncer = new Timer(o => {
+            Thread.CurrentThread.Name = "PresenceAnnouncement";
             foreach (var cloud in Cache.Keys) {
                 var user = Connection.CurrentCloudsdaleUser.AsListUser;
-                var request = JsonConvert.SerializeObject(new PresenceObject { channel = "/clouds/" + cloud + "/presence", data = user });
+                var request = JsonConvert.SerializeObject(new PresenceObject { channel = "/clouds/" + cloud + "/users", data = user });
                 Connection.Faye.SendRaw(request);
             }
         }, null, 5000, 30000);
@@ -64,9 +65,10 @@ namespace Cloudsdale.Managers {
         public static void Init() {
             Connection.Faye.ChannelMessageRecieved += FayeMessageRecieved;
             if (PresenceAnnouncer == null) PresenceAnnouncer = new Timer(o => {
+                Thread.CurrentThread.Name = "PresenceAnnouncement";
                 foreach (var cloud in Cache.Keys) {
                     var user = Connection.CurrentCloudsdaleUser.AsListUser;
-                    var request = JsonConvert.SerializeObject(new PresenceObject { channel = "/clouds/" + cloud + "/presence", data = user });
+                    var request = JsonConvert.SerializeObject(new PresenceObject { channel = "/clouds/" + cloud + "/users", data = user });
                     Connection.Faye.SendRaw(request);
                 }
             }, null, 5000, 30000);
@@ -85,6 +87,7 @@ namespace Cloudsdale.Managers {
                         break;
                     case "users":
                         var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
+                        if (user.data == null) break;
                         Deployment.Current.Dispatcher.BeginInvoke(() => Cache[chansplit[1]].users.Heartbeat(user.data));
                         break;
                     case "chat":
