@@ -24,7 +24,7 @@
                    TextWrapping="Wrap" FontFamily="Verdana"/>
     </DataTemplate>
     <DataTemplate x:Key="ChatMessageTemplate">
-        <Grid Margin="0,0,0,5">
+        <Grid Margin="0,3,0,5">
             <Image DataContext="{Binding Path=user.avatar}" Source="{Binding Path=Chat}" 
                    HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Height="50">
                 <Image.Clip>

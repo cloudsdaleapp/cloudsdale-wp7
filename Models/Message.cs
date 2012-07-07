@@ -11,19 +11,21 @@ namespace Cloudsdale.Models {
         public SimpleUser user { get; set; }
         public Topic topic;
 
-        private readonly Regex _backslashN = new Regex("([^\\\\]|^)\\\\n");
-        private readonly Regex _backslashT = new Regex("([^\\\\]|^)\\\\t");
+        private static readonly Regex _backslashNLB = new Regex("^\\\\n");
+        private static readonly Regex _backslashN = new Regex("([^\\\\])\\\\n");
+        private static readonly Regex _backslashTLB = new Regex("^\\\\t");
+        private static readonly Regex _backslashT = new Regex("([^\\\\])\\\\t");
         public ChatLine[] Split {
             get {
                 try {
-
-                    content = _backslashN.Replace(content, "\n");
+                    content = _backslashNLB.Replace(content, "\n");
+                    content = _backslashN.Replace(content, match => match.Value[0] + "\n");
                     var split = content.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                     var lines = new ChatLine[split.Length];
                     for (var i = 0; i < split.Length; ++i) {
                         split[i] = split[i].Trim();
-                        split[i] = _backslashN.Replace(split[i], "\n");
-                        split[i] = _backslashT.Replace(split[i], "    ");
+                        split[i] = _backslashTLB.Replace(split[i], "    ");
+                        split[i] = _backslashT.Replace(split[i], match => match.Value[0] + "\t");
                         split[i] = split[i].Replace("\\\\", "\\");
                         split[i] = Settings.ChatFilter.Filter(split[i]);
                         lines[i] = new ChatLine {

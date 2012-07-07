@@ -7,6 +7,7 @@ using System.Windows.Media;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
+using Microsoft.Phone.Shell;
 
 namespace Cloudsdale {
     public partial class Clouds {
@@ -53,8 +54,12 @@ namespace Cloudsdale {
         private void PhoneApplicationPageOrientationChanged(object sender, OrientationChangedEventArgs e) {
             if (e.Orientation == PageOrientation.PortraitUp) {
                 cloudPivot.Background = (Brush) Resources["PortraitBackground"];
+                SystemTray.IsVisible = true;
+                Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(double.PositiveInfinity));
             } else {
                 cloudPivot.Background = (Brush) Resources["LandscapeBackground"];
+                SystemTray.IsVisible = false;
+                Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(double.PositiveInfinity));
             }
         }
 
