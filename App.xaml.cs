@@ -1,13 +1,15 @@
 ﻿using System;
+#if DEBUG
 using System.Diagnostics;
-using System.Net;
-using System.Threading;
 using System.Windows;
+#endif
 using System.Windows.Navigation;
 using BugSense;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using Newtonsoft.Json;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
@@ -17,6 +19,21 @@ namespace Cloudsdale {
         /// </summary>
         /// <returns>The root frame of the Phone Application.</returns>
         public PhoneApplicationFrame RootFrame { get; private set; }
+
+        /// <summary>
+        /// Provides access to a ContentManager for the application.
+        /// </summary>
+        public ContentManager Content { get; private set; }
+
+        /// <summary>
+        /// Provides access to a GameTimer that is set up to pump the FrameworkDispatcher.
+        /// </summary>
+        public GameTimer FrameworkDispatcherTimer { get; private set; }
+
+        /// <summary>
+        /// Provides access to the AppServiceProvider for the application.
+        /// </summary>
+        public AppServiceProvider Services { get; private set; }
 
         /// <summary>
         /// Constructor for the Application object.
@@ -32,6 +49,8 @@ namespace Cloudsdale {
 
             // Phone-specific initialization
             InitializePhoneApplication();
+
+            InitializeXnaApplication();
 
             // Show graphics profiling information while debugging.
 #if DEBUG
@@ -93,14 +112,14 @@ namespace Cloudsdale {
                 System.Diagnostics.Debugger.Break();
             }
         }
-
+        
+#if DEBUG
         // Code to execute on Unhandled Exceptions
         private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e) {
-#if DEBUG
             Debug.WriteLine(e.ExceptionObject);
             Debugger.Break();
-#endif
         }
+#endif
 
         #region Phone application initialization
 
@@ -134,6 +153,37 @@ namespace Cloudsdale {
 
             // Remove this handler since it is no longer needed
             RootFrame.Navigated -= CompleteInitializePhoneApplication;
+        }
+
+        #endregion
+
+        #region XNA application initialization
+
+        // Performs initialization of the XNA types required for the application.
+        private void InitializeXnaApplication() {
+            // Create the service provider
+            Services = new AppServiceProvider();
+
+            // Add the SharedGraphicsDeviceManager to the Services as the IGraphicsDeviceService for the app
+            foreach (var obj in ApplicationLifetimeObjects) {
+                if (obj is IGraphicsDeviceService)
+                    Services.AddService(typeof(IGraphicsDeviceService), obj);
+            }
+
+            // Create the ContentManager so the application can load precompiled assets
+            Content = new ContentManager(Services, "XNAContent\\CloudsdaleXNAContent");
+
+            // Create a GameTimer to pump the XNA FrameworkDispatcher
+            FrameworkDispatcherTimer = new GameTimer();
+            FrameworkDispatcherTimer.FrameAction += FrameworkDispatcherFrameAction;
+            FrameworkDispatcherTimer.Start();
+        }
+
+        // An event handler that pumps the FrameworkDispatcher each frame.
+        // FrameworkDispatcher is required for a lot of the XNA events and
+        // for certain functionality such as SoundEffect playback.
+        private void FrameworkDispatcherFrameAction(object sender, EventArgs e) {
+            FrameworkDispatcher.Update();
         }
 
         #endregion
