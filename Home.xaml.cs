@@ -2,7 +2,6 @@
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -38,7 +37,12 @@ namespace Cloudsdale {
             };
             wc.DownloadStringAsync(new Uri(Res.PopularCloudsEndpoint));
 
-            var settings = IsolatedStorageSettings.ApplicationSettings;
+            if (IsolatedStorageSettings.ApplicationSettings.Contains("ux.allowaltcodes")) {
+                allowaltcodes.IsChecked = true;
+                recursivealtcodes.Visibility = Visibility.Visible;
+            }
+            recursivealtcodes.IsChecked =
+                IsolatedStorageSettings.ApplicationSettings.Contains("ux.recursivealtcodeentry");
         }
 
         public LoggedInUser CurrentUser {
@@ -79,7 +83,7 @@ namespace Cloudsdale {
             grid.MouseLeftButtonDown += (sender, args) => {
                 buttondownpoints = args.StylusDevice.GetStylusPoints(LayoutRoot);
                 var proj = new PlaneProjection {
-                    RotationX = 15, 
+                    RotationX = 15,
                     RotationY = -15,
                 };
                 grid.Projection = proj;
@@ -132,7 +136,7 @@ namespace Cloudsdale {
                 };
                 grid.Projection = proj;
             };
-            var doGoToCloud = Connection.CurrentCloudsdaleUser.clouds.Where(c => c.name == cloud.name).Any();
+            var doGoToCloud = Connection.CurrentCloudsdaleUser.clouds.Any(c => c.name == cloud.name);
             grid.MouseLeftButtonUp += (sender, args) => {
                 grid.Projection = baseproj;
                 var points = args.StylusDevice.GetStylusPoints(LayoutRoot);
@@ -143,7 +147,7 @@ namespace Cloudsdale {
                         points[0].Y > buttondownpoints[0].Y + 25)
                         return;
                 }
-                
+
                 if (!doGoToCloud) {
                     if (MessageBox.Show("Do you want to join the cloud " + cloud.name + "?", "",
                         MessageBoxButton.OKCancel) == MessageBoxResult.OK) {
@@ -163,7 +167,7 @@ namespace Cloudsdale {
 
         private void PopularClick(object sender, RoutedEventArgs e) {
             searchResults.Items.Clear();
-            searchResults.Items.Add(new TextBlock{Text="Loading..."});
+            searchResults.Items.Add(new TextBlock { Text = "Loading..." });
         }
 
         private void RecentClick(object sender, RoutedEventArgs e) {
@@ -180,6 +184,32 @@ namespace Cloudsdale {
             var settings = IsolatedStorageSettings.ApplicationSettings;
             settings.Remove("lastuser");
             NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+        }
+
+        private void AllowaltcodesChecked(object sender, RoutedEventArgs e) {
+            var settings = IsolatedStorageSettings.ApplicationSettings;
+            settings["ux.allowaltcodes"] = true;
+            settings.Save();
+            recursivealtcodes.Visibility = Visibility.Visible;
+        }
+
+        private void AllowaltcodesUnchecked(object sender, RoutedEventArgs e) {
+            var settings = IsolatedStorageSettings.ApplicationSettings;
+            settings.Remove("ux.allowaltcodes");
+            settings.Save();
+            recursivealtcodes.Visibility = Visibility.Collapsed;
+        }
+
+        private void RecursivealtcodesChecked(object sender, RoutedEventArgs e) {
+            var settings = IsolatedStorageSettings.ApplicationSettings;
+            settings["ux.recursivealtcodeentry"] = true;
+            settings.Save();
+        }
+
+        private void RecursivealtcodesUnchecked(object sender, RoutedEventArgs e) {
+            var settings = IsolatedStorageSettings.ApplicationSettings;
+            settings.Remove("ux.recursivealtcodeentry");
+            settings.Save();
         }
     }
 }

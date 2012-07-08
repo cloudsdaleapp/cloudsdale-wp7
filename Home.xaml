@@ -96,11 +96,17 @@
                             Click="RecentClick" />
                 </Grid>
             </controls:PivotItem>
-            <controls:PivotItem Header="Settings" Foreground="Black">
+            <controls:PivotItem Header="Settings">
                 <Grid>
                     <ScrollViewer>
                         <StackPanel>
-
+                            <CheckBox x:Name="allowaltcodes" Content="Enable alt code entry" 
+                                      Foreground="Black" Checked="AllowaltcodesChecked"
+                                      Unchecked="AllowaltcodesUnchecked"/>
+                            <CheckBox x:Name="recursivealtcodes" Content="Enter codes repeatedly"
+                                      Foreground="Black" Margin="50,-20,0,0" Visibility="Collapsed"
+                                      Checked="RecursivealtcodesChecked"
+                                      Unchecked="RecursivealtcodesUnchecked"/>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>

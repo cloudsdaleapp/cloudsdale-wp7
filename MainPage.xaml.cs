@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -133,6 +134,10 @@ namespace Cloudsdale {
                 Debug.WriteLine("Error removing backstack: " + x);
             }
 
+            if (e.IsNavigationInitiator && IsolatedStorageSettings.ApplicationSettings.Contains("lastuser")) {
+                throw new ApplicationTerminationException();
+            }
+
             base.OnNavigatedTo(e);
         }
     }
@@ -140,5 +145,8 @@ namespace Cloudsdale {
     public class SavedUser {
         public LoggedInUser user;
         public string id;
+    }
+
+    public class ApplicationTerminationException : Exception {
     }
 }

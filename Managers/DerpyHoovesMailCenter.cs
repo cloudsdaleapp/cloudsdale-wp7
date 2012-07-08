@@ -14,14 +14,7 @@ namespace Cloudsdale.Managers {
     /// Used to control all incoming data for a cloud
     /// </summary>
     public class DerpyHoovesMailCenter {
-        internal static Timer PresenceAnnouncer = new Timer(o => {
-            Thread.CurrentThread.Name = "PresenceAnnouncement";
-            foreach (var cloud in Cache.Keys) {
-                var user = Connection.CurrentCloudsdaleUser.AsListUser;
-                var request = JsonConvert.SerializeObject(new PresenceObject { channel = "/clouds/" + cloud + "/users", data = user });
-                Connection.Faye.SendRaw(request);
-            }
-        }, null, 5000, 30000);
+        internal static Timer PresenceAnnouncer = null;
 
         private DerpyHoovesMailCenter() {
         }
@@ -33,7 +26,8 @@ namespace Cloudsdale.Managers {
                 Thread.CurrentThread.Name = "PresenceAnnouncement";
                 foreach (var cloud in Cache.Keys) {
                     var user = Connection.CurrentCloudsdaleUser.AsListUser;
-                    var request = JsonConvert.SerializeObject(new PresenceObject { channel = "/clouds/" + cloud + "/users", data = user });
+                    var request =
+                        JsonConvert.SerializeObject(new PresenceObject { channel = "/clouds/" + cloud + "/users", data = user }).Replace(";", "");
                     Connection.Faye.SendRaw(request);
                 }
             }, null, 5000, 30000);
@@ -122,7 +116,7 @@ namespace Cloudsdale.Managers {
             var wc = new WebClient();
             DownloadStringCompletedEventHandler dlm = (sender, args) => { };
             dlm = (sender, args) => {
-                var ms = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result, new JsonSerializerSettings{ObjectCreationHandling = ObjectCreationHandling.Replace}).result;
+                var ms = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }).result;
                 foreach (var m in ms) {
                     if (m == null || m.user == null || m.id == null || m.content == null) continue;
                     Cache[cloud].messages.Add(m);
@@ -154,6 +148,7 @@ namespace Cloudsdale.Managers {
         public class PresenceObject {
             public string channel;
             public PresenceUser data;
+            public string clientId = Connection.Faye.ClientId;
         }
 
         public class PresenceUser {
@@ -171,19 +166,19 @@ namespace Cloudsdale.Managers {
         }
 
         public class PresenceAvatar {
-            public string Chat;
-            public string Mini;
-            public string Normal;
-            public string Preview;
-            public string Thumb;
+            public string chat;
+            public string mini;
+            public string normal;
+            public string preview;
+            public string thumb;
 
             public static implicit operator PresenceAvatar(Avatar a) {
                 return new PresenceAvatar {
-                    Chat = a.Chat.ToString(),
-                    Mini = a.Mini.ToString(),
-                    Normal = a.Normal.ToString(),
-                    Preview = a.Preview.ToString(),
-                    Thumb = a.Thumb.ToString()
+                    chat = a.Chat.ToString(),
+                    mini = a.Mini.ToString(),
+                    normal = a.Normal.ToString(),
+                    preview = a.Preview.ToString(),
+                    thumb = a.Thumb.ToString(),
                 };
             }
         }

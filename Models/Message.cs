@@ -13,10 +13,18 @@ namespace Cloudsdale.Models {
         public DateTime timestamp { get; set; }
         public string content { get; set; }
 
+        public DateTime CorrectedTimestamp {
+            get { 
+                var tzi = TimeZoneInfo.Local;
+                var offset = tzi.BaseUtcOffset + TimeSpan.FromHours(1);
+                return timestamp + offset;
+            }
+        }
+
         public SimpleUser user { get; set; }
         public Topic topic;
 
-        private readonly List<Message> subs;
+        internal readonly List<Message> subs;
 
         private static readonly Regex _backslashNLB = new Regex("^\\\\n");
         private static readonly Regex _backslashN = new Regex("([^\\\\])\\\\n");
@@ -25,9 +33,22 @@ namespace Cloudsdale.Models {
         public ChatLine[] Split {
             get {
                 try {
-                    var message = content;
-                    foreach (var msg in subs) {
-                        message += '\n' + msg.content;
+                    string message;
+                    if (subs.Count < 1 || subs[0].timestamp > timestamp) {
+                        message = content;
+                        foreach (var msg in subs) {
+                            message += '\n' + msg.content;
+                        }
+                    } else {
+                        var inserted = false;
+                        message = subs[0].content;
+                        for (var i = 1; i < subs.Count; ++i) {
+                            message += '\n' + subs[i].content;
+                            if (!inserted && timestamp > subs[i].timestamp) {
+                                message += '\n' + content;
+                                inserted = true;
+                            }
+                        }
                     }
                     message = _backslashNLB.Replace(message, "\n");
                     message = _backslashN.Replace(message, match => match.Value[0] + "\n");

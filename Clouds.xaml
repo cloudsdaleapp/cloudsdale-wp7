@@ -39,8 +39,8 @@
                                 <GradientStop Color="#FFC7C7C7" Offset="1" />
                             </LinearGradientBrush>
                         </Grid.Background>
-                        <TextBox VerticalAlignment="Bottom" x:Name="SendBox" 
-                                 KeyDown="SendBoxKeyDown" />
+                        <TextBox VerticalAlignment="Bottom" x:Name="SendBox" InputScope="Chat"
+                                 KeyDown="SendBoxKeyDown" DoubleTap="SendBoxDoubleTap" Tap="SendBoxTap" />
                     </Grid>
                     <Grid VerticalAlignment="Top" Height="50" Margin="-12,0">
                         <Grid.Background>
@@ -51,7 +51,7 @@
                         </Grid.Background>
                     </Grid>
                     <ScrollViewer x:Name="ChatScroller" 
-                                   Margin="0,0,0,64">
+                                   Margin="0,0,0,64" Tap="ChatScrollerTap">
                         <ItemsControl x:Name="Chats" ItemTemplate="{StaticResource ChatMessageTemplate}" />
                     </ScrollViewer>
                 </Grid>

@@ -11,9 +11,9 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 
-namespace Cloudsdale {
-    public partial class About : PhoneApplicationPage {
-        public About() {
+namespace Cloudsdale.Information {
+    public partial class Info : PhoneApplicationPage {
+        public Info() {
             InitializeComponent();
         }
     }

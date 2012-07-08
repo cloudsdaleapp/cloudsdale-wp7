@@ -23,18 +23,28 @@ namespace Cloudsdale.Managers {
             }
 
             var greatest = 0;
-            while (greatest < cache.Count && cache[greatest].timestamp < item.timestamp) greatest++;
+            while (greatest < cache.Count && cache[greatest].timestamp <= item.timestamp) greatest++;
 
             if (greatest > 0 && cache[greatest - 1].user.id == item.user.id) {
                 cache[greatest - 1].AddSub(item);
                 cache.Trigger(greatest - 1);
-                return;
-            }
+            } else {
+                if (greatest < cache.Count) {
+                    if (cache[greatest].user.id == item.user.id) {
+                        var item2 = cache[greatest];
+                        cache.RemoveAt(greatest);
+                        item.AddSub(item2);
+                        foreach (var i in item2.subs) {
+                            item.AddSub(i);
+                        }
+                    }
+                }
 
-            cache.Insert(greatest, item);
+                cache.Insert(greatest, item);
 
-            if (cache.Count > Capacity) {
-                cache.RemoveAt(0);
+                if (cache.Count > Capacity) {
+                    cache.RemoveAt(0);
+                }
             }
         }
     }

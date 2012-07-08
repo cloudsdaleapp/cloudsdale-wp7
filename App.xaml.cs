@@ -1,8 +1,8 @@
 ﻿using System;
 #if DEBUG
 using System.Diagnostics;
-using System.Windows;
 #endif
+using System.Windows;
 using System.Windows.Navigation;
 using BugSense;
 using Microsoft.Phone.Controls;
@@ -24,9 +24,7 @@ namespace Cloudsdale {
         public App() {
 
             BugSenseHandler.Instance.Init(this, Res.BugsenseApiKey);
-#if DEBUG
             BugSenseHandler.Instance.UnhandledException += Application_UnhandledException;
-#endif
 
             // Standard Silverlight initialization
             InitializeComponent();
@@ -89,19 +87,25 @@ namespace Cloudsdale {
 
         // Code to execute if a navigation fails
         private void RootFrame_NavigationFailed(object sender, NavigationFailedEventArgs e) {
+            if (e.Exception is ApplicationTerminationException) {
+                return;
+            }
             if (System.Diagnostics.Debugger.IsAttached) {
                 // A navigation has failed; break into the debugger
                 System.Diagnostics.Debugger.Break();
             }
         }
         
-#if DEBUG
         // Code to execute on Unhandled Exceptions
         private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e) {
+            if (e.ExceptionObject is ApplicationTerminationException) {
+                throw e.ExceptionObject;
+            }
+#if DEBUG
             Debug.WriteLine(e.ExceptionObject);
             Debugger.Break();
-        }
 #endif
+        }
 
         #region Phone application initialization
 

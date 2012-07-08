@@ -251,6 +251,7 @@ namespace Cloudsdale.FayeConnector {
         }
 
         public void SendRaw(string data) {
+            if (socket == null) return;
             socket.Send(data);
         }
 
