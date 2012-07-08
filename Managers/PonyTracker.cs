@@ -6,11 +6,11 @@ using Cloudsdale.Models;
 using System.Windows;
 
 namespace Cloudsdale.Managers {
-    public class CloudUserListManager {
+    public class PonyTracker {
         private readonly Dictionary<string, UserObject> users = new Dictionary<string, UserObject>();
         private readonly ObservableCollection<ListUser> userlist = new ObservableCollection<ListUser>();
 
-        internal CloudUserListManager() {
+        internal PonyTracker() {
         }
 
         public void Heartbeat(ListUser user) {

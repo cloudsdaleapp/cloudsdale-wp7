@@ -56,25 +56,10 @@
     </Reference>
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.Phone.Interop" />
-    <Reference Include="Microsoft.Xna.Framework" />
-    <Reference Include="Microsoft.Xna.Framework.Avatar" />
-    <Reference Include="Microsoft.Xna.Framework.Game" />
-    <Reference Include="Microsoft.Xna.Framework.GamerServices" />
-    <Reference Include="Microsoft.Xna.Framework.GamerServicesExtensions" />
-    <Reference Include="Microsoft.Xna.Framework.Graphics" />
-    <Reference Include="Microsoft.Xna.Framework.Input.Touch" />
-    <Reference Include="Microsoft.Xna.Framework.Interop" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
-    <Reference Include="SuperSocket.ClientEngine.Common">
-      <HintPath>..\..\..\Dropbox\CSharp\Lib\SuperSocket.ClientEngine.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.ClientEngine.Core">
-      <HintPath>..\..\..\Dropbox\CSharp\Lib\SuperSocket.ClientEngine.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.ClientEngine.Protocol">
-      <HintPath>..\..\..\Dropbox\CSharp\Lib\SuperSocket.ClientEngine.Protocol.dll</HintPath>
-    </Reference>
+    <Reference Include="SuperSocket.ClientEngine.Common, Version=0.2.0.0, Culture=neutral, PublicKeyToken=ee9af13f57f00acc, processorArchitecture=MSIL" />
+    <Reference Include="SuperSocket.ClientEngine.Core, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="SuperSocket.ClientEngine.Protocol, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System.Windows" />
     <Reference Include="system" />
     <Reference Include="System.Core" />
@@ -111,6 +96,9 @@
     <Compile Include="Controls\CountDisplay.xaml.cs">
       <DependentUpon>CountDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DropViewer.xaml.cs">
+      <DependentUpon>DropViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FacebookAuth\FBOANegotiator.cs" />
     <Compile Include="FacebookAuth\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
@@ -132,12 +120,15 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Managers\AppleFarm.cs" />
     <Compile Include="Managers\GenericBinding.cs" />
-    <Compile Include="Managers\MessageCacheController.cs" />
+    <Compile Include="Managers\DerpyHoovesMailCenter.cs" />
+    <Compile Include="Managers\SweetAppleAcres.cs" />
     <Compile Include="Models\Avatar.cs" />
     <Compile Include="Models\Cloud.cs" />
+    <Compile Include="Models\CloudsdaleItem.cs" />
     <Compile Include="Models\CloudsRequest.cs" />
-    <Compile Include="Managers\CloudUserListManager.cs" />
+    <Compile Include="Managers\PonyTracker.cs" />
     <Compile Include="Models\Drop.cs" />
     <Compile Include="Models\FayeMessageResponse.cs" />
     <Compile Include="Models\LoginResponse.cs" />
@@ -166,6 +157,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\CountDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DropViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -211,6 +206,7 @@
     <Content Include="Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\Icons\back.png" />
     <Content Include="Images\Icons\refresh.png" />
     <Content Include="Images\ajax-spinner.gif" />
     <Content Include="Images\cloudsdale-thin-bright-logo.png" />

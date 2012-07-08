@@ -6,7 +6,8 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     FontFamily="Segoe WP Bold"
     FontSize="28"
     Foreground="Black"
@@ -30,8 +31,22 @@
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem Header="Home" Foreground="#FF2A81DB">
                 <StackPanel>
-                    <TextBlock TextWrapping="Wrap" FontSize="34" Text="Welcome back to cloudsdale!" Margin="0,0,0,20" />
-                    <TextBlock TextWrapping="Wrap" FontSize="18" Text="You have been a member since 00/00/0001" x:Name="MemberSinceBlock" />
+                    <StackPanel Orientation="Horizontal" x:Name="UserInfoPane">
+                        <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100" 
+                               HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Image.Clip>
+                                <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,100,100" />
+                            </Image.Clip>
+                        </Image>
+                        <Button Content="Logout" Foreground="#FF202020" BorderBrush="#FF202020" 
+                                HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Click="LogoutClick" />
+                    </StackPanel>
+                    <TextBlock TextWrapping="Wrap" FontSize="34" 
+                               Text="Welcome back to cloudsdale!" 
+                               Margin="0,0,0,20" />
+                    <TextBlock TextWrapping="Wrap" FontSize="18" 
+                               Text="You have been a member since 00/00/0001" 
+                               x:Name="MemberSinceBlock" />
                 </StackPanel>
             </controls:PivotItem>
             <controls:PivotItem Header="Clouds">
@@ -81,8 +96,14 @@
                             Click="RecentClick" />
                 </Grid>
             </controls:PivotItem>
-            <controls:PivotItem Header="Settings">
-                
+            <controls:PivotItem Header="Settings" Foreground="Black">
+                <Grid>
+                    <ScrollViewer>
+                        <StackPanel>
+
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
             </controls:PivotItem>
         </controls:Pivot>
     </Grid>

@@ -7,9 +7,7 @@ using System.Windows.Navigation;
 using BugSense;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
@@ -24,6 +22,7 @@ namespace Cloudsdale {
         /// Constructor for the Application object.
         /// </summary>
         public App() {
+
             BugSenseHandler.Instance.Init(this, Res.BugsenseApiKey);
 #if DEBUG
             BugSenseHandler.Instance.UnhandledException += Application_UnhandledException;
@@ -75,8 +74,8 @@ namespace Cloudsdale {
         // Code to execute when the application is deactivated (sent to background)
         // This code will not execute when the application is closing
         private void Application_Deactivated(object sender, DeactivatedEventArgs e) {
-            Managers.MessageCacheController.PresenceAnnouncer.Dispose();
-            Managers.MessageCacheController.PresenceAnnouncer = null;
+            Managers.DerpyHoovesMailCenter.PresenceAnnouncer.Dispose();
+            Managers.DerpyHoovesMailCenter.PresenceAnnouncer = null;
             if (Connection.Faye != null)
                 Connection.Faye.Disconnect();
         }

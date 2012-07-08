@@ -87,6 +87,10 @@ namespace Cloudsdale.FayeConnector {
                     timeout();
                 socket.Opened -= AreSet;
 
+                socket.Closed += (sender, args) => {
+                    
+                };
+
                 // Get a response for the handshack (moar hacked-on synchronosity)
                 var handshakeresponse = "";
                 EventHandler<MessageReceivedEventArgs> handshakecallback = ((sender, args) => {

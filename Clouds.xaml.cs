@@ -1,4 +1,5 @@
-﻿using System.IO.IsolatedStorage;
+﻿using System;
+using System.IO.IsolatedStorage;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,10 +13,10 @@ using Microsoft.Phone.Shell;
 namespace Cloudsdale {
     public partial class Clouds {
         public static bool wasoncloud;
-        public MessageCacheController Controller { get; set; }
+        public DerpyHoovesMailCenter Controller { get; set; }
 
         public Clouds() {
-            Controller = MessageCacheController.GetCloud(Connection.CurrentCloud.id);
+            Controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud.id);
             InitializeComponent();
 
             {
@@ -83,7 +84,11 @@ namespace Cloudsdale {
             if (button == null) return;
             var drop = button.DataContext as Drop;
             if (drop == null) return;
-            drop.OpenInBrowser();
+
+            LastDropClicked = drop;
+            NavigationService.Navigate(new Uri("/DropViewer.xaml", UriKind.Relative));
         }
+
+        public static Drop LastDropClicked;
     }
 }

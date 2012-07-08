@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -18,7 +19,11 @@ namespace Cloudsdale {
 
         public Home() {
             comingfromhome = true;
+
             InitializeComponent();
+
+            UserInfoPane.DataContext = CurrentUser;
+
             MemberSinceBlock.Text = MemberSinceMessage;
             foreach (var cloud in Connection.CurrentCloudsdaleUser.clouds) {
                 AddCloud(cloud);
@@ -32,6 +37,12 @@ namespace Cloudsdale {
                 }
             };
             wc.DownloadStringAsync(new Uri(Res.PopularCloudsEndpoint));
+
+            var settings = IsolatedStorageSettings.ApplicationSettings;
+        }
+
+        public LoggedInUser CurrentUser {
+            get { return Connection.CurrentCloudsdaleUser; }
         }
 
         public static string MemberSinceMessage {
@@ -39,7 +50,7 @@ namespace Cloudsdale {
         }
 
         public void AddCloud(Cloud cloud) {
-            var controller = MessageCacheController.Subscribe(cloud.id);
+            var controller = DerpyHoovesMailCenter.Subscribe(cloud.id);
             var grid = new Grid {
                 Margin = new Thickness(0, 0, 0, 5),
                 Height = 50
@@ -151,18 +162,24 @@ namespace Cloudsdale {
         }
 
         private void PopularClick(object sender, RoutedEventArgs e) {
-
+            searchResults.Items.Clear();
+            searchResults.Items.Add(new TextBlock{Text="Loading..."});
         }
 
         private void RecentClick(object sender, RoutedEventArgs e) {
-
+            searchResults.Items.Clear();
+            searchResults.Items.Add(new TextBlock { Text = "Loading..." });
         }
 
         private void ExploreRefreshClick(object sender, RoutedEventArgs e) {
+            searchResults.Items.Clear();
+            searchResults.Items.Add(new TextBlock { Text = "Loading..." });
         }
 
-        private void PullClick(object sender, RoutedEventArgs e) {
-            Connection.PullUser();
+        private void LogoutClick(object sender, RoutedEventArgs e) {
+            var settings = IsolatedStorageSettings.ApplicationSettings;
+            settings.Remove("lastuser");
+            NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
         }
     }
 }

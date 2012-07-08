@@ -12,8 +12,7 @@ using System.Windows.Shapes;
 using Newtonsoft.Json;
 
 namespace Cloudsdale.Models {
-    public class UserReference {
-        public string id;
+    public class UserReference : CloudsdaleItem {
 
         public User FullUser {
             get {

@@ -12,10 +12,9 @@ using Cloudsdale.FayeConnector.ResponseTypes;
 using Microsoft.Phone.Tasks;
 
 namespace Cloudsdale.Models {
-    public class Drop {
+    public class Drop : CloudsdaleItem {
         public Uri url { get; set; }
         public string title { get; set; }
-        public string id { get; set; }
         public Uri preview { get; set; }
 
         public void OpenInBrowser() {
@@ -25,9 +24,10 @@ namespace Cloudsdale.Models {
                 Deployment.Current.Dispatcher.BeginInvoke(OpenInBrowserInternal);
             }
         }
+
         private void OpenInBrowserInternal() {
             var task = new WebBrowserTask {
-                Uri = preview
+                Uri = url
             };
             task.Show();
         }

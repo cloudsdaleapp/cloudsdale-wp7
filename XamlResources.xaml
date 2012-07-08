@@ -25,10 +25,10 @@
     </DataTemplate>
     <DataTemplate x:Key="ChatMessageTemplate">
         <Grid Margin="0,3,0,5">
-            <Image DataContext="{Binding Path=user.avatar}" Source="{Binding Path=Chat}" 
+            <Image DataContext="{Binding Path=user.avatar}" Source="{Binding Path=Preview}" Stretch="Fill"
                    HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Height="50">
                 <Image.Clip>
-                    <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,50,50" />
+                    <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,50,50" />
                 </Image.Clip>
             </Image>
             <StackPanel Orientation="Horizontal" Margin="60,0">
@@ -85,3 +85,4 @@
         </Setter>
     </Style>
 </ResourceDictionary>
+    

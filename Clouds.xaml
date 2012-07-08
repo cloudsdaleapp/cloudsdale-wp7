@@ -62,15 +62,17 @@
                         <ItemsControl x:Name="MediaList">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Button BorderBrush="Transparent" Width="456" Padding="-12" 
+                                    <Button BorderBrush="Transparent" Padding="-12" 
                                             Click="DropItemClick" DataContext="{Binding}" 
-                                            Style="{StaticResource XTiltButtonStyle}">
-                                        <Grid Width="456">
-                                            <Image DataContext="{Binding}" Source="{Binding Path=preview}" 
-                                                   Width="120" Height="90" HorizontalAlignment="Left" />
+                                            Style="{StaticResource XTiltButtonStyle}"
+                                            HorizontalAlignment="Left">
+                                        <Grid>
+                                            <Image DataContext="{Binding}" Source="{Binding Path=preview}"
+                                                   Width="120" Height="90" HorizontalAlignment="Left"
+                                                   VerticalAlignment="Top" />
                                             <TextBlock DataContext="{Binding}" Text="{Binding Path=title}" 
                                                        Margin="125,0,0,0" TextWrapping="Wrap" Foreground="Black" 
-                                                       FontSize="24" />
+                                                       FontSize="24" VerticalAlignment="Top" />
                                         </Grid>
                                     </Button>
                                 </DataTemplate>
@@ -86,7 +88,8 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Height="50" Margin="0,0,0,10">
-                                        <Image Source="{Binding Path=avatar.Chat}"
+                                        <Image Source="{Binding Path=avatar.Thumb}"
+                                               Stretch="Fill"
                                                HorizontalAlignment="Left"
                                                Width="50" Height="50">
                                             <Image.Clip>

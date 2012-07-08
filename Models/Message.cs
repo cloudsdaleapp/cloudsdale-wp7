@@ -1,15 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 
 namespace Cloudsdale.Models {
-    public class Message {
+    public class Message : CloudsdaleItem {
+        public Message() {
+            subs = new List<Message>();
+        }
+
         public DateTime timestamp { get; set; }
         public string content { get; set; }
 
         public SimpleUser user { get; set; }
         public Topic topic;
+
+        private readonly List<Message> subs;
 
         private static readonly Regex _backslashNLB = new Regex("^\\\\n");
         private static readonly Regex _backslashN = new Regex("([^\\\\])\\\\n");
@@ -18,9 +25,13 @@ namespace Cloudsdale.Models {
         public ChatLine[] Split {
             get {
                 try {
-                    content = _backslashNLB.Replace(content, "\n");
-                    content = _backslashN.Replace(content, match => match.Value[0] + "\n");
-                    var split = content.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    var message = content;
+                    foreach (var msg in subs) {
+                        message += '\n' + msg.content;
+                    }
+                    message = _backslashNLB.Replace(message, "\n");
+                    message = _backslashN.Replace(message, match => match.Value[0] + "\n");
+                    var split = message.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                     var lines = new ChatLine[split.Length];
                     for (var i = 0; i < split.Length; ++i) {
                         split[i] = split[i].Trim();
@@ -42,6 +53,15 @@ namespace Cloudsdale.Models {
                     return new ChatLine[0];
                 }
             }
+        }
+
+        public void AddSub(Message item) {
+            foreach (var sub in subs) {
+                if (sub.id == item.id) return;
+            }
+            var greatest = 0;
+            while (greatest < subs.Count && subs[greatest].timestamp < item.timestamp) greatest++;
+            subs.Insert(greatest, item);
         }
     }
 

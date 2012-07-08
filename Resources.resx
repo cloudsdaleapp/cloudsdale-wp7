@@ -140,7 +140,7 @@
     <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/chat/messages</value>
   </data>
   <data name="getUserEndpoint" xml:space="preserve">
-    <value>http://www.cloudsdale.org/v1/users/{0}</value>
+    <value>http://www.cloudsdale.org/v1/users/{0}.json</value>
   </data>
   <data name="PopularCloudsEndpoint" xml:space="preserve">
     <value>http://www.cloudsdale.org/v1/clouds/popular.json</value>
@@ -152,7 +152,7 @@
     <value>http://www.cloudsdale.org/v1/clouds/search.json?q={query}</value>
   </data>
   <data name="UserCloudsEndpoint" xml:space="preserve">
-    <value>http://www.cloudsdale.org/v1/users/{userid}/clouds</value>
+    <value>http://www.cloudsdale.org/v1/users/{userid}/clouds.json</value>
   </data>
   <data name="FayeMessageChannel" xml:space="preserve">
     <value>/clouds/{cloudid}/chat/messages</value>
@@ -190,5 +190,14 @@
   </data>
   <data name="FayePresence" xml:space="preserve">
     <value>[{"channel":"/clouds/{cloudid}/presence","clientId":"{clientid}",data:{user}}]</value>
+  </data>
+  <data name="CloudJoin" xml:space="preserve">
+    <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/users</value>
+  </data>
+  <data name="CloudLeave" xml:space="preserve">
+    <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/users/{userid}</value>
+  </data>
+  <data name="HammockID" xml:space="preserve">
+    <value>4ecc40133fddbd4eb0000001</value>
   </data>
 </root>

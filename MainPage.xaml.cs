@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -11,7 +10,6 @@ using System.Windows.Controls;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Newtonsoft.Json;
-using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
     public partial class MainPage {
@@ -20,17 +18,20 @@ namespace Cloudsdale {
             InitializeComponent();
             var settings = IsolatedStorageSettings.ApplicationSettings;
 
+            if (settings.Contains("lastuser")) {
+                var user = (SavedUser) settings["lastuser"];
+                Connection.CloudsdaleClientId = user.id;
+                Connection.CurrentCloudsdaleUser = user.user;
+                Dispatcher.BeginInvoke(() => {
+                    NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative));
+                    Connection.Connect(dispatcher: Dispatcher, pulluserclouds: true);
+                });
+                return;
+            }
             if (settings.Contains("email")) {
                 UserBox.Text = (string) settings["email"];
             }
-            if (settings.Contains("rempass")) {
-                rempass.IsChecked = (bool?) settings["rempass"];
-                if ((bool)settings["rempass"] && settings.Contains("password")) {
-                    var pdat = ProtectedData.Unprotect((byte[])settings["password"],
-                                                       Encoding.UTF8.GetBytes(Res.EncryptionComplexifier));
-                    PassBox.Password = Encoding.UTF8.GetString(pdat, 0, pdat.Length);
-                }
-            }
+            ContentPanel.Visibility = Visibility.Visible;
         }
 
         private void LoginClick(object sender, RoutedEventArgs e) {
@@ -39,11 +40,6 @@ namespace Cloudsdale {
             EmailLogin();
             var settings = IsolatedStorageSettings.ApplicationSettings;
             settings["email"] = UserBox.Text;
-            settings["rempass"] = rempass.IsChecked;
-            if (rempass.IsChecked == true) {
-                settings["password"] = ProtectedData.Protect(Encoding.UTF8.GetBytes(PassBox.Password),
-                                                             Encoding.UTF8.GetBytes(Res.EncryptionComplexifier));
-            }
             settings.Save();
         }
 
@@ -84,7 +80,7 @@ namespace Cloudsdale {
                     response.Close();
                 } catch (WebException ex) {
                     if (ex.Message == "The remote server returned an error: NotFound.") {
-                        Dispatcher.BeginInvoke(() => MessageBox.Show("Incorrect email or password"));
+                        Dispatcher.BeginInvoke(() => MessageBox.Show("Couldn't log in"));
                     } else {
                         Debug.WriteLine(ex);
                         Dispatcher.BeginInvoke(() => MessageBox.Show("Unkown error connecting to the server"));
@@ -128,7 +124,21 @@ namespace Cloudsdale {
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
             fbbtn.IsEnabled = true;
             emailbtn.IsEnabled = true;
+
+            try {
+                while (NavigationService.CanGoBack) {
+                    NavigationService.RemoveBackEntry();
+                }
+            } catch (Exception x) {
+                Debug.WriteLine("Error removing backstack: " + x);
+            }
+
             base.OnNavigatedTo(e);
         }
+    }
+
+    public class SavedUser {
+        public LoggedInUser user;
+        public string id;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.IO.IsolatedStorage;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -25,7 +26,7 @@ namespace Cloudsdale {
 
         public static FayeConnector.FayeConnector Faye;
 
-        public static void Connect(Page page = null, Dispatcher dispatcher = null) {
+        public static void Connect(Page page = null, Dispatcher dispatcher = null, bool pulluserclouds = false) {
             switch (LoginType) {
                 case 0:
                     break;
@@ -44,15 +45,30 @@ namespace Cloudsdale {
                     return;
             }
 
+            if (!CurrentCloudsdaleUser.is_member_of_a_cloud) {
+                JoinCloud(Resources.HammockID);
+                CurrentCloudsdaleUser.is_member_of_a_cloud = true;
+            }
+
+            if (pulluserclouds) {
+                PullUserClouds(() => FinishConnecting(page, dispatcher));
+            } else {
+                SaveUser();
+                FinishConnecting(page, dispatcher);
+            }
+        }
+
+        public static void FinishConnecting(Page page = null, Dispatcher dispatcher = null) {
             Faye = new FayeConnector.FayeConnector(Resources.pushUrl);
 
             Faye.HandshakeComplete += (sender, args) => {
                 if (dispatcher == null)
                     foreach (var cloud in CurrentCloudsdaleUser.clouds) {
-                        Managers.MessageCacheController.Subscribe(cloud.id);
+                        Managers.DerpyHoovesMailCenter.Subscribe(cloud.id);
                     }
 
-                Managers.MessageCacheController.Init();
+
+                Managers.DerpyHoovesMailCenter.Init();
 
                 if (page == null) {
                     if (dispatcher != null) {
@@ -71,6 +87,17 @@ namespace Cloudsdale {
             Faye.Handshake();
         }
 
+        public static void PullUserClouds(Action complete) {
+            var wc = new WebClient();
+            wc.DownloadStringCompleted += (sender, args) => {
+                var result = JsonConvert.DeserializeObject<CloudGetResponse>(args.Result).result;
+                CurrentCloudsdaleUser.clouds = result;
+                SaveUser();
+                complete();
+            };
+            wc.DownloadStringAsync(new Uri(Resources.UserCloudsEndpoint.Replace("{userid}", CurrentCloudsdaleUser.id)));
+        }
+
         public static void SendMessage(string cloud, string message) {
             var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new SentMessage { content = message, client_id = Faye.ClientId }));
             var request = WebRequest.CreateHttp(Resources.SendEndpoint.Replace("{cloudid}", cloud));
@@ -87,27 +114,18 @@ namespace Cloudsdale {
             }, null);
         }
 
-        public static void PullUser() {
-            var request = WebRequest.CreateHttp(Resources.getUserEndpoint.Replace("{0}", CurrentCloudsdaleUser.id));
-            request.Accept = "application/json";
-            request.Method = "GET";
-            request.Headers["X-Auth-Token"] = CurrentCloudsdaleUser.auth_token;
-            request.BeginGetResponse(ar => {
-                var response = request.EndGetResponse(ar);
-                var data = "";
-                using (var stream = response.GetResponseStream())
-                using (var sr = new StreamReader(stream)) {
-                    data = sr.ReadToEnd();
-                }
-                var settings = new JsonSerializerSettings {
-                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                    MissingMemberHandling = MissingMemberHandling.Ignore,
-                    NullValueHandling = NullValueHandling.Ignore,
-                    CheckAdditionalContent = false
-                };
-                JsonConvert.DeserializeObject<User>(data, settings).CopyTo(CurrentCloudsdaleUser);
+        public static void JoinCloud(string id) {
 
-            }, null);
         }
+
+        public static void SaveUser() {
+            var settings = IsolatedStorageSettings.ApplicationSettings;
+            settings["lastuser"] = new SavedUser { id = CloudsdaleClientId, user = CurrentCloudsdaleUser };
+            settings.Save();
+        }
+    }
+
+    public class CloudGetResponse {
+        public Cloud[] result;
     }
 }
