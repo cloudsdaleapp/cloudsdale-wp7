@@ -40,11 +40,11 @@ namespace Cloudsdale {
             if (e.Orientation == PageOrientation.PortraitUp) {
                 cloudPivot.Background = (Brush)Resources["PortraitBackground"];
                 SystemTray.IsVisible = true;
-                Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(double.PositiveInfinity));
+                ScrollDown(null, null);
             } else {
                 cloudPivot.Background = (Brush)Resources["LandscapeBackground"];
                 SystemTray.IsVisible = false;
-                Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(double.PositiveInfinity));
+                ScrollDown(null, null);
             }
         }
 

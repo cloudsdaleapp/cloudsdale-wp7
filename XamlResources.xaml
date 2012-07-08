@@ -37,7 +37,7 @@
                            Foreground="{Binding Path=RoleBrush}" FontSize="12" Margin="5,3"/>
             </StackPanel>
             <TextBlock DataContext="{Binding}"
-                       Text="{Binding Path=timestamp, StringFormat=t}" HorizontalAlignment="Right" 
+                       Text="{Binding Path=CorrectedTimestamp, StringFormat=t}" HorizontalAlignment="Right" 
                        VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f"/>
             <ItemsControl DataContext="{Binding}" ItemsSource="{Binding Path=Split}" Margin="60,20,0,0"
                           ItemTemplate="{StaticResource ChatMessageLineTemplate}"/>

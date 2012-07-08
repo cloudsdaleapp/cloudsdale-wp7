@@ -15,6 +15,7 @@ namespace Cloudsdale.FayeConnector {
         private WebSocket socket;
         private readonly AutoResetEvent are = new AutoResetEvent(false);
         private string clientId;
+        private bool disconnectOrdered;
         public string ClientId {
             get { return clientId; }
         }
@@ -68,6 +69,7 @@ namespace Cloudsdale.FayeConnector {
             new Thread(() => HandshakeInternal(() => Deployment.Current.Dispatcher.BeginInvoke(timeoutCallback))).Start();
         }
         private void HandshakeInternal(Action timeout) {
+            disconnectOrdered = false;
             // If there's an existing socket connected or in the middle of connecting... CRUSH ITS SOUL!
             if (Connecting) {
                 socket.Close();
@@ -88,7 +90,8 @@ namespace Cloudsdale.FayeConnector {
                 socket.Opened -= AreSet;
 
                 socket.Closed += (sender, args) => {
-                    
+                    if (disconnectOrdered) return;
+                    Connection.Connect();
                 };
 
                 // Get a response for the handshack (moar hacked-on synchronosity)
@@ -259,6 +262,7 @@ namespace Cloudsdale.FayeConnector {
         /// SERVER GTFO!
         /// </summary>
         public void Disconnect() {
+            disconnectOrdered = true;
             if (Closed) return;
             socket.Send(FayeResources.Disconnect.Replace("%CLIENTID%", clientId));
             socket.Close();
