@@ -59,13 +59,7 @@ namespace Cloudsdale.FayeConnector {
         /// </summary>
         public void Handshake(Action timeoutCallback = null) {
             if (timeoutCallback == null)
-                timeoutCallback = () => {
-                    MessageBox.Show("Can't connect to cloudsdale");
-                    // ReSharper disable PossibleNullReferenceException
-                    (Application.Current.RootVisual as PhoneApplicationFrame).
-                        Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
-                    // ReSharper restore PossibleNullReferenceException
-                };
+                timeoutCallback = DefaultHandshakeCallback;
             new Thread(() => HandshakeInternal(() => Deployment.Current.Dispatcher.BeginInvoke(timeoutCallback))).Start();
         }
         private void HandshakeInternal(Action timeout) {
@@ -138,6 +132,17 @@ namespace Cloudsdale.FayeConnector {
         }
         private void AreSet(object o, EventArgs e) {
             are.Set();
+        }
+
+        private void DefaultHandshakeCallback() {
+            if (MessageBox.Show("Can't connect to cloudsdale\r\nRetry?", "", MessageBoxButton.OKCancel) == MessageBoxResult.OK) {
+                Handshake();
+            } else {
+                // ReSharper disable PossibleNullReferenceException
+                (Application.Current.RootVisual as PhoneApplicationFrame).
+                    Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                // ReSharper restore PossibleNullReferenceException
+            }
         }
 
         // process dat msg

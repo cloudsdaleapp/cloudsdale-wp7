@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+#if DEBUG
 using System.Diagnostics;
+#endif
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -72,7 +74,7 @@ namespace Cloudsdale.Managers {
         }
 
         public static DerpyHoovesMailCenter GetCloud(string name) {
-            return Cache[name];
+            return Cache.ContainsKey(name) ? Cache[name] : Subscribe(name);
         }
 
         private readonly SweetAppleAcres messages = new SweetAppleAcres(50);
@@ -107,8 +109,10 @@ namespace Cloudsdale.Managers {
         }
 
         public static DerpyHoovesMailCenter Subscribe(string cloud) {
-            if (!Cache.ContainsKey(cloud)) {
-                Cache[cloud] = new DerpyHoovesMailCenter();
+            lock (Cache) {
+                if (!Cache.ContainsKey(cloud)) {
+                    Cache[cloud] = new DerpyHoovesMailCenter();
+                }
             }
             Connection.Faye.Subscribe("/clouds/" + cloud + "/users");
             Connection.Faye.Subscribe("/clouds/" + cloud + "/chat/messages");

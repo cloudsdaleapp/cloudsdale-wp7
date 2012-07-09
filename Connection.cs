@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
 using System.IO.IsolatedStorage;
 using System.Net;
 using System.Text;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -115,7 +112,10 @@ namespace Cloudsdale {
         }
 
         public static void JoinCloud(string id) {
-
+            var data = new byte[0];
+            var request = WebRequest.CreateHttp(Resources.JoinCloudEndpoint.Replace("{cloudid}", id));
+            request.Accept = "application/json";
+            request.Method = "POST";
         }
 
         public static void SaveUser() {
