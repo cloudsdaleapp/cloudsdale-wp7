@@ -7,7 +7,6 @@ using System.Windows.Navigation;
 using BugSense;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using Newtonsoft.Json;
 using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
@@ -24,7 +23,7 @@ namespace Cloudsdale {
         public App() {
 
             BugSenseHandler.Instance.Init(this, Res.BugsenseApiKey);
-            BugSenseHandler.Instance.UnhandledException += Application_UnhandledException;
+            BugSenseHandler.Instance.UnhandledException += ApplicationUnhandledException;
 
             // Standard Silverlight initialization
             InitializeComponent();
@@ -60,19 +59,21 @@ namespace Cloudsdale {
 
         // Code to execute when the application is activated (brought to foreground)
         // This code will not execute when the application is first launched
-        private void Application_Activated(object sender, ActivatedEventArgs e) {
+        private void ApplicationActivated(object sender, ActivatedEventArgs e) {
             try {
                 if (RootFrame.Content is MainPage || RootFrame.Content is FacebookAuth.Login) return;
                 Connection.Connect();
             } catch {
+                MainPage.reconstruction = true;
                 RootFrame.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
             }
         }
 
         // Code to execute when the application is deactivated (sent to background)
         // This code will not execute when the application is closing
-        private void Application_Deactivated(object sender, DeactivatedEventArgs e) {
-            Managers.DerpyHoovesMailCenter.PresenceAnnouncer.Dispose();
+        private void ApplicationDeactivated(object sender, DeactivatedEventArgs e) {
+            if (Managers.DerpyHoovesMailCenter.PresenceAnnouncer != null)
+                Managers.DerpyHoovesMailCenter.PresenceAnnouncer.Dispose();
             Managers.DerpyHoovesMailCenter.PresenceAnnouncer = null;
             if (Connection.Faye != null)
                 Connection.Faye.Disconnect();
@@ -86,18 +87,23 @@ namespace Cloudsdale {
         }
 
         // Code to execute if a navigation fails
-        private void RootFrame_NavigationFailed(object sender, NavigationFailedEventArgs e) {
+        private void RootFrameNavigationFailed(object sender, NavigationFailedEventArgs e) {
             if (e.Exception is ApplicationTerminationException) {
                 return;
             }
+#if DEBUG
             if (System.Diagnostics.Debugger.IsAttached) {
                 // A navigation has failed; break into the debugger
                 System.Diagnostics.Debugger.Break();
             }
+#else
+            MainPage.reconstruction = true;
+            RootFrame.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+#endif
         }
         
         // Code to execute on Unhandled Exceptions
-        private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e) {
+        private static void ApplicationUnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e) {
             if (e.ExceptionObject is ApplicationTerminationException) {
                 throw e.ExceptionObject;
             }
@@ -123,7 +129,7 @@ namespace Cloudsdale {
             RootFrame.Navigated += CompleteInitializePhoneApplication;
 
             // Handle navigation failures
-            RootFrame.NavigationFailed += RootFrame_NavigationFailed;
+            RootFrame.NavigationFailed += RootFrameNavigationFailed;
 
             // Ensure we don't initialize again
             phoneApplicationInitialized = true;

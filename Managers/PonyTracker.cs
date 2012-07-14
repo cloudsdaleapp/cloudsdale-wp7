@@ -8,12 +8,13 @@ using System.Windows;
 namespace Cloudsdale.Managers {
     public class PonyTracker {
         private readonly Dictionary<string, UserObject> users = new Dictionary<string, UserObject>();
-        private readonly ObservableCollection<ListUser> userlist = new ObservableCollection<ListUser>();
+        private readonly ObservableCollection<CensusUser> userlist = new ObservableCollection<CensusUser>();
 
         internal PonyTracker() {
         }
 
-        public void Heartbeat(ListUser user) {
+        public void Heartbeat(ListUser use) {
+            var user = PonyvilleCensus.Heartbeat(use);
             if (users.ContainsKey(user.id)) {
                 Reset(user.id);
             } else {
@@ -33,14 +34,14 @@ namespace Cloudsdale.Managers {
         }
 
         private struct UserObject {
-            internal ListUser id;
+            internal CensusUser id;
             internal Timer update;
             internal void Destroy() {
                 update.Change(Timeout.Infinite, Timeout.Infinite);
             }
         }
 
-        public ObservableCollection<ListUser> Users {
+        public ObservableCollection<CensusUser> Users {
             get { return userlist; }
         }
     }

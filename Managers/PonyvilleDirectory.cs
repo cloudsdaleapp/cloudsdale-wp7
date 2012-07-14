@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -9,12 +8,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using Cloudsdale.Models;
 
-namespace Cloudsdale.Models {
+namespace Cloudsdale.Managers {
+    public class PonyvilleDirectory {
 
-    [DataContract]
-    public class CloudsdaleItem {
-        [DataMember]
-        public string id;
+    }
+
+    public class DirectoryCloud : Cloud {
+        public bool IsMember;
     }
 }

@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
+using Newtonsoft.Json;
 
 namespace Cloudsdale.Models {
+    [JsonObject(MemberSerialization.OptIn)]
     public class Message : CloudsdaleItem {
         public Message() {
             subs = new List<Message>();
         }
-
+        [JsonProperty]
         public DateTime timestamp { get; set; }
+        [JsonProperty]
         public string content { get; set; }
 
         public DateTime CorrectedTimestamp {
@@ -21,7 +24,9 @@ namespace Cloudsdale.Models {
             }
         }
 
+        [JsonProperty]
         public SimpleUser user { get; set; }
+        [JsonProperty]
         public Topic topic;
 
         internal readonly List<Message> subs;

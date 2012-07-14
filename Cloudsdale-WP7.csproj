@@ -49,18 +49,27 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BugSense">
-      <HintPath>..\..\..\Dropbox\CSharp\Lib\BugSense.dll</HintPath>
+      <HintPath>..\..\BugSense-WP7-v0.9.9\BugSense\Silverlight\BugSense.dll</HintPath>
     </Reference>
     <Reference Include="Facebook">
-      <HintPath>..\..\..\Dropbox\CSharp\Lib\Facebook.dll</HintPath>
+      <HintPath>..\..\Dropbox\CSharp\Lib\Facebook.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Interop" />
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
-    <Reference Include="SuperSocket.ClientEngine.Common, Version=0.2.0.0, Culture=neutral, PublicKeyToken=ee9af13f57f00acc, processorArchitecture=MSIL" />
-    <Reference Include="SuperSocket.ClientEngine.Core, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="SuperSocket.ClientEngine.Protocol, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\Dropbox\CSharp\Lib\Json.NET\Bin\WindowsPhone\Signed\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.ClientEngine.Common, Version=0.2.0.0, Culture=neutral, PublicKeyToken=ee9af13f57f00acc, processorArchitecture=MSIL">
+      <HintPath>..\..\Dropbox\CSharp\Lib\SuperSocket.ClientEngine.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.ClientEngine.Core, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Dropbox\CSharp\Lib\SuperSocket.ClientEngine.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.ClientEngine.Protocol, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Dropbox\CSharp\Lib\SuperSocket.ClientEngine.Protocol.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows" />
     <Reference Include="system" />
     <Reference Include="System.Core" />
@@ -68,7 +77,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="mscorlib.extensions" />
     <Reference Include="WebSocket4Net">
-      <HintPath>..\..\..\Dropbox\CSharp\Lib\WebSocket4Net.dll</HintPath>
+      <HintPath>..\..\Dropbox\CSharp\Lib\WebSocket4Net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +136,8 @@
     <Compile Include="Managers\AppleFarm.cs" />
     <Compile Include="Managers\GenericBinding.cs" />
     <Compile Include="Managers\DerpyHoovesMailCenter.cs" />
+    <Compile Include="Managers\PonyvilleCensus.cs" />
+    <Compile Include="Managers\PonyvilleDirectory.cs" />
     <Compile Include="Managers\SweetAppleAcres.cs" />
     <Compile Include="Models\Avatar.cs" />
     <Compile Include="Models\Cloud.cs" />

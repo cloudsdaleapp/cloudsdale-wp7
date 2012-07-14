@@ -1,13 +1,20 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Cloudsdale.FayeConnector;
 
 namespace Cloudsdale.Models {
-    public struct Avatar {
-        public Uri Normal { get; set; }
-        public Uri Mini { get; set; }
-        public Uri Thumb { get; set; }
-        public Uri Preview { get; set; }
-        public Uri Chat { get; set; }
+    [DataContract(Name="Avatar")]
+    public class Avatar {
+        [DataMember]
+        public virtual Uri Normal { get; set; }
+        [DataMember]
+        public virtual Uri Mini { get; set; }
+        [DataMember]
+        public virtual Uri Thumb { get; set; }
+        [DataMember]
+        public virtual Uri Preview { get; set; }
+        [DataMember]
+        public virtual Uri Chat { get; set; }
     }
 }

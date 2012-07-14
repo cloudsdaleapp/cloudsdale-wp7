@@ -1,20 +1,37 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Cloudsdale.Models {
+    [DataContract]
+    [KnownType(typeof(CloudChatInfo))]
+    [KnownType(typeof(UserReference))]
+    [KnownType(typeof(Avatar))]
     public class Cloud : CloudsdaleItem {
+        [DataMember]
         public string name;
+        [DataMember]
         public string description;
-        public DateTime created_at;
+        [DataMember]
+        public DateTime? created_at;
+        [DataMember]
         public string rules;
-        public bool hidden;
+        [DataMember]
+        public bool? hidden;
+        [DataMember]
         public Avatar avatar;
-        public bool is_transient;
+        [DataMember]
+        public bool? is_transient;
+        [DataMember]
         public UserReference owner;
+        [DataMember]
         public UserReference[] moderators;
+        [DataMember]
         public CloudChatInfo chat;
     }
 
-    public struct CloudChatInfo {
-        public DateTime last_message_at;
+    [DataContract]
+    public class CloudChatInfo {
+        [DataMember]
+        public DateTime? last_message_at;
     }
 }

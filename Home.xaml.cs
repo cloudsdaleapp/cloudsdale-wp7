@@ -50,7 +50,7 @@ namespace Cloudsdale {
         }
 
         public static string MemberSinceMessage {
-            get { return "You have been a member since " + Connection.CurrentCloudsdaleUser.member_since.ToShortDateString(); }
+            get { return "You have been a member since " + (Connection.CurrentCloudsdaleUser.member_since ?? new DateTime()).ToShortDateString(); }
         }
 
         public void AddCloud(Cloud cloud) {

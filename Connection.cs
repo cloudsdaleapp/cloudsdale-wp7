@@ -42,7 +42,7 @@ namespace Cloudsdale {
                     return;
             }
 
-            if (!CurrentCloudsdaleUser.is_member_of_a_cloud) {
+            if (!(CurrentCloudsdaleUser.is_member_of_a_cloud ?? false)) {
                 JoinCloud(Resources.HammockID);
                 CurrentCloudsdaleUser.is_member_of_a_cloud = true;
             }
@@ -87,7 +87,10 @@ namespace Cloudsdale {
         public static void PullUserClouds(Action complete) {
             var wc = new WebClient();
             wc.DownloadStringCompleted += (sender, args) => {
-                var result = JsonConvert.DeserializeObject<CloudGetResponse>(args.Result).result;
+                var settings = new JsonSerializerSettings {
+                    DefaultValueHandling = DefaultValueHandling.Populate,
+                };
+                var result = JsonConvert.DeserializeObject<CloudGetResponse>(args.Result, settings).result;
                 CurrentCloudsdaleUser.clouds = result;
                 SaveUser();
                 complete();

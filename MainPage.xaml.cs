@@ -14,6 +14,8 @@ using Newtonsoft.Json;
 
 namespace Cloudsdale {
     public partial class MainPage {
+        public static bool reconstruction = false;
+
         // Constructor
         public MainPage() {
             InitializeComponent();
@@ -134,9 +136,11 @@ namespace Cloudsdale {
                 Debug.WriteLine("Error removing backstack: " + x);
             }
 
-            if (e.IsNavigationInitiator && IsolatedStorageSettings.ApplicationSettings.Contains("lastuser")) {
+            if (!reconstruction && e.IsNavigationInitiator && IsolatedStorageSettings.ApplicationSettings.Contains("lastuser")) {
                 throw new ApplicationTerminationException();
             }
+
+            if (reconstruction) reconstruction = false;
 
             base.OnNavigatedTo(e);
         }

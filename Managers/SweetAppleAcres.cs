@@ -17,6 +17,8 @@ namespace Cloudsdale.Managers {
         }
 
         private void InternalAdd(Message item) {
+            item.user = PonyvilleCensus.Heartbeat(item.user);
+
             var count = cache.Count;
             for (var i = 0; i < count; ++i) {
                 if (cache[i].id == item.id) return;

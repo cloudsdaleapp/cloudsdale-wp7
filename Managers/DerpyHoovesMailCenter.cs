@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 #if DEBUG
 using System.Diagnostics;
 #endif
+using System.Diagnostics;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -101,7 +102,7 @@ namespace Cloudsdale.Managers {
         public ObservableCollection<Drop> Drops {
             get { return drops.Cache; }
         }
-        public ObservableCollection<ListUser> Users {
+        public ObservableCollection<CensusUser> Users {
             get { return users.Users; }
         }
         public void BindMsgCount(Controls.CountDisplay display) {
@@ -114,6 +115,9 @@ namespace Cloudsdale.Managers {
                     Cache[cloud] = new DerpyHoovesMailCenter();
                 }
             }
+            if (Connection.Faye.IsSubscribed("/clouds/" + cloud + "/users")) {
+                return Cache[cloud]; 
+            }
             Connection.Faye.Subscribe("/clouds/" + cloud + "/users");
             Connection.Faye.Subscribe("/clouds/" + cloud + "/chat/messages");
             Connection.Faye.Subscribe("/clouds/" + cloud + "/drops");
@@ -122,7 +126,10 @@ namespace Cloudsdale.Managers {
             dlm = (sender, args) => {
                 var ms = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }).result;
                 foreach (var m in ms) {
-                    if (m == null || m.user == null || m.id == null || m.content == null) continue;
+                    if (m == null || m.user == null || m.id == null || m.content == null) {
+                        Debugger.Break();
+                        continue;
+                    }
                     Cache[cloud].messages.Add(m);
                 }
                 wc.DownloadStringCompleted -= dlm;

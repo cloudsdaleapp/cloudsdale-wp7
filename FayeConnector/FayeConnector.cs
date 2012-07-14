@@ -54,6 +54,10 @@ namespace Cloudsdale.FayeConnector {
             this.address = address;
         }
 
+        public bool IsSubscribed(string channel) {
+            return subbedchans.Contains(channel);
+        }
+
         /// <summary>
         /// Begins the handshaking process
         /// </summary>
@@ -136,7 +140,7 @@ namespace Cloudsdale.FayeConnector {
 
         private void DefaultHandshakeCallback() {
             if (MessageBox.Show("Can't connect to cloudsdale\r\nRetry?", "", MessageBoxButton.OKCancel) == MessageBoxResult.OK) {
-                Handshake();
+                Connection.Connect();
             } else {
                 // ReSharper disable PossibleNullReferenceException
                 (Application.Current.RootVisual as PhoneApplicationFrame).
@@ -267,6 +271,7 @@ namespace Cloudsdale.FayeConnector {
         /// SERVER GTFO!
         /// </summary>
         public void Disconnect() {
+            subbedchans.Clear();
             disconnectOrdered = true;
             if (Closed) return;
             socket.Send(FayeResources.Disconnect.Replace("%CLIENTID%", clientId));

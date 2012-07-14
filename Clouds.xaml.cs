@@ -6,10 +6,12 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Navigation;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 
 namespace Cloudsdale {
     public partial class Clouds {
@@ -17,6 +19,10 @@ namespace Cloudsdale {
         public DerpyHoovesMailCenter Controller { get; set; }
 
         public Clouds() {
+            if (Connection.CurrentCloud == null) {
+                NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                return;
+            }
             Controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud.id);
             InitializeComponent();
 
@@ -48,22 +54,21 @@ namespace Cloudsdale {
             }
         }
 
-        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
+        protected override void OnNavigatedTo(NavigationEventArgs e) {
             Controller.Messages.CollectionChanged += ScrollDown;
             ScrollDown(null, null);
         }
 
-        protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e) {
+        protected override void OnNavigatedFrom(NavigationEventArgs e) {
             Controller.Messages.CollectionChanged -= ScrollDown;
             Controller.MarkAsRead();
             wasoncloud = false;
         }
 
         private void SendBoxKeyDown(object sender, KeyEventArgs e) {
-            if (e.Key == Key.Enter) {
-                Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text);
-                SendBox.Text = "";
-            }
+            if (e.Key != Key.Enter) return;
+            Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text);
+            SendBox.Text = "";
         }
 
         private void DropItemClick(object sender, RoutedEventArgs e) {
