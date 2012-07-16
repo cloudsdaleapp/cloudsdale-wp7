@@ -6,7 +6,7 @@ using Cloudsdale.Models;
 namespace Cloudsdale.Managers {
 
     public class AppleFarm<T> where T : CloudsdaleItem {
-        private int capacity;
+        protected int capacity;
         protected readonly CollectionThatLetsMeForceAnUpdateForTheLastItem cache;
         protected readonly bool reverse;
 

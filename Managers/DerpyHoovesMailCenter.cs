@@ -19,8 +19,10 @@ namespace Cloudsdale.Managers {
     public class DerpyHoovesMailCenter {
         internal static Timer PresenceAnnouncer = null;
 
-        private DerpyHoovesMailCenter() {
+        private DerpyHoovesMailCenter(string cid) {
+            drops = PinkiePieEntertainmentDojo.GetForCloud(cid);
         }
+
         private static readonly Dictionary<string, DerpyHoovesMailCenter> Cache =
             new Dictionary<string, DerpyHoovesMailCenter>();
         public static void Init() {
@@ -79,7 +81,7 @@ namespace Cloudsdale.Managers {
         }
 
         private readonly SweetAppleAcres messages = new SweetAppleAcres(50);
-        private readonly AppleFarm<Drop> drops = new AppleFarm<Drop>(25, true);
+        private readonly PinkiePieEntertainmentDojo drops;
         private readonly PonyTracker users = new PonyTracker();
         private readonly GenericBinding<String> textblockbinding = new GenericBinding<string>(TextBlock.TextProperty);
         private int unread;
@@ -112,7 +114,7 @@ namespace Cloudsdale.Managers {
         public static DerpyHoovesMailCenter Subscribe(string cloud) {
             lock (Cache) {
                 if (!Cache.ContainsKey(cloud)) {
-                    Cache[cloud] = new DerpyHoovesMailCenter();
+                    Cache[cloud] = new DerpyHoovesMailCenter(cloud);
                 }
             }
             if (Connection.Faye.IsSubscribed("/clouds/" + cloud + "/users")) {

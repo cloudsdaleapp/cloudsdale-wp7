@@ -13,6 +13,8 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 
+// http://i.qkme.me/3597jb.jpg GO TO BED
+
 namespace Cloudsdale {
     public partial class Clouds {
         public static bool wasoncloud;
@@ -27,11 +29,17 @@ namespace Cloudsdale {
             InitializeComponent();
 
             cloudPivot.Title = Connection.CurrentCloud.name;
-            Chats.ItemsSource = Controller.Messages;
-            MediaList.ItemsSource = Controller.Drops;
-            Ponies.ItemsSource = Controller.Users;
 
-            ScrollDown(null, null);
+            new Thread(() => {
+                Thread.Sleep(50);
+                Dispatcher.BeginInvoke(() => {
+                    Chats.ItemsSource = Controller.Messages;
+                    MediaList.ItemsSource = Controller.Drops;
+                    Ponies.ItemsSource = Controller.Users;
+                    ScrollDown(null, null);
+                });
+            }).Start();
+
             wasoncloud = true;
         }
 

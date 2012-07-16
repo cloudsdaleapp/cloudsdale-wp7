@@ -136,6 +136,7 @@
     <Compile Include="Managers\AppleFarm.cs" />
     <Compile Include="Managers\GenericBinding.cs" />
     <Compile Include="Managers\DerpyHoovesMailCenter.cs" />
+    <Compile Include="Managers\PinkiePieEntertainmentDojo.cs" />
     <Compile Include="Managers\PonyvilleCensus.cs" />
     <Compile Include="Managers\PonyvilleDirectory.cs" />
     <Compile Include="Managers\SweetAppleAcres.cs" />
