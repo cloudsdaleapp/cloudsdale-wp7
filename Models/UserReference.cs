@@ -1,7 +1,7 @@
-﻿using System.Runtime.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace Cloudsdale.Models {
-    [DataContract]
+    [JsonObject(MemberSerialization.OptIn)]
     public class UserReference : CloudsdaleItem {
 
         public struct GetUserResult {

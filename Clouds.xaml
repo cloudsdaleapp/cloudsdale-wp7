@@ -7,7 +7,8 @@
     xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
+    xmlns:Generic="clr-namespace:System.Collections.Generic;assembly=System"
+    xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:Cloudsdale="clr-namespace:Cloudsdale" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     FontFamily="Segoe WP Bold"
     FontSize="28"
     Foreground="Black"
@@ -57,27 +58,49 @@
                 </Grid>
             </controls:PivotItem>
             <controls:PivotItem x:Name="mediaTab" Header="Drops">
-                <Grid Margin="0,-30,0,0">
+                <Grid Margin="-12,-30,-12,0">
                     <ScrollViewer>
-                        <ItemsControl x:Name="MediaList">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button BorderBrush="Transparent" Padding="-12" 
+                        <StackPanel>
+                            <Grid Margin="0,0,0,-25" Height="100">
+                                <Grid.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#FFF0F0F0" Offset="1" />
+                                        <GradientStop Color="#FFA7A7A7" Offset="0.5" />
+                                        <GradientStop Color="#FFA7A7A7" Offset="0" />
+                                    </LinearGradientBrush>
+                                </Grid.Background>
+                                <Grid Height="75" VerticalAlignment="Top" Margin="12,0,12,0">
+                                    <TextBox Margin="0,0,75,0" Name="SearchBar" />
+                                    <Button HorizontalAlignment="Right" Width="75" Style="{StaticResource XTiltButtonStyle}"
+                                        Padding="0" BorderBrush="Transparent" Click="SearchClick">
+                                        <Button.Content>
+                                            <Image Name="SearchButtonImage" Source="/Images/Icons/search.png" />
+                                        </Button.Content>
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                            <ItemsControl x:Name="MediaList" Margin="12,0,12,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button BorderBrush="Transparent" Padding="-12" 
                                             Click="DropItemClick" DataContext="{Binding}" 
                                             Style="{StaticResource XTiltButtonStyle}"
                                             HorizontalAlignment="Left">
-                                        <Grid>
-                                            <Image DataContext="{Binding}" Source="{Binding Path=preview}"
+                                            <Grid>
+                                                <Image DataContext="{Binding}" Source="{Binding Path=preview}"
                                                    Width="120" Height="90" HorizontalAlignment="Left"
-                                                   VerticalAlignment="Top" />
-                                            <TextBlock DataContext="{Binding}" Text="{Binding Path=title}" 
+                                                   VerticalAlignment="Top" ImageFailed="DropImageFailed" />
+                                                <TextBlock DataContext="{Binding}" Text="{Binding Path=title}" 
                                                        Margin="125,0,0,0" TextWrapping="Wrap" Foreground="Black" 
                                                        FontSize="24" VerticalAlignment="Top" />
-                                        </Grid>
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button Width="200" Foreground="Black" BorderBrush="Black"
+                                    Click="MoreDropsClick" Name="MoreDrops">Load More</Button>
+                        </StackPanel>
                     </ScrollViewer>
                 </Grid>
             </controls:PivotItem>
@@ -107,6 +130,14 @@
                 </Grid>
             </controls:PivotItem>
         </controls:Pivot>
+        <Button  HorizontalAlignment="Right" VerticalAlignment="Top" 
+                 Padding="-10" BorderBrush="Transparent" Margin="0"
+                 Style="{StaticResource XTiltButtonStyle}"
+                 Click="AddOrRemoveCloudClick">
+            <Button.Content>
+                <Image Source="/Images/Icons/add.png" Width="40" />
+            </Button.Content>
+        </Button>
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>

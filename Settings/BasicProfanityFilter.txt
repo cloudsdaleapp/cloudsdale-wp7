@@ -1,5 +1,0 @@
-﻿\bf([u]+)ck
-\bsh([i]+)t\b
-\bpenis|cock|dick([\w]+)|pussy|faggot\b
-\b([n]+)([i]+)([g]+)([e]+)([r]+)\b
-\bass

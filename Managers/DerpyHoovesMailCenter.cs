@@ -47,7 +47,7 @@ namespace Cloudsdale.Managers {
                 switch (chansplit[2]) {
                     case "drops":
                         var drop = JsonConvert.DeserializeObject<FayeDropResponse>(args.Data).data;
-                        Cache[chansplit[1]].drops.Add(drop);
+                        Cache[chansplit[1]].drops.AddDrop(drop);
                         break;
                     case "users":
                         var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
@@ -104,6 +104,9 @@ namespace Cloudsdale.Managers {
         public ObservableCollection<Drop> Drops {
             get { return drops.Cache; }
         }
+        public PinkiePieEntertainmentDojo DropController {
+            get { return drops; }
+        }
         public ObservableCollection<CensusUser> Users {
             get { return users.Users; }
         }
@@ -138,10 +141,7 @@ namespace Cloudsdale.Managers {
                 wc.DownloadStringCompleted += (o, eventArgs) => {
                     var result = JsonConvert.DeserializeObject<WebDropResponse>(eventArgs.Result);
                     var drops = result.result;
-                    Array.Reverse(drops);
-                    foreach (var d in drops) {
-                        Cache[cloud].drops.Add(d);
-                    }
+                    Cache[cloud].drops.PreLoad(drops);
                 };
                 wc.DownloadStringAsync(new Uri(Resources.PreviousDropsEndpoint.Replace("{cloudid}", cloud)));
             };

@@ -1,17 +1,25 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.IO.IsolatedStorage;
+using System.Net;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using Newtonsoft.Json;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
+using Res = Cloudsdale.Resources;
 
 // http://i.qkme.me/3597jb.jpg GO TO BED
 
@@ -176,6 +184,82 @@ namespace Cloudsdale {
             if (pop != null && pop.IsOpen) {
                 pop.IsOpen = false;
             }
+        }
+
+        private void MoreDropsClick(object sender, RoutedEventArgs e) {
+            MoreDrops.Visibility = Visibility.Collapsed;
+            if (!Controller.DropController.CanIncreaseCapacity) {
+                return;
+            }
+            var request = WebRequest.CreateHttp(new Uri(Res.PreviousDropsEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)));
+            var nextpage = ((Controller.DropController.Capacity / 10) + 1).ToString();
+            request.Headers["X-Result-Page"] = nextpage;
+            request.BeginGetResponse(ai => {
+                var response = request.EndGetResponse(ai);
+                string resultString;
+                using (var stream = response.GetResponseStream())
+                using (var reader = new StreamReader(stream, Encoding.UTF8)) {
+                    resultString = reader.ReadToEnd();
+                }
+                var result = JsonConvert.DeserializeObject<WebDropResponse>(resultString);
+                Controller.DropController.IncreaseCapacity(result.result);
+                if (Controller.DropController.CanIncreaseCapacity)
+                    Dispatcher.BeginInvoke(() => MoreDrops.Visibility = Visibility.Visible);
+            }, null);
+        }
+
+        private bool searching;
+        private void SearchClick(object sender, RoutedEventArgs e) {
+            if (!searching) {
+                if (string.IsNullOrWhiteSpace(SearchBar.Text)) {
+                    MessageBox.Show("Please enter a search query");
+                    return;
+                }
+                searching = true;
+                MoreDrops.IsEnabled = false;
+                SearchButtonImage.Source = new BitmapImage(new Uri("/Images/Icons/back_white.png", UriKind.Relative));
+                MoreDrops.Content = "Searching...";
+                var searchList = new ObservableCollection<Drop>();
+                MediaList.ItemsSource = searchList;
+                var request = WebRequest.CreateHttp(
+                    new Uri(Res.DropsSearchEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)
+                                                   .Replace("{query}", Uri.EscapeDataString(SearchBar.Text.Trim()))));
+                SearchBar.Text = "";
+                request.BeginGetResponse(ai => {
+                    var response = request.EndGetResponse(ai);
+                    string resultString;
+                    using (var stream = response.GetResponseStream())
+                    using (var reader = new StreamReader(stream, Encoding.UTF8)) {
+                        resultString = reader.ReadToEnd();
+                    }
+                    var result = JsonConvert.DeserializeObject<WebDropResponse>(resultString);
+                    Dispatcher.BeginInvoke(() => {
+                        MoreDrops.Visibility = Visibility.Collapsed;
+                        foreach (var d in result.result) {
+                            searchList.Add(d);
+                        }
+                    });
+                }, null);
+            } else {
+                searching = false;
+                MoreDrops.IsEnabled = true;
+                MoreDrops.Content = "Load More";
+                MoreDrops.Visibility = Visibility.Visible;
+                MediaList.ItemsSource = Controller.Drops;
+                SearchButtonImage.Source = new BitmapImage(new Uri("/Images/Icons/search.png", UriKind.Relative));
+            }
+        }
+
+        private void DropImageFailed(object sender, ExceptionRoutedEventArgs e) {
+            if (sender is Image) {
+                var image = sender as Image;
+                image.Source = new BitmapImage(new Uri("http://assets.cloudsdale.org/assets/fallback/preview_thumb_drop.png"));
+            }
+        }
+
+        private void AddOrRemoveCloudClick(object sender, RoutedEventArgs e) {
+            var ms = Controller.Messages;
+            Debugger.Break();
         }
     }
 }

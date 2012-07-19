@@ -1,37 +1,34 @@
 ﻿using System;
-using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Cloudsdale.Models {
-    [DataContract]
-    [KnownType(typeof(CloudChatInfo))]
-    [KnownType(typeof(UserReference))]
-    [KnownType(typeof(Avatar))]
+    [JsonObject(MemberSerialization.OptIn)]
     public class Cloud : CloudsdaleItem {
-        [DataMember]
+        [JsonProperty]
         public string name;
-        [DataMember]
+        [JsonProperty]
         public string description;
-        [DataMember]
+        [JsonProperty]
         public DateTime? created_at;
-        [DataMember]
+        [JsonProperty]
         public string rules;
-        [DataMember]
+        [JsonProperty]
         public bool? hidden;
-        [DataMember]
+        [JsonProperty]
         public Avatar avatar;
-        [DataMember]
+        [JsonProperty]
         public bool? is_transient;
-        [DataMember]
+        [JsonProperty]
         public UserReference owner;
-        [DataMember]
+        [JsonProperty]
         public UserReference[] moderators;
-        [DataMember]
+        [JsonProperty]
         public CloudChatInfo chat;
     }
 
-    [DataContract]
+    [JsonObject(MemberSerialization.OptIn)]
     public class CloudChatInfo {
-        [DataMember]
+        [JsonProperty]
         public DateTime? last_message_at;
     }
 }

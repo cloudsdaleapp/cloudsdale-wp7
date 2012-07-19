@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+#if DEBUG
 using System.Diagnostics;
+#endif
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using Newtonsoft.Json;
@@ -31,10 +33,6 @@ namespace Cloudsdale.Models {
 
         internal readonly List<Message> subs;
 
-        private static readonly Regex _backslashNLB = new Regex("^\\\\n");
-        private static readonly Regex _backslashN = new Regex("([^\\\\])\\\\n");
-        private static readonly Regex _backslashTLB = new Regex("^\\\\t");
-        private static readonly Regex _backslashT = new Regex("([^\\\\])\\\\t");
         public ChatLine[] Split {
             get {
                 try {
@@ -55,16 +53,11 @@ namespace Cloudsdale.Models {
                             }
                         }
                     }
-                    message = _backslashNLB.Replace(message, "\n");
-                    message = _backslashN.Replace(message, match => match.Value[0] + "\n");
-                    var split = message.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    message = Settings.StringParser.ParseLiteral(message);
+                    var split = message.Split('\n');
                     var lines = new ChatLine[split.Length];
                     for (var i = 0; i < split.Length; ++i) {
-                        split[i] = split[i].Trim();
-                        split[i] = _backslashTLB.Replace(split[i], "    ");
-                        split[i] = _backslashT.Replace(split[i], match => match.Value[0] + "\t");
-                        split[i] = split[i].Replace("\\\\", "\\");
-                        split[i] = Settings.ChatFilter.Filter(split[i]);
+                        if (string.IsNullOrWhiteSpace(split[i])) split[i] = " ";
                         lines[i] = new ChatLine {
                             Text = split[i],
                             Color = new SolidColorBrush(split[i].StartsWith(">") ?

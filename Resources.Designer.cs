@@ -61,19 +61,6 @@ namespace Cloudsdale {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to \bf([u]+)ck
-        ///\bsh([i]+)t\b
-        ///\bpenis|cock|dick([\w]+)|pussy|faggot\b
-        ///\b([n]+)([i]+)([g]+)([e]+)([r]+)\b
-        ///\bass.
-        /// </summary>
-        internal static string BasicProfanityFilter {
-            get {
-                return ResourceManager.GetString("BasicProfanityFilter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to d71ed537.
         /// </summary>
         internal static string BugsenseApiKey {
@@ -106,6 +93,15 @@ namespace Cloudsdale {
         internal static string CurrentApiVersion {
             get {
                 return ResourceManager.GetString("CurrentApiVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/{cloudid}/drops/search.json?q={query}.
+        /// </summary>
+        internal static string DropsSearchEndpoint {
+            get {
+                return ResourceManager.GetString("DropsSearchEndpoint", resourceCulture);
             }
         }
         

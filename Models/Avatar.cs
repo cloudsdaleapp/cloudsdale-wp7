@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using Cloudsdale.FayeConnector;
 
 namespace Cloudsdale.Models {
-    [DataContract(Name="Avatar")]
+    [JsonObject(MemberSerialization.OptIn)]
     public class Avatar {
-        [DataMember]
+        [JsonProperty]
         public virtual Uri Normal { get; set; }
-        [DataMember]
+        [JsonProperty]
         public virtual Uri Mini { get; set; }
-        [DataMember]
+        [JsonProperty]
         public virtual Uri Thumb { get; set; }
-        [DataMember]
+        [JsonProperty]
         public virtual Uri Preview { get; set; }
-        [DataMember]
+        [JsonProperty]
         public virtual Uri Chat { get; set; }
     }
 }

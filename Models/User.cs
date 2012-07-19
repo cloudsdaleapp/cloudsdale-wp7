@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Runtime.Serialization;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
+using Newtonsoft.Json;
 
 namespace Cloudsdale.Models {
 
-    [DataContract]
-    [KnownType(typeof(Avatar))]
+    [JsonObject(MemberSerialization.OptIn)]
     public class ListUser : UserReference {
-        [DataMember]
+        [JsonProperty]
         public virtual string name { get; set; }
-        [DataMember]
+        [JsonProperty]
         public virtual Avatar avatar { get; set; }
 
         public ListUser AsListUser {
@@ -19,9 +16,9 @@ namespace Cloudsdale.Models {
         }
     }
 
-    [DataContract]
+    [JsonObject(MemberSerialization.OptIn)]
     public class SimpleUser : ListUser {
-        [DataMember]
+        [JsonProperty]
         public string role;
 
         public string RoleTag {
@@ -56,31 +53,29 @@ namespace Cloudsdale.Models {
         }
     }
 
-    [DataContract]
-    [KnownType(typeof(Prosecution))]
+    [JsonObject(MemberSerialization.OptIn)]
     public class User : SimpleUser {
-        [DataMember]
+        [JsonProperty]
         public string time_zone;
-        [DataMember]
+        [JsonProperty]
         public DateTime? member_since;
-        [DataMember]
+        [JsonProperty]
         public DateTime? suspended_until;
-        [DataMember]
+        [JsonProperty]
         public string reason_for_suspension;
-
-        [DataMember]
+        [JsonProperty]
         public bool? is_registered;
-        [DataMember]
+        [JsonProperty]
         public bool? is_transient;
-        [DataMember]
+        [JsonProperty]
         public bool? is_banned;
-        [DataMember]
+        [JsonProperty]
         public bool? is_member_of_a_cloud;
-        [DataMember]
+        [JsonProperty]
         public bool? has_an_avatar;
-        [DataMember]
+        [JsonProperty]
         public bool? has_read_tnc;
-        [DataMember]
+        [JsonProperty]
         public Prosecution[] prosecutions;
 
         public void CopyTo(User user) {
@@ -127,18 +122,17 @@ namespace Cloudsdale.Models {
         }
     }
 
-    [DataContract]
-    [KnownType(typeof(Cloud))]
+    [JsonObject(MemberSerialization.OptIn)]
     public class LoggedInUser : User {
-        [DataMember]
+        [JsonProperty]
         public string auth_token;
-        [DataMember]
+        [JsonProperty]
         public string email;
-        [DataMember]
+        [JsonProperty]
         public bool? needs_to_confirm_registration;
-        [DataMember]
+        [JsonProperty]
         public bool? needs_name_change;
-        [DataMember]
+        [JsonProperty]
         public Cloud[] clouds;
     }
 }

@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 using Cloudsdale.Models;
 
 namespace Cloudsdale.Managers {
@@ -55,6 +46,10 @@ namespace Cloudsdale.Managers {
         }
 
         public void AddDrop(Drop drop) {
+            if (cache.Any(d => d.id == drop.id)) {
+                return;
+            }
+
             if (!Deployment.Current.Dispatcher.CheckAccess()) {
                 Deployment.Current.Dispatcher.BeginInvoke(() => AddDrop(drop));
                 return;
