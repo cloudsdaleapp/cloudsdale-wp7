@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Media;
 using Newtonsoft.Json;
+using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Cloudsdale.Models {
 
@@ -23,13 +25,13 @@ namespace Cloudsdale.Models {
 
         public string RoleTag {
             get {
-                switch (role) {
+                switch (role.ToLower()) {
                     case "creator":
                         return "founder";
-                    case "admin":
                     case "donor":
+                    case "admin":
                     case "moderator":
-                        return role;
+                        return role.ToLower();
                 }
                 return "";
             }
@@ -135,7 +137,47 @@ namespace Cloudsdale.Models {
         public bool? needs_to_confirm_registration;
         [JsonProperty]
         public bool? needs_name_change;
-        [JsonProperty]
-        public Cloud[] clouds;
+
+        private ObservableCollection<Cloud> _cloudCol = new ObservableCollection<Cloud>();
+        private Cloud[] _clouds;
+        [JsonProperty("clouds")]
+        public Cloud[] clouds {
+            get {
+                return _clouds;
+            }
+            set {
+                _clouds = value;
+                if (Deployment.Current.Dispatcher.CheckAccess()) {
+                    PopulateClouds();
+                } else {
+                    Deployment.Current.Dispatcher.BeginInvoke(PopulateClouds);
+                }
+            }
+        }
+        public ObservableCollection<Cloud> Clouds {
+            get { return _cloudCol; }
+        }
+
+        void PopulateClouds() {
+            _cloudCol.Clear();
+            if (_clouds != null)
+                foreach (var cloud in _clouds) {
+                    _cloudCol.Add(cloud);
+                }
+        }
+
+        public void CopyTo(LoggedInUser user) {
+            base.CopyTo(user);
+            if (auth_token != null) 
+                user.auth_token = auth_token;
+            if (email != null) 
+                user.email = email;
+            if (needs_to_confirm_registration != null) 
+                user.needs_to_confirm_registration = needs_to_confirm_registration;
+            if (needs_name_change != null)
+                user.needs_name_change = needs_name_change;
+            if (clouds != null)
+                user.clouds = clouds;
+        }
     }
 }

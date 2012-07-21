@@ -110,19 +110,24 @@
                         <ItemsControl x:Name="Ponies">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Height="50" Margin="0,0,0,10">
-                                        <Image Source="{Binding Path=avatar.Thumb}"
+                                    <Button BorderBrush="Transparent" Padding="-12"
+                                            Style="{StaticResource XTiltButtonStyle}"
+                                            Click="UserListClick" Margin="0"
+                                            HorizontalAlignment="Left">
+                                        <Grid Height="50" Margin="0,0,0,10" HorizontalAlignment="Left">
+                                            <Image Source="{Binding Path=avatar.Thumb}"
                                                Stretch="Fill"
                                                HorizontalAlignment="Left"
                                                Width="50" Height="50">
-                                            <Image.Clip>
-                                                <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,50,50" />
-                                            </Image.Clip>
-                                        </Image>
-                                        <TextBlock Text="{Binding Path=name}"
+                                                <Image.Clip>
+                                                    <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,50,50" />
+                                                </Image.Clip>
+                                            </Image>
+                                            <TextBlock Text="{Binding Path=name}"
                                                    FontSize="34" Foreground="Black"
                                                    Margin="60,0,0,0"/>
-                                    </Grid>
+                                        </Grid>
+                                    </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -138,6 +143,19 @@
                 <Image Source="/Images/Icons/add.png" Width="40" />
             </Button.Content>
         </Button>
+        <Popup Margin="10" Name="userpopup" Width="456" Height="776">
+            <Border Margin="0,0,0,0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Offset="0" Color="#FFF0F0F0" />
+                        <GradientStop Offset="1" Color="#FFD9D9D0" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid Width="456" Height="776">
+                    
+                </Grid>
+            </Border>
+        </Popup>
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>

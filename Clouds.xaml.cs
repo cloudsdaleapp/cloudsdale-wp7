@@ -27,6 +27,7 @@ namespace Cloudsdale {
     public partial class Clouds {
         public static bool wasoncloud;
         public DerpyHoovesMailCenter Controller { get; set; }
+        public bool leaving;
 
         public Clouds() {
             if (Connection.CurrentCloud == null) {
@@ -58,6 +59,15 @@ namespace Cloudsdale {
             }).Start();
         }
 
+        protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e) {
+            if (userpopup.IsOpen) {
+                userpopup.IsOpen = false;
+                e.Cancel = true;
+                return;
+            }
+            base.OnBackKeyPress(e);
+        }
+
         private void PhoneApplicationPageOrientationChanged(object sender, OrientationChangedEventArgs e) {
             if (e.Orientation == PageOrientation.PortraitUp) {
                 cloudPivot.Background = (Brush)Resources["PortraitBackground"];
@@ -71,11 +81,15 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
+            leaving = true;
             Controller.Messages.CollectionChanged += ScrollDown;
             ScrollDown(null, null);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e) {
+            if (leaving && !Connection.IsMemberOfCloud(Connection.CurrentCloud.id)) {
+                DerpyHoovesMailCenter.Unsubscribe(Connection.CurrentCloud.id);
+            }
             Controller.Messages.CollectionChanged -= ScrollDown;
             Controller.MarkAsRead();
             wasoncloud = false;
@@ -93,6 +107,8 @@ namespace Cloudsdale {
             var drop = button.DataContext as Drop;
             if (drop == null) return;
 
+            leaving = false;
+
             LastDropClicked = drop;
             NavigationService.Navigate(new Uri("/DropViewer.xaml", UriKind.Relative));
         }
@@ -103,6 +119,7 @@ namespace Cloudsdale {
         private void SendBoxDoubleTap(object sender, GestureEventArgs e) {
             if (pop != null && pop.IsOpen) {
                 pop.IsOpen = false;
+                LayoutRoot.Children.Remove(pop);
                 return;
             }
 
@@ -148,6 +165,7 @@ namespace Cloudsdale {
                     tb.Focus();
                 } else {
                     pop.IsOpen = false;
+                    LayoutRoot.Children.Remove(pop);
                     SendBox.Focus();
                     SendBox.Select(SendBox.Text.Length, 0);
                 }
@@ -177,12 +195,14 @@ namespace Cloudsdale {
         private void SendBoxTap(object sender, GestureEventArgs e) {
             if (pop != null && pop.IsOpen) {
                 pop.IsOpen = false;
+                LayoutRoot.Children.Remove(pop);
             }
         }
 
         private void ChatScrollerTap(object sender, GestureEventArgs e) {
             if (pop != null && pop.IsOpen) {
                 pop.IsOpen = false;
+                LayoutRoot.Children.Remove(pop);
             }
         }
 
@@ -258,8 +278,14 @@ namespace Cloudsdale {
         }
 
         private void AddOrRemoveCloudClick(object sender, RoutedEventArgs e) {
-            var ms = Controller.Messages;
-            Debugger.Break();
+        }
+
+        private void UserListClick(object sender, RoutedEventArgs e) {
+            if (!(sender is Button)) return;
+            var button = sender as Button;
+            if (!(button.DataContext is CensusUser)) return;
+            var user = button.DataContext as CensusUser;
+            userpopup.IsOpen = true;
         }
     }
 }
