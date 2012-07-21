@@ -285,7 +285,31 @@ namespace Cloudsdale {
             var button = sender as Button;
             if (!(button.DataContext is CensusUser)) return;
             var user = button.DataContext as CensusUser;
+
+            userpopup.DataContext = user;
             userpopup.IsOpen = true;
+        }
+
+        private void AvatarMouseUp(object sender, MouseButtonEventArgs e) {
+            if (!(sender is Image)) return;
+            var image = sender as Image;
+
+            if (image.Opacity > .9) return;
+            image.Opacity = 1.0;
+
+            if (!(image.DataContext is Message)) return;
+            var message = image.DataContext as Message;
+
+            userpopup.DataContext = message.user;
+            userpopup.IsOpen = true;
+        }
+
+        private void AvatarMouseDown(object sender, MouseButtonEventArgs e) {
+            (sender as FrameworkElement).Opacity = 0.8;
+        }
+
+        private void AvatarMouseLeave(object sender, MouseEventArgs e) {
+            (sender as FrameworkElement).Opacity = 1.0;
         }
     }
 }

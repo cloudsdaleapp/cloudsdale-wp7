@@ -125,6 +125,24 @@ namespace Cloudsdale.Models {
             if (prosecutions != null)
                 user.prosecutions = prosecutions;
         }
+
+        public Visibility ShowSuspended {
+            get {
+                return suspended_until != null && suspended_until > DateTime.Now ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        public string SuspendedUntilMessage {
+            get {
+                return "Suspended until " + suspended_until;
+            }
+        }
+
+        public string SuspendedReason {
+            get {
+                return reason_for_suspension ?? "No reason given";
+            }
+        }
     }
 
     [JsonObject(MemberSerialization.OptIn)]
