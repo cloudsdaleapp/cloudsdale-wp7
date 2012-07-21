@@ -27,6 +27,7 @@ namespace Cloudsdale.Models {
                     case "creator":
                         return "founder";
                     case "admin":
+                    case "donor":
                     case "moderator":
                         return role;
                 }
@@ -43,6 +44,8 @@ namespace Cloudsdale.Models {
                         return Color.FromArgb(0xFF, 0x1F, 0x7F, 0x1F);
                     case "moderator":
                         return Color.FromArgb(0xFF, 0xFF, 0xAF, 0x1F);
+                    case "donor":
+                        return Color.FromArgb(0xFF, 0x66, 0x00, 0xCC);
                 }
                 return default(Color);
             }

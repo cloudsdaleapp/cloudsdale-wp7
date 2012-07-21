@@ -49,7 +49,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BugSense">
-      <HintPath>..\..\BugSense-WP7-v0.9.9\BugSense\Silverlight\BugSense.dll</HintPath>
+      <HintPath>..\..\Dropbox\CSharp\Lib\BugSense.dll</HintPath>
     </Reference>
     <Reference Include="Facebook">
       <HintPath>..\..\Dropbox\CSharp\Lib\Facebook.dll</HintPath>
