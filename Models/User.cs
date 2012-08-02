@@ -153,6 +153,8 @@ namespace Cloudsdale.Models {
         public string email;
         [JsonProperty]
         public bool? needs_to_confirm_registration;
+        [JsonProperty] 
+        public bool? needs_password_change;
         [JsonProperty]
         public bool? needs_name_change;
 

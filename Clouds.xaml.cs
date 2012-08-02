@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Net;
@@ -25,9 +25,9 @@ using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
     public partial class Clouds {
-        public static bool wasoncloud;
+        public static bool Wasoncloud;
         public DerpyHoovesMailCenter Controller { get; set; }
-        public bool leaving;
+        public bool Leaving;
 
         public Clouds() {
             if (Connection.CurrentCloud == null) {
@@ -49,7 +49,7 @@ namespace Cloudsdale {
                 });
             }).Start();
 
-            wasoncloud = true;
+            Wasoncloud = true;
         }
 
         public void ScrollDown(object sender, EventArgs args) {
@@ -81,18 +81,18 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
-            leaving = true;
+            Leaving = true;
             Controller.Messages.CollectionChanged += ScrollDown;
             ScrollDown(null, null);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e) {
-            if (leaving && !Connection.IsMemberOfCloud(Connection.CurrentCloud.id)) {
+            if (Leaving && !Connection.IsMemberOfCloud(Connection.CurrentCloud.id)) {
                 DerpyHoovesMailCenter.Unsubscribe(Connection.CurrentCloud.id);
             }
             Controller.Messages.CollectionChanged -= ScrollDown;
             Controller.MarkAsRead();
-            wasoncloud = false;
+            Wasoncloud = false;
         }
 
         private void SendBoxKeyDown(object sender, KeyEventArgs e) {
@@ -107,7 +107,7 @@ namespace Cloudsdale {
             var drop = button.DataContext as Drop;
             if (drop == null) return;
 
-            leaving = false;
+            Leaving = false;
 
             LastDropClicked = drop;
             NavigationService.Navigate(new Uri("/DropViewer.xaml", UriKind.Relative));
@@ -115,7 +115,9 @@ namespace Cloudsdale {
 
         public static Drop LastDropClicked;
 
+// ReSharper disable InconsistentNaming
         private Popup pop;
+// ReSharper restore InconsistentNaming
         private void SendBoxDoubleTap(object sender, GestureEventArgs e) {
             if (pop != null && pop.IsOpen) {
                 pop.IsOpen = false;
@@ -212,7 +214,7 @@ namespace Cloudsdale {
                 return;
             }
             var request = WebRequest.CreateHttp(new Uri(Res.PreviousDropsEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)));
-            var nextpage = ((Controller.DropController.Capacity / 10) + 1).ToString();
+            var nextpage = ((Controller.DropController.Capacity / 10) + 1).ToString(CultureInfo.InvariantCulture);
             request.Headers["X-Result-Page"] = nextpage;
             request.BeginGetResponse(ai => {
                 var response = request.EndGetResponse(ai);
@@ -228,14 +230,14 @@ namespace Cloudsdale {
             }, null);
         }
 
-        private bool searching;
+        private bool _searching;
         private void SearchClick(object sender, RoutedEventArgs e) {
-            if (!searching) {
+            if (!_searching) {
                 if (string.IsNullOrWhiteSpace(SearchBar.Text)) {
                     MessageBox.Show("Please enter a search query");
                     return;
                 }
-                searching = true;
+                _searching = true;
                 MoreDrops.IsEnabled = false;
                 SearchButtonImage.Source = new BitmapImage(new Uri("/Images/Icons/back_white.png", UriKind.Relative));
                 MoreDrops.Content = "Searching...";
@@ -261,7 +263,7 @@ namespace Cloudsdale {
                     });
                 }, null);
             } else {
-                searching = false;
+                _searching = false;
                 MoreDrops.IsEnabled = true;
                 MoreDrops.Content = "Load More";
                 MoreDrops.Visibility = Visibility.Visible;
@@ -305,11 +307,11 @@ namespace Cloudsdale {
         }
 
         private void AvatarMouseDown(object sender, MouseButtonEventArgs e) {
-            (sender as FrameworkElement).Opacity = 0.8;
+            ((FrameworkElement) sender).Opacity = 0.8;
         }
 
         private void AvatarMouseLeave(object sender, MouseEventArgs e) {
-            (sender as FrameworkElement).Opacity = 1.0;
+            ((FrameworkElement) sender).Opacity = 1.0;
         }
     }
 }

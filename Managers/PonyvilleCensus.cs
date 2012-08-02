@@ -9,10 +9,40 @@ using System.Threading;
 using System.Windows;
 using Cloudsdale.Models;
 using Newtonsoft.Json;
+using System.Linq;
+using System.Text;
+using System.IO;
 
 namespace Cloudsdale.Managers {
     public class PonyvilleCensus {
         private static readonly UserStore Cache;
+
+        public List<CensusUser> Users {
+            get {
+                return Cache.Values.ToList<CensusUser>();
+            }
+        }
+
+        public static void Save() {
+            using (var file = IsolatedStorageFile.GetUserStoreForApplication().
+                OpenFile("cache.usercache.json", FileMode.OpenOrCreate, FileAccess.Write))
+            using (var writer = new StreamWriter(file, Encoding.UTF8)) {
+                writer.Write(JsonConvert.SerializeObject(Cache));
+            }
+        }
+
+        public static void Load() {
+            if (!IsolatedStorageFile.GetUserStoreForApplication().FileExists("cache.usercache.json")) return;
+            using (var file = IsolatedStorageFile.GetUserStoreForApplication().
+                OpenFile("cache.usercache.json", FileMode.Open, FileAccess.Read))
+            using (var reader = new StreamReader(file, Encoding.UTF8)) {
+                var newstore = JsonConvert.DeserializeObject<UserStore>(reader.ReadToEnd());
+                var enumer = newstore.GetEnumerator();
+                while (enumer.MoveNext()) {
+                    Cache[enumer.Current.Key] = enumer.Current.Value;
+                }
+            }
+        }
 
         static PonyvilleCensus() {
             Cache = new UserStore();
@@ -65,8 +95,6 @@ namespace Cloudsdale.Managers {
         // ReSharper restore RedundantCheckBeforeAssignment
     }
 
-    [DataContract]
-    [KnownType(typeof(Avatar))]
     public sealed class CensusUser : User, INotifyPropertyChanged {
 
         public CensusUser(string id) {
@@ -119,7 +147,7 @@ namespace Cloudsdale.Managers {
         }
     }
 
-    [DataContract]
+
     public sealed class CensusAvatar : Avatar, INotifyPropertyChanged {
         private const string DefaultAvatarUrlChat = "http://assets.cloudsdale.org/assets/fallback/avatar_chat_user.png";
         private const string DefaultAvatarUrlMini = "http://assets.cloudsdale.org/assets/fallback/avatar_mini_user.png";
@@ -200,8 +228,6 @@ namespace Cloudsdale.Managers {
         }
     }
 
-    [KnownType(typeof(CensusUser))]
-    [KnownType(typeof(CensusAvatar))]
     public class UserStore : Dictionary<string, CensusUser> {
 
     }
