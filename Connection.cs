@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Net;
@@ -105,7 +106,7 @@ namespace Cloudsdale {
             request.Accept = "application/json";
             request.Method = "POST";
             request.ContentType = "application/json";
-            request.Headers["Content-Length"] = data.Length.ToString();
+            request.Headers["Content-Length"] = data.Length.ToString(CultureInfo.InvariantCulture);
             request.Headers["X-Auth-Token"] = CurrentCloudsdaleUser.auth_token;
             request.BeginGetRequestStream(ar => {
                 var reqs = request.EndGetRequestStream(ar);
