@@ -30,7 +30,6 @@ namespace Cloudsdale.Models {
                         return "founder";
                     case "donor":
                     case "admin":
-                    case "donor":
                     case "developer":
                     case "moderator":
                         return role.ToLower();
@@ -43,7 +42,7 @@ namespace Cloudsdale.Models {
             get {
                 switch (role) {
                     case "donor":
-                        return Color.FromArgb(0xFF, 0x6F, 0x00, 0xAF);
+                        return Color.FromArgb(0xFF, 0x66, 0x00, 0xCC);
                     case "creator":
                         return Color.FromArgb(0xFF, 0xFF, 0x1F, 0x1F);
                     case "admin":
