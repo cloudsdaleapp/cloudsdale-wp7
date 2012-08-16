@@ -53,7 +53,40 @@
                     </Grid>
                     <ScrollViewer x:Name="ChatScroller" 
                                    Margin="0,0,0,64" Tap="ChatScrollerTap">
-                        <ItemsControl x:Name="Chats" ItemTemplate="{StaticResource ChatMessageTemplate}" />
+                        <ItemsControl x:Name="Chats">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,3,0,5" DataContext="{Binding}">
+                                        <Image DataContext="{Binding}" Source="{Binding Path=user.avatar.Preview}" Stretch="Fill"
+                                               HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Height="50"
+                                               MouseLeftButtonUp="AvatarMouseUp" MouseLeftButtonDown="AvatarMouseDown"
+                                               MouseLeave="AvatarMouseLeave">
+                                            <Image.Clip>
+                                                <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,50,50" />
+                                            </Image.Clip>
+                                        </Image>
+                                        <StackPanel Orientation="Horizontal" Margin="60,0">
+                                            <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=name}" 
+                                                       FontSize="18" Foreground="#FF5F8FCF"/>
+                                            <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=RoleTag}"
+                                                       Foreground="{Binding Path=RoleBrush}" FontSize="12" Margin="5,3"/>
+                                        </StackPanel>
+                                        <TextBlock DataContext="{Binding}"
+                                                   Text="{Binding Path=CorrectedTimestamp, StringFormat=t}" HorizontalAlignment="Right" 
+                                                   VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f"/>
+                                        <ItemsControl DataContext="{Binding}" ItemsSource="{Binding Path=Split}" Margin="60,20,0,0">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock DataContext="{Binding}" Text="{Binding Path=Text}" 
+                                                               Foreground="{Binding Path=Color}" FontSize="16" 
+                                                               TextWrapping="Wrap" FontFamily="Verdana"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </ScrollViewer>
                 </Grid>
             </controls:PivotItem>
@@ -110,19 +143,24 @@
                         <ItemsControl x:Name="Ponies">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Height="50" Margin="0,0,0,10">
-                                        <Image Source="{Binding Path=avatar.Thumb}"
+                                    <Button BorderBrush="Transparent" Padding="-12"
+                                            Style="{StaticResource XTiltButtonStyle}"
+                                            Click="UserListClick" Margin="0"
+                                            HorizontalAlignment="Left">
+                                        <Grid Height="50" Margin="0,0,0,10" HorizontalAlignment="Left">
+                                            <Image Source="{Binding Path=avatar.Thumb}"
                                                Stretch="Fill"
                                                HorizontalAlignment="Left"
                                                Width="50" Height="50">
-                                            <Image.Clip>
-                                                <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,50,50" />
-                                            </Image.Clip>
-                                        </Image>
-                                        <TextBlock Text="{Binding Path=name}"
+                                                <Image.Clip>
+                                                    <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,50,50" />
+                                                </Image.Clip>
+                                            </Image>
+                                            <TextBlock Text="{Binding Path=name}"
                                                    FontSize="34" Foreground="Black"
                                                    Margin="60,0,0,0"/>
-                                    </Grid>
+                                        </Grid>
+                                    </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -138,6 +176,52 @@
                 <Image Source="/Images/Icons/add.png" Width="40" />
             </Button.Content>
         </Button>
+        <Popup Name="userpopup" HorizontalAlignment="Center" VerticalAlignment="Center" Width="800" Height="800">
+            <Border Background="#A0000000">
+                <Grid Width="800" Height="800">
+                    <Border BorderThickness="5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Offset="0" Color="#FFF0F0F0" />
+                                <GradientStop Offset="1" Color="#FFD9D9D0" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Border.BorderBrush>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Offset="0" Color="#FFE0E0E0" />
+                                <GradientStop Offset="1" Color="#FFC9C9C0" />
+                            </LinearGradientBrush>
+                        </Border.BorderBrush>
+                        <Grid Height="450" Width="450" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ScrollViewer Margin="10">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100"
+                                       HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,10,10"
+                                       Stretch="Fill">
+                                            <Image.Clip>
+                                                <RectangleGeometry Rect="0,0,100,100" RadiusX="20" RadiusY="20" />
+                                            </Image.Clip>
+                                        </Image>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Path=name}" TextWrapping="Wrap" Width="320" />
+                                            <TextBlock Text="{Binding Path=RoleTag}" Foreground="{Binding Path=RoleBrush}"
+                                               TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Visibility="{Binding Path=ShowSuspended}">
+                                        <TextBlock Foreground="Red" Text="{Binding Path=SuspendedUntilMessage}"
+                                                   FontSize="18"/>
+                                        <TextBlock Text="{Binding Path=SuspendedReason}" FontSize="18" 
+                                                   Width="430" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Popup>
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.IO;
 using System.IO.IsolatedStorage;
 using System.Net;
 using System.Text;
@@ -104,7 +106,7 @@ namespace Cloudsdale {
             request.Accept = "application/json";
             request.Method = "POST";
             request.ContentType = "application/json";
-            request.Headers["Content-Length"] = data.Length.ToString();
+            request.Headers["Content-Length"] = data.Length.ToString(CultureInfo.InvariantCulture);
             request.Headers["X-Auth-Token"] = CurrentCloudsdaleUser.auth_token;
             request.BeginGetRequestStream(ar => {
                 var reqs = request.EndGetRequestStream(ar);
@@ -115,10 +117,28 @@ namespace Cloudsdale {
         }
 
         public static void JoinCloud(string id) {
-            var data = new byte[0];
+            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new CloudsdaleItem { id = CurrentCloudsdaleUser.id }));
             var request = WebRequest.CreateHttp(Resources.JoinCloudEndpoint.Replace("{cloudid}", id));
             request.Accept = "application/json";
             request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Headers["Content-Length"] = data.Length.ToString();
+            request.Headers["X-Auth-Token"] = CurrentCloudsdaleUser.auth_token;
+            request.BeginGetRequestStream(ar => {
+                var requestStream = request.EndGetRequestStream(ar);
+                requestStream.Write(data, 0, data.Length);
+                requestStream.Close();
+                request.BeginGetResponse(a => {
+                    var response = request.EndGetResponse(a);
+                    string message;
+                    using (var responseStream = response.GetResponseStream())
+                    using (var streamReader = new StreamReader(responseStream)) {
+                        message = streamReader.ReadToEnd();
+                    }
+                    var user = JsonConvert.DeserializeObject<WebResponse<LoggedInUser>>(message).result;
+                    user.CopyTo(CurrentCloudsdaleUser);
+                }, null);
+            }, null);
         }
 
         public static void SaveUser() {
@@ -126,9 +146,20 @@ namespace Cloudsdale {
             settings["lastuser"] = new SavedUser { id = CloudsdaleClientId, user = CurrentCloudsdaleUser };
             settings.Save();
         }
+
+        public static bool IsMemberOfCloud(string cloud) {
+            foreach (var c in CurrentCloudsdaleUser.clouds) {
+                if (c.id == cloud) return true;
+            }
+            return false;
+        }
     }
 
     public class CloudGetResponse {
         public Cloud[] result;
+    }
+
+    public class WebResponse<T> {
+        public T result;
     }
 }

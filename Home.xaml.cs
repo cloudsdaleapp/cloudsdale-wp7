@@ -24,9 +24,10 @@ namespace Cloudsdale {
             UserInfoPane.DataContext = CurrentUser;
 
             MemberSinceBlock.Text = MemberSinceMessage;
-            foreach (var cloud in Connection.CurrentCloudsdaleUser.clouds) {
-                AddCloud(cloud);
-            }
+            if (Connection.CurrentCloudsdaleUser.clouds != null)
+                foreach (var cloud in Connection.CurrentCloudsdaleUser.clouds) {
+                    AddCloud(cloud);
+                }
             var wc = new WebClient();
             wc.DownloadStringCompleted += (sender, args) => {
                 var clouds = JsonConvert.DeserializeObject<CloudsRequest>(args.Result).result;

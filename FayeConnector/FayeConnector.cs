@@ -100,7 +100,8 @@ namespace Cloudsdale.FayeConnector {
                 });
                 socket.MessageReceived += handshakecallback;
                 socket.Send(FayeResources.Handshake);
-                are.WaitOne();
+                if (!are.WaitOne(5000))
+                    timeout();
                 socket.MessageReceived -= handshakecallback;
 
                 // If dat response is a failure... THROW THE CHEEEEESE (and by cheese I mean callback)

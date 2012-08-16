@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Media;
 using Newtonsoft.Json;
+using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Cloudsdale.Models {
 
@@ -23,14 +25,15 @@ namespace Cloudsdale.Models {
 
         public string RoleTag {
             get {
-                switch (role) {
+                switch (role.ToLower()) {
                     case "creator":
                         return "founder";
+                    case "donor":
                     case "admin":
                     case "donor":
                     case "developer":
                     case "moderator":
-                        return role;
+                        return role.ToLower();
                 }
                 return "";
             }
@@ -126,6 +129,24 @@ namespace Cloudsdale.Models {
             if (prosecutions != null)
                 user.prosecutions = prosecutions;
         }
+
+        public Visibility ShowSuspended {
+            get {
+                return suspended_until != null && suspended_until > DateTime.Now ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        public string SuspendedUntilMessage {
+            get {
+                return "Suspended until " + suspended_until;
+            }
+        }
+
+        public string SuspendedReason {
+            get {
+                return reason_for_suspension ?? "No reason given";
+            }
+        }
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -136,9 +157,51 @@ namespace Cloudsdale.Models {
         public string email;
         [JsonProperty]
         public bool? needs_to_confirm_registration;
+        [JsonProperty] 
+        public bool? needs_password_change;
         [JsonProperty]
         public bool? needs_name_change;
-        [JsonProperty]
-        public Cloud[] clouds;
+
+        private ObservableCollection<Cloud> _cloudCol = new ObservableCollection<Cloud>();
+        private Cloud[] _clouds;
+        [JsonProperty("clouds")]
+        public Cloud[] clouds {
+            get {
+                return _clouds;
+            }
+            set {
+                _clouds = value;
+                if (Deployment.Current.Dispatcher.CheckAccess()) {
+                    PopulateClouds();
+                } else {
+                    Deployment.Current.Dispatcher.BeginInvoke(PopulateClouds);
+                }
+            }
+        }
+        public ObservableCollection<Cloud> Clouds {
+            get { return _cloudCol; }
+        }
+
+        void PopulateClouds() {
+            _cloudCol.Clear();
+            if (_clouds != null)
+                foreach (var cloud in _clouds) {
+                    _cloudCol.Add(cloud);
+                }
+        }
+
+        public void CopyTo(LoggedInUser user) {
+            base.CopyTo(user);
+            if (auth_token != null) 
+                user.auth_token = auth_token;
+            if (email != null) 
+                user.email = email;
+            if (needs_to_confirm_registration != null) 
+                user.needs_to_confirm_registration = needs_to_confirm_registration;
+            if (needs_name_change != null)
+                user.needs_name_change = needs_name_change;
+            if (clouds != null)
+                user.clouds = clouds;
+        }
     }
 }

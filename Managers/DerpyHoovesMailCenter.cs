@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-#if DEBUG
-using System.Diagnostics;
-#endif
 using System.Diagnostics;
 using System.Net;
 using System.Windows;
@@ -121,7 +118,7 @@ namespace Cloudsdale.Managers {
                 }
             }
             if (Connection.Faye.IsSubscribed("/clouds/" + cloud + "/users")) {
-                return Cache[cloud]; 
+                return Cache[cloud];
             }
             Connection.Faye.Subscribe("/clouds/" + cloud + "/users");
             Connection.Faye.Subscribe("/clouds/" + cloud + "/chat/messages");

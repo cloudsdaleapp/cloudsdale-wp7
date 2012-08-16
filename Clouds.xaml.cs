@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Net;
@@ -25,8 +25,9 @@ using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
     public partial class Clouds {
-        public static bool wasoncloud;
+        public static bool Wasoncloud;
         public DerpyHoovesMailCenter Controller { get; set; }
+        public bool Leaving;
 
         public Clouds() {
             if (Connection.CurrentCloud == null) {
@@ -48,7 +49,7 @@ namespace Cloudsdale {
                 });
             }).Start();
 
-            wasoncloud = true;
+            Wasoncloud = true;
         }
 
         public void ScrollDown(object sender, EventArgs args) {
@@ -56,6 +57,15 @@ namespace Cloudsdale {
                 Thread.Sleep(100);
                 Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(double.PositiveInfinity));
             }).Start();
+        }
+
+        protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e) {
+            if (userpopup.IsOpen) {
+                userpopup.IsOpen = false;
+                e.Cancel = true;
+                return;
+            }
+            base.OnBackKeyPress(e);
         }
 
         private void PhoneApplicationPageOrientationChanged(object sender, OrientationChangedEventArgs e) {
@@ -71,14 +81,18 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
+            Leaving = true;
             Controller.Messages.CollectionChanged += ScrollDown;
             ScrollDown(null, null);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e) {
+            if (Leaving && !Connection.IsMemberOfCloud(Connection.CurrentCloud.id)) {
+                DerpyHoovesMailCenter.Unsubscribe(Connection.CurrentCloud.id);
+            }
             Controller.Messages.CollectionChanged -= ScrollDown;
             Controller.MarkAsRead();
-            wasoncloud = false;
+            Wasoncloud = false;
         }
 
         private void SendBoxKeyDown(object sender, KeyEventArgs e) {
@@ -93,16 +107,21 @@ namespace Cloudsdale {
             var drop = button.DataContext as Drop;
             if (drop == null) return;
 
+            Leaving = false;
+
             LastDropClicked = drop;
             NavigationService.Navigate(new Uri("/DropViewer.xaml", UriKind.Relative));
         }
 
         public static Drop LastDropClicked;
 
+// ReSharper disable InconsistentNaming
         private Popup pop;
+// ReSharper restore InconsistentNaming
         private void SendBoxDoubleTap(object sender, GestureEventArgs e) {
             if (pop != null && pop.IsOpen) {
                 pop.IsOpen = false;
+                LayoutRoot.Children.Remove(pop);
                 return;
             }
 
@@ -148,6 +167,7 @@ namespace Cloudsdale {
                     tb.Focus();
                 } else {
                     pop.IsOpen = false;
+                    LayoutRoot.Children.Remove(pop);
                     SendBox.Focus();
                     SendBox.Select(SendBox.Text.Length, 0);
                 }
@@ -177,12 +197,14 @@ namespace Cloudsdale {
         private void SendBoxTap(object sender, GestureEventArgs e) {
             if (pop != null && pop.IsOpen) {
                 pop.IsOpen = false;
+                LayoutRoot.Children.Remove(pop);
             }
         }
 
         private void ChatScrollerTap(object sender, GestureEventArgs e) {
             if (pop != null && pop.IsOpen) {
                 pop.IsOpen = false;
+                LayoutRoot.Children.Remove(pop);
             }
         }
 
@@ -192,7 +214,7 @@ namespace Cloudsdale {
                 return;
             }
             var request = WebRequest.CreateHttp(new Uri(Res.PreviousDropsEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)));
-            var nextpage = ((Controller.DropController.Capacity / 10) + 1).ToString();
+            var nextpage = ((Controller.DropController.Capacity / 10) + 1).ToString(CultureInfo.InvariantCulture);
             request.Headers["X-Result-Page"] = nextpage;
             request.BeginGetResponse(ai => {
                 var response = request.EndGetResponse(ai);
@@ -208,14 +230,14 @@ namespace Cloudsdale {
             }, null);
         }
 
-        private bool searching;
+        private bool _searching;
         private void SearchClick(object sender, RoutedEventArgs e) {
-            if (!searching) {
+            if (!_searching) {
                 if (string.IsNullOrWhiteSpace(SearchBar.Text)) {
                     MessageBox.Show("Please enter a search query");
                     return;
                 }
-                searching = true;
+                _searching = true;
                 MoreDrops.IsEnabled = false;
                 SearchButtonImage.Source = new BitmapImage(new Uri("/Images/Icons/back_white.png", UriKind.Relative));
                 MoreDrops.Content = "Searching...";
@@ -241,7 +263,7 @@ namespace Cloudsdale {
                     });
                 }, null);
             } else {
-                searching = false;
+                _searching = false;
                 MoreDrops.IsEnabled = true;
                 MoreDrops.Content = "Load More";
                 MoreDrops.Visibility = Visibility.Visible;
@@ -258,8 +280,38 @@ namespace Cloudsdale {
         }
 
         private void AddOrRemoveCloudClick(object sender, RoutedEventArgs e) {
-            var ms = Controller.Messages;
-            Debugger.Break();
+        }
+
+        private void UserListClick(object sender, RoutedEventArgs e) {
+            if (!(sender is Button)) return;
+            var button = sender as Button;
+            if (!(button.DataContext is CensusUser)) return;
+            var user = button.DataContext as CensusUser;
+
+            userpopup.DataContext = user;
+            userpopup.IsOpen = true;
+        }
+
+        private void AvatarMouseUp(object sender, MouseButtonEventArgs e) {
+            if (!(sender is Image)) return;
+            var image = sender as Image;
+
+            if (image.Opacity > .9) return;
+            image.Opacity = 1.0;
+
+            if (!(image.DataContext is Message)) return;
+            var message = image.DataContext as Message;
+
+            userpopup.DataContext = message.user;
+            userpopup.IsOpen = true;
+        }
+
+        private void AvatarMouseDown(object sender, MouseButtonEventArgs e) {
+            ((FrameworkElement) sender).Opacity = 0.8;
+        }
+
+        private void AvatarMouseLeave(object sender, MouseEventArgs e) {
+            ((FrameworkElement) sender).Opacity = 1.0;
         }
     }
 }

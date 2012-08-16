@@ -19,30 +19,6 @@
         <GradientStop Color="#FFF0F0F0" Offset="0.21" />
         <GradientStop Color="#FFF0F0F0" Offset="1" />
     </LinearGradientBrush>
-    <DataTemplate x:Key="ChatMessageLineTemplate">
-        <TextBlock DataContext="{Binding}" Text="{Binding Path=Text}" Foreground="{Binding Path=Color}" FontSize="16" 
-                   TextWrapping="Wrap" FontFamily="Verdana"/>
-    </DataTemplate>
-    <DataTemplate x:Key="ChatMessageTemplate">
-        <Grid Margin="0,3,0,5">
-            <Image DataContext="{Binding Path=user.avatar}" Source="{Binding Path=Preview}" Stretch="Fill"
-                   HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Height="50">
-                <Image.Clip>
-                    <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,50,50" />
-                </Image.Clip>
-            </Image>
-            <StackPanel Orientation="Horizontal" Margin="60,0">
-                <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=name}" FontSize="18" Foreground="#FF5F8FCF"/>
-                <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=RoleTag}"
-                           Foreground="{Binding Path=RoleBrush}" FontSize="12" Margin="5,3"/>
-            </StackPanel>
-            <TextBlock DataContext="{Binding}"
-                       Text="{Binding Path=CorrectedTimestamp, StringFormat=t}" HorizontalAlignment="Right" 
-                       VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f"/>
-            <ItemsControl DataContext="{Binding}" ItemsSource="{Binding Path=Split}" Margin="60,20,0,0"
-                          ItemTemplate="{StaticResource ChatMessageLineTemplate}"/>
-        </Grid>
-    </DataTemplate>
     <Style TargetType="ButtonBase" x:Key="XTiltButtonStyle">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="{StaticResource PhoneForegroundBrush}"/>

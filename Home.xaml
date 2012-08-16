@@ -100,6 +100,7 @@
                 <Grid>
                     <ScrollViewer>
                         <StackPanel>
+                            <Button Foreground="Black" BorderBrush="Black" Content="All Users Seen" />
                             <CheckBox x:Name="allowaltcodes" Content="Enable alt code entry" 
                                       Foreground="Black" Checked="AllowaltcodesChecked"
                                       Unchecked="AllowaltcodesUnchecked"/>
