@@ -5,10 +5,15 @@
         <!--<GradientStop Color="#FF1A91DB" Offset="0.0" />-->
         <!--<GradientStop Color="#FFD0D0D0" Offset="0" />
         <GradientStop Color="#FFD0D0D0" Offset="0.06" />-->
-        <GradientStop Color="#FF3AA1FB" Offset="0.06" />
+        <!--<GradientStop Color="#FF3AA1FB" Offset="0.06" />
         <GradientStop Color="#FF1A91DB" Offset="0.10" />
         <GradientStop Color="#FF2A81DB" Offset="0.125" />
         <GradientStop Color="#FFF0F0F0" Offset="0.125" />
+        <GradientStop Color="#FFF0F0F0" Offset="1" />-->
+        <GradientStop Color="#FF3AA1FB" Offset="0.06" />
+        <GradientStop Color="#FF3AA1FB" Offset="0.129" />
+        <GradientStop Color="#FF2A81DB" Offset="0.130" />
+        <GradientStop Color="#FFF0F0F0" Offset="0.130" />
         <GradientStop Color="#FFF0F0F0" Offset="1" />
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="LandscapeBackground" StartPoint="0,0" EndPoint="0,1">
