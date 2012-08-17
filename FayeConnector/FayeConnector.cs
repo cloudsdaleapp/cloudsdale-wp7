@@ -69,11 +69,13 @@ namespace Cloudsdale.FayeConnector {
         private void HandshakeInternal(Action timeout) {
             disconnectOrdered = false;
             // If there's an existing socket connected or in the middle of connecting... CRUSH ITS SOUL!
-            if (Connecting) {
-                socket.Close();
-                socket = null;
-            } else if (Connected) {
-                Disconnect();
+            lock (are) {
+                if (Connecting) {
+                    socket.Close();
+                    socket = null;
+                } else if (Connected) {
+                    Disconnect();
+                }
             }
 
             // Lock! This is my object! MINE I TELL YOU!
@@ -83,8 +85,10 @@ namespace Cloudsdale.FayeConnector {
                 // Open the socket with hacked-on synchronosity
                 socket.Opened += AreSet;
                 socket.Open();
-                if (!are.WaitOne(5000))
+                if (!are.WaitOne(5000)) {
                     timeout();
+                    return;
+                }
                 socket.Opened -= AreSet;
 
                 socket.Closed += (sender, args) => {
@@ -139,7 +143,7 @@ namespace Cloudsdale.FayeConnector {
             are.Set();
         }
 
-        private void DefaultHandshakeCallback() {
+        private static void DefaultHandshakeCallback() {
             if (MessageBox.Show("Can't connect to cloudsdale\r\nRetry?", "", MessageBoxButton.OKCancel) == MessageBoxResult.OK) {
                 Connection.Connect();
             } else {
@@ -275,9 +279,14 @@ namespace Cloudsdale.FayeConnector {
             subbedchans.Clear();
             disconnectOrdered = true;
             if (Closed) return;
-            socket.Send(FayeResources.Disconnect.Replace("%CLIENTID%", clientId));
-            socket.Close();
-            socket = null;
+            try {
+                lock (are) {
+                    socket.Send(FayeResources.Disconnect.Replace("%CLIENTID%", clientId));
+                    socket = null;
+                }
+            } catch (Exception e) {
+                Debug.WriteLine(e);
+            }
         }
 
         /// <summary>
