@@ -27,8 +27,8 @@ namespace Cloudsdale {
                     Connection.CloudsdaleClientId = user.id;
                     Connection.CurrentCloudsdaleUser = user.user;
                     Dispatcher.BeginInvoke(() => {
-                        //NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative));
-                        //Connection.Connect(dispatcher: Dispatcher, pulluserclouds: true);
+                        NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative));
+                        Connection.Connect(dispatcher: Dispatcher, pulluserclouds: true);
                     });
                     return;
                 }
