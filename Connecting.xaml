@@ -17,7 +17,15 @@
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="/SplashScreenImage.jpg" />
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" >
+                <GradientStop Offset=".15" Color="#FF1A91DB" />
+                <GradientStop Offset=".15" Color="#FFF0F0F0" />
+            </LinearGradientBrush>
         </Grid.Background>
+        <Grid VerticalAlignment="Top" Margin="0,20,0,0">
+            <Image Source="/Images/cloudsdale-thin-bright-logo.png" />
+        </Grid>
+
+        <ProgressBar Foreground="CornflowerBlue" IsIndeterminate="True" />
     </Grid>
 </phone:PhoneApplicationPage>
