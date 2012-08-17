@@ -33,24 +33,9 @@
             <controls:PivotItem x:Name="chatTab" Header="Chat">
                 <Grid Margin="0,-26,0,0">
                     <Grid VerticalAlignment="Bottom" Height="100" Margin="-12,0">
-                        <!--<Grid.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <GradientStop Color="#FFF0F0F0" Offset="0.0" />
-                                <GradientStop Color="#FFC7C7C7" Offset="0.4" />
-                                <GradientStop Color="#FFC7C7C7" Offset="1" />
-                            </LinearGradientBrush>
-                        </Grid.Background>-->
                         <TextBox VerticalAlignment="Bottom" x:Name="SendBox" InputScope="Chat"
                                  KeyDown="SendBoxKeyDown" DoubleTap="SendBoxDoubleTap" Tap="SendBoxTap" BorderBrush="#888888"/>
                     </Grid>
-                    <!--<Grid VerticalAlignment="Top" Height="50" Margin="-12,0">
-                        <Grid.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <GradientStop Color="#FFC0C0C0" Offset="0.0" />
-                                <GradientStop Color="#00C0C0C0" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Grid.Background>
-                    </Grid>-->
                     <ScrollViewer x:Name="ChatScroller" 
                                    Margin="0,0,0,64" Tap="ChatScrollerTap">
                         <ItemsControl x:Name="Chats">
@@ -95,19 +80,12 @@
                     <ScrollViewer>
                         <StackPanel>
                             <Grid Margin="0,0,0,-25" Height="100">
-                                <Grid.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                        <GradientStop Color="#FFF0F0F0" Offset="1" />
-                                        <GradientStop Color="#FFA7A7A7" Offset="0.5" />
-                                        <GradientStop Color="#FFA7A7A7" Offset="0" />
-                                    </LinearGradientBrush>
-                                </Grid.Background>
                                 <Grid Height="75" VerticalAlignment="Top" Margin="12,0,12,0">
-                                    <TextBox Margin="0,0,75,0" Name="SearchBar" />
+                                    <TextBox Margin="0,0,75,0" Name="SearchBar" BorderBrush="#888888"/>
                                     <Button HorizontalAlignment="Right" Width="75" Style="{StaticResource XTiltButtonStyle}"
                                         Padding="0" BorderBrush="Transparent" Click="SearchClick">
                                         <Button.Content>
-                                            <Image Name="SearchButtonImage" Source="/Images/Icons/search.png" />
+                                            <Image Name="SearchButtonImage" Source="/Images/Icons/search.png"/>
                                         </Button.Content>
                                     </Button>
                                 </Grid>

@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cloudsdale-WP7", "Cloudsdale-WP7.csproj", "{7173D7CE-B469-4D53-B377-4FFA489F004B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7173D7CE-B469-4D53-B377-4FFA489F004B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7173D7CE-B469-4D53-B377-4FFA489F004B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7173D7CE-B469-4D53-B377-4FFA489F004B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7173D7CE-B469-4D53-B377-4FFA489F004B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7173D7CE-B469-4D53-B377-4FFA489F004B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7173D7CE-B469-4D53-B377-4FFA489F004B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
