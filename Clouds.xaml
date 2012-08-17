@@ -25,14 +25,14 @@
     </phone:PhoneApplicationPage.Resources>
 
     <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackground}" Margin="0,0,0,0">
-        <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot">
+        <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot" Margin="0,10,0,0">
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" FontFamily="Segoe WP Bold" FontSize="48"/>
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem x:Name="chatTab" Header="Chat">
-                <Grid Margin="0,-30,0,0">
+                <Grid Margin="0,-26,0,0">
                     <Grid VerticalAlignment="Bottom" Height="100" Margin="-12,0">
                         <Grid.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -92,7 +92,7 @@
                 </Grid>
             </controls:PivotItem>
             <controls:PivotItem x:Name="mediaTab" Header="Drops">
-                <Grid Margin="-12,-30,-12,0">
+                <Grid Margin="-12,-26,-12,0">
                     <ScrollViewer>
                         <StackPanel>
                             <Grid Margin="0,0,0,-25" Height="100">
@@ -139,7 +139,7 @@
                 </Grid>
             </controls:PivotItem>
             <controls:PivotItem x:Name="peopleTab" Header="Ponies">
-                <Grid Margin="0,-30,0,0">
+                <Grid Margin="0,-26,0,0">
                     <ScrollViewer>
                         <ItemsControl x:Name="Ponies">
                             <ItemsControl.ItemTemplate>
