@@ -40,7 +40,7 @@ namespace Cloudsdale {
             cloudPivot.Title = Connection.CurrentCloud.name;
 
             new Thread(() => {
-                Thread.Sleep(50);
+                Thread.Sleep(75);
                 Dispatcher.BeginInvoke(() => {
                     Chats.ItemsSource = Controller.Messages;
                     MediaList.ItemsSource = Controller.Drops;
@@ -115,9 +115,9 @@ namespace Cloudsdale {
 
         public static Drop LastDropClicked;
 
-// ReSharper disable InconsistentNaming
+        // ReSharper disable InconsistentNaming
         private Popup pop;
-// ReSharper restore InconsistentNaming
+        // ReSharper restore InconsistentNaming
         private void SendBoxDoubleTap(object sender, GestureEventArgs e) {
             if (pop != null && pop.IsOpen) {
                 pop.IsOpen = false;
@@ -246,7 +246,6 @@ namespace Cloudsdale {
                 var request = WebRequest.CreateHttp(
                     new Uri(Res.DropsSearchEndpoint.Replace("{cloudid}", Connection.CurrentCloud.id)
                                                    .Replace("{query}", Uri.EscapeDataString(SearchBar.Text.Trim()))));
-                SearchBar.Text = "";
                 request.BeginGetResponse(ai => {
                     var response = request.EndGetResponse(ai);
                     string resultString;
@@ -264,6 +263,7 @@ namespace Cloudsdale {
                 }, null);
             } else {
                 _searching = false;
+                SearchBar.Text = "";
                 MoreDrops.IsEnabled = true;
                 MoreDrops.Content = "Load More";
                 MoreDrops.Visibility = Visibility.Visible;
@@ -280,6 +280,13 @@ namespace Cloudsdale {
         }
 
         private void AddOrRemoveCloudClick(object sender, RoutedEventArgs e) {
+            if (Connection.CurrentCloudsdaleUser.Clouds.Contains(Connection.CurrentCloud)) {
+                Connection.CurrentCloudsdaleUser.Clouds.Remove(Connection.CurrentCloud);
+                NavigationService.GoBack();
+            } else {
+                Connection.JoinCloud(Connection.CurrentCloud.id);
+                Connection.CurrentCloudsdaleUser.Clouds.Add(Connection.CurrentCloud);
+            }
         }
 
         private void UserListClick(object sender, RoutedEventArgs e) {
@@ -307,11 +314,11 @@ namespace Cloudsdale {
         }
 
         private void AvatarMouseDown(object sender, MouseButtonEventArgs e) {
-            ((FrameworkElement) sender).Opacity = 0.8;
+            ((FrameworkElement)sender).Opacity = 0.8;
         }
 
         private void AvatarMouseLeave(object sender, MouseEventArgs e) {
-            ((FrameworkElement) sender).Opacity = 1.0;
+            ((FrameworkElement)sender).Opacity = 1.0;
         }
     }
 }

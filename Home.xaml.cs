@@ -15,15 +15,17 @@ using Res = Cloudsdale.Resources;
 namespace Cloudsdale {
     public partial class Home {
         public static bool comingfromhome = false;
+        public static bool comingfromlogin = true;
 
         public Home() {
             comingfromhome = true;
 
             InitializeComponent();
 
+            pivotView.Items.RemoveAt(2);
+
             UserInfoPane.DataContext = CurrentUser;
 
-            MemberSinceBlock.Text = MemberSinceMessage;
             if (Connection.CurrentCloudsdaleUser.clouds != null)
                 foreach (var cloud in Connection.CurrentCloudsdaleUser.clouds) {
                     AddCloud(cloud);
@@ -46,12 +48,17 @@ namespace Cloudsdale {
                 IsolatedStorageSettings.ApplicationSettings.Contains("ux.recursivealtcodeentry");
         }
 
-        public LoggedInUser CurrentUser {
-            get { return Connection.CurrentCloudsdaleUser; }
+        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
+            if (comingfromlogin) {
+                comingfromlogin = false;
+                while (NavigationService.CanGoBack) {
+                    NavigationService.RemoveBackEntry();
+                }
+            }
         }
 
-        public static string MemberSinceMessage {
-            get { return "You have been a member since " + (Connection.CurrentCloudsdaleUser.member_since ?? new DateTime()).ToShortDateString(); }
+        public LoggedInUser CurrentUser {
+            get { return Connection.CurrentCloudsdaleUser; }
         }
 
         public void AddCloud(Cloud cloud) {
@@ -93,10 +100,10 @@ namespace Cloudsdale {
                 grid.Projection = baseproj;
                 var points = args.StylusDevice.GetStylusPoints(LayoutRoot);
                 if (points.Count > 0 && buttondownpoints.Count > 0) {
-                    if (points[0].X < buttondownpoints[0].X - 25 ||
-                        points[0].X > buttondownpoints[0].X + 25 ||
-                        points[0].Y < buttondownpoints[0].Y - 25 ||
-                        points[0].Y > buttondownpoints[0].Y + 25)
+                    if (points[0].X < buttondownpoints[0].X - 40 ||
+                        points[0].X > buttondownpoints[0].X + 40 ||
+                        points[0].Y < buttondownpoints[0].Y - 40 ||
+                        points[0].Y > buttondownpoints[0].Y + 40)
                         return;
                 }
                 Connection.CurrentCloud = cloud;
@@ -142,10 +149,10 @@ namespace Cloudsdale {
                 grid.Projection = baseproj;
                 var points = args.StylusDevice.GetStylusPoints(LayoutRoot);
                 if (points.Count > 0 && buttondownpoints.Count > 0) {
-                    if (points[0].X < buttondownpoints[0].X - 25 ||
-                        points[0].X > buttondownpoints[0].X + 25 ||
-                        points[0].Y < buttondownpoints[0].Y - 25 ||
-                        points[0].Y > buttondownpoints[0].Y + 25)
+                    if (points[0].X < buttondownpoints[0].X - 40 ||
+                        points[0].X > buttondownpoints[0].X + 40 ||
+                        points[0].Y < buttondownpoints[0].Y - 40 ||
+                        points[0].Y > buttondownpoints[0].Y + 40)
                         return;
                 }
 

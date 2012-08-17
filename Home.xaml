@@ -12,7 +12,8 @@
     FontSize="28"
     Foreground="Black"
     SupportedOrientations="Portrait"  Orientation="Portrait"
-    shell:SystemTray.IsVisible="True">
+    shell:SystemTray.IsVisible="True"
+    shell:SystemTray.Opacity="0.01">
 
     <phone:PhoneApplicationPage.Resources>
         <ResourceDictionary>
@@ -22,37 +23,40 @@
         </ResourceDictionary>
     </phone:PhoneApplicationPage.Resources>
 
-    <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackground}">
-        <controls:Pivot Title="Cloudsdale">
+    <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackground}" Margin="0,0,0,0">
+        <controls:Pivot Title="Cloudsdale" Name="pivotView">
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" FontFamily="Segoe WP Bold" FontSize="48"/>
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem Header="Home" Foreground="#FF2A81DB">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" x:Name="UserInfoPane">
+                <StackPanel x:Name="UserInfoPane">
+                    <StackPanel Orientation="Horizontal">
                         <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100" 
                                HorizontalAlignment="Left" VerticalAlignment="Top">
                             <Image.Clip>
                                 <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,100,100" />
                             </Image.Clip>
                         </Image>
-                        <Button Content="Logout" Foreground="#FF202020" BorderBrush="#FF202020" 
+                        <StackPanel>
+                            <TextBlock Margin="10,0,0,0" Foreground="#FF202020"><Run Text="{Binding Path=name}" /></TextBlock>
+                            <Button Content="Logout" Foreground="#FF202020" BorderBrush="#FF202020" Margin="0"
                                 HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Click="LogoutClick" />
+                        </StackPanel>
                     </StackPanel>
                     <TextBlock TextWrapping="Wrap" FontSize="34" 
                                Text="Welcome back to cloudsdale!" 
                                Margin="0,0,0,20" />
-                    <TextBlock TextWrapping="Wrap" FontSize="18" 
-                               Text="You have been a member since 00/00/0001" 
-                               x:Name="MemberSinceBlock" />
+                    <TextBlock TextWrapping="Wrap" FontSize="18">
+                        You have been a member since <Run Text="{Binding Path=member_since, StringFormat=dd/MM/yy}" />
+                    </TextBlock>
                 </StackPanel>
             </controls:PivotItem>
             <controls:PivotItem Header="Clouds">
-                <Grid>
-                    <ScrollViewer Margin="0,0,0,50">
-                        <ItemsControl x:Name="CloudList" />
+                <Grid Margin="-12,-30,-12,0">
+                    <ScrollViewer Margin="12,0,12,50">
+                        <ItemsControl x:Name="CloudList" Margin="0,15,0,0" />
                     </ScrollViewer>
                     <Button VerticalAlignment="Bottom" BorderBrush="Transparent" Margin="0,0,0,2" 
                             Height="50" Padding="-25" Width="50"
@@ -61,7 +65,7 @@
                     </Button>
                 </Grid>
             </controls:PivotItem>
-            <controls:PivotItem Header="Explore" Foreground="Black">
+            <controls:PivotItem Header="Explore" Foreground="Black" Visibility="Collapsed" IsEnabled="False">
                 <Grid>
                     <Grid Margin="-12,-30" Height="110" VerticalAlignment="Top">
                         <Grid.Background>
@@ -100,7 +104,8 @@
                 <Grid>
                     <ScrollViewer>
                         <StackPanel>
-                            <Button Foreground="Black" BorderBrush="Black" Content="All Users Seen" />
+                            <Button Foreground="Black" BorderBrush="Black" Content="All Users Seen"
+                                    Visibility="Collapsed"/>
                             <CheckBox x:Name="allowaltcodes" Content="Enable alt code entry" 
                                       Foreground="Black" Checked="AllowaltcodesChecked"
                                       Unchecked="AllowaltcodesUnchecked"/>

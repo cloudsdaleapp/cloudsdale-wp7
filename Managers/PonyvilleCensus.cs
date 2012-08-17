@@ -101,9 +101,10 @@ namespace Cloudsdale.Managers {
             this.id = id;
             avatar = new CensusAvatar();
             name = "(Identifying)";
-            if (id == Connection.CurrentCloudsdaleUser.id) {
-                Connection.CurrentCloudsdaleUser.CopyTo(this);
-            }
+            if (Connection.CurrentCloudsdaleUser != null)
+                if (id == Connection.CurrentCloudsdaleUser.id) {
+                    Connection.CurrentCloudsdaleUser.CopyTo(this);
+                }
             new Thread(() => {
                 var wc = new WebClient();
                 wc.DownloadStringCompleted += (sender, args) => {

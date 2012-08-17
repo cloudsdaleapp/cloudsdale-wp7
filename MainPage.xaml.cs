@@ -23,13 +23,15 @@ namespace Cloudsdale {
 
             if (settings.Contains("lastuser")) {
                 var user = (SavedUser) settings["lastuser"];
-                Connection.CloudsdaleClientId = user.id;
-                Connection.CurrentCloudsdaleUser = user.user;
-                Dispatcher.BeginInvoke(() => {
-                    NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative));
-                    Connection.Connect(dispatcher: Dispatcher, pulluserclouds: true);
-                });
-                return;
+                if (user.user != null) {
+                    Connection.CloudsdaleClientId = user.id;
+                    Connection.CurrentCloudsdaleUser = user.user;
+                    Dispatcher.BeginInvoke(() => {
+                        NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative));
+                        Connection.Connect(dispatcher: Dispatcher, pulluserclouds: true);
+                    });
+                    return;
+                }
             }
             if (settings.Contains("email")) {
                 UserBox.Text = (string) settings["email"];

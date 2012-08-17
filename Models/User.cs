@@ -65,8 +65,9 @@ namespace Cloudsdale.Models {
     public class User : SimpleUser {
         [JsonProperty]
         public string time_zone;
+
         [JsonProperty]
-        public DateTime? member_since;
+        public DateTime? member_since { get; set; }
         [JsonProperty]
         public DateTime? suspended_until;
         [JsonProperty]
@@ -156,12 +157,12 @@ namespace Cloudsdale.Models {
         public string email;
         [JsonProperty]
         public bool? needs_to_confirm_registration;
-        [JsonProperty] 
+        [JsonProperty]
         public bool? needs_password_change;
         [JsonProperty]
         public bool? needs_name_change;
 
-        private ObservableCollection<Cloud> _cloudCol = new ObservableCollection<Cloud>();
+        private readonly ObservableCollection<Cloud> _cloudCol = new ObservableCollection<Cloud>();
         private Cloud[] _clouds;
         [JsonProperty("clouds")]
         public Cloud[] clouds {

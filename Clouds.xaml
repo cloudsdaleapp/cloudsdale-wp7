@@ -13,7 +13,8 @@
     FontSize="28"
     Foreground="Black"
     SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
-    shell:SystemTray.IsVisible="True" OrientationChanged="PhoneApplicationPageOrientationChanged">
+    shell:SystemTray.IsVisible="True" OrientationChanged="PhoneApplicationPageOrientationChanged"
+    shell:SystemTray.Opacity="0.01">
 
     <phone:PhoneApplicationPage.Resources>
         <ResourceDictionary>
@@ -23,7 +24,7 @@
         </ResourceDictionary>
     </phone:PhoneApplicationPage.Resources>
 
-    <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackground}">
+    <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackground}" Margin="0,0,0,0">
         <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot">
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
@@ -72,7 +73,7 @@
                                                        Foreground="{Binding Path=RoleBrush}" FontSize="12" Margin="5,3"/>
                                         </StackPanel>
                                         <TextBlock DataContext="{Binding}"
-                                                   Text="{Binding Path=CorrectedTimestamp, StringFormat=t}" HorizontalAlignment="Right" 
+                                                   Text="{Binding Path=CorrectedTimestamp, StringFormat=HH:mm:ss}" HorizontalAlignment="Right" 
                                                    VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f"/>
                                         <ItemsControl DataContext="{Binding}" ItemsSource="{Binding Path=Split}" Margin="60,20,0,0">
                                             <ItemsControl.ItemTemplate>
@@ -138,7 +139,7 @@
                 </Grid>
             </controls:PivotItem>
             <controls:PivotItem x:Name="peopleTab" Header="Ponies">
-                <Grid Margin="0,-12,0,0">
+                <Grid Margin="0,-30,0,0">
                     <ScrollViewer>
                         <ItemsControl x:Name="Ponies">
                             <ItemsControl.ItemTemplate>
@@ -169,9 +170,10 @@
             </controls:PivotItem>
         </controls:Pivot>
         <Button  HorizontalAlignment="Right" VerticalAlignment="Top" 
-                 Padding="-10" BorderBrush="Transparent" Margin="0"
+                 Padding="-10" BorderBrush="Transparent" Margin="0,16,0,0"
                  Style="{StaticResource XTiltButtonStyle}"
-                 Click="AddOrRemoveCloudClick">
+                 Click="AddOrRemoveCloudClick" Visibility="Collapsed"
+                 IsEnabled="False">
             <Button.Content>
                 <Image Source="/Images/Icons/add.png" Width="40" />
             </Button.Content>
