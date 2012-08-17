@@ -17,13 +17,7 @@
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid>
         <Grid.Background>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                <GradientStop Color="#FF3AA1FB" Offset="0.0" />
-                <GradientStop Color="#FF1A91DB" Offset="0.15" />
-                <GradientStop Color="#FFF1F1F1" Offset="0.4" />
-                <GradientStop Color="#FFC9C9C9" Offset="1.0" />
-            </LinearGradientBrush>
+            <ImageBrush ImageSource="/SplashScreenImage.jpg" />
         </Grid.Background>
-        <Image VerticalAlignment="Top" Margin="0,20" Source="/Images/cloudsdale-thin-bright-logo.png" />
     </Grid>
 </phone:PhoneApplicationPage>
