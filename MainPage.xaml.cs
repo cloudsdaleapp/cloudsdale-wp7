@@ -41,6 +41,7 @@ namespace Cloudsdale {
 
         private void LoginClick(object sender, RoutedEventArgs e) {
             reconstruction = true;
+            Home.comingfromhome = false;
             fbbtn.IsEnabled = false;
             emailbtn.IsEnabled = false;
             EmailLogin();
@@ -51,11 +52,13 @@ namespace Cloudsdale {
 
         private void FacebookClick(object sender, RoutedEventArgs e) {
             reconstruction = true;
+            Home.comingfromhome = false;
             FacebookLogin();
         }
 
         private void TwitterClick(object sender, RoutedEventArgs e) {
             reconstruction = true;
+            Home.comingfromhome = false;
             TwitterLogin();
         }
 

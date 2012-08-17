@@ -26,6 +26,6 @@
             <Image Source="/Images/cloudsdale-thin-bright-logo.png" />
         </Grid>
 
-        <ProgressBar Foreground="CornflowerBlue" IsIndeterminate="True" />
+        <!--<ProgressBar Foreground="CornflowerBlue" IsIndeterminate="True" />-->
     </Grid>
 </phone:PhoneApplicationPage>
