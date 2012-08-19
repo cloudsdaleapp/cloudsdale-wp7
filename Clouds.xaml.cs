@@ -59,22 +59,35 @@ namespace Cloudsdale {
             }).Start();
         }
 
+        private bool inanim;
         protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e) {
+            if (inanim) return;
             if (userpopup.IsOpen) {
                 userpopup.IsOpen = false;
                 e.Cancel = true;
                 return;
+            }
+            if (CloudInfoPopup.IsOpen) {
+                e.Cancel = true;
+                CloudInfoDown.Stop();
+                inanim = true;
+                CloudInfoUp.Begin();
+                new Thread(() => {
+                    Thread.Sleep(1000);
+                    inanim = false;
+                    Dispatcher.BeginInvoke(() => CloudInfoPopup.IsOpen = false);
+                }).Start();
             }
             base.OnBackKeyPress(e);
         }
 
         private void PhoneApplicationPageOrientationChanged(object sender, OrientationChangedEventArgs e) {
             if (e.Orientation == PageOrientation.PortraitUp) {
-                cloudPivot.Background = (Brush)Resources["PortraitBackground"];
+                LayoutRoot.Background = (Brush)Resources["PortraitBackground"];
                 SystemTray.IsVisible = true;
                 ScrollDown(null, null);
             } else {
-                cloudPivot.Background = (Brush)Resources["LandscapeBackground"];
+                LayoutRoot.Background = (Brush)Resources["LandscapeBackground"];
                 SystemTray.IsVisible = false;
                 ScrollDown(null, null);
             }
@@ -319,6 +332,12 @@ namespace Cloudsdale {
 
         private void AvatarMouseLeave(object sender, MouseEventArgs e) {
             ((FrameworkElement)sender).Opacity = 1.0;
+        }
+
+        private void CloudInfoClick(object sender, RoutedEventArgs e) {
+            CloudInfoPopup.DataContext = Connection.CurrentCloud;
+            CloudInfoPopup.IsOpen = true;
+            CloudInfoDown.Begin();
         }
     }
 }

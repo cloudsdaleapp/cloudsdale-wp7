@@ -144,7 +144,6 @@ namespace Cloudsdale {
         public static void SaveUser() {
             var settings = IsolatedStorageSettings.ApplicationSettings;
             settings["lastuser"] = new SavedUser { id = CloudsdaleClientId, user = CurrentCloudsdaleUser };
-            settings.Save();
         }
 
         public static bool IsMemberOfCloud(string cloud) {

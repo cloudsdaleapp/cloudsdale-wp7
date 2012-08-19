@@ -42,10 +42,10 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Margin="0,3,0,5" DataContext="{Binding}">
-                                        <Image DataContext="{Binding}" Source="{Binding Path=user.avatar.Preview}" Stretch="Fill"
+                                        <Image DataContext="{Binding}" Source="{Binding Path=user.avatar.Preview}"
                                                HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Height="50"
                                                MouseLeftButtonUp="AvatarMouseUp" MouseLeftButtonDown="AvatarMouseDown"
-                                               MouseLeave="AvatarMouseLeave">
+                                               MouseLeave="AvatarMouseLeave" Stretch="Fill">
                                             <Image.Clip>
                                                 <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,50,50" />
                                             </Image.Clip>
@@ -57,9 +57,11 @@
                                                        Foreground="{Binding Path=RoleBrush}" FontSize="12" Margin="5,3"/>
                                         </StackPanel>
                                         <TextBlock DataContext="{Binding}"
-                                                   Text="{Binding Path=CorrectedTimestamp, StringFormat=HH:mm:ss}" HorizontalAlignment="Right" 
+                                                   Text="{Binding Path=CorrectedTimestamp, StringFormat=HH:mm:ss}" 
+                                                   HorizontalAlignment="Right" 
                                                    VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f"/>
-                                        <ItemsControl DataContext="{Binding}" ItemsSource="{Binding Path=Split}" Margin="60,20,0,0">
+                                        <ItemsControl DataContext="{Binding}" ItemsSource="{Binding Path=Split}" 
+                                                      Margin="60,20,0,0">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <TextBlock DataContext="{Binding}" Text="{Binding Path=Text}" 
@@ -149,8 +151,15 @@
         <Button  HorizontalAlignment="Right" VerticalAlignment="Top" 
                  Padding="-10" BorderBrush="Transparent" Margin="0,16,0,0"
                  Style="{StaticResource XTiltButtonStyle}"
-                 Click="AddOrRemoveCloudClick" Visibility="Collapsed"
-                 IsEnabled="False">
+                 Click="CloudInfoClick">
+            <Button.Content>
+                <Image Source="/Images/Icons/iwhite.png" Width="40" />
+            </Button.Content>
+        </Button>
+        <Button  HorizontalAlignment="Right" VerticalAlignment="Top" 
+                 Padding="-10" BorderBrush="Transparent" Margin="0,16,50,0"
+                 Style="{StaticResource XTiltButtonStyle}"
+                 Click="AddOrRemoveCloudClick" IsEnabled="False">
             <Button.Content>
                 <Image Source="/Images/Icons/add.png" Width="40" />
             </Button.Content>
@@ -158,19 +167,8 @@
         <Popup Name="userpopup" HorizontalAlignment="Center" VerticalAlignment="Center" Width="800" Height="800">
             <Border Background="#A0000000">
                 <Grid Width="800" Height="800">
-                    <Border BorderThickness="5" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <GradientStop Offset="0" Color="#FFF0F0F0" />
-                                <GradientStop Offset="1" Color="#FFD9D9D0" />
-                            </LinearGradientBrush>
-                        </Border.Background>
-                        <Border.BorderBrush>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <GradientStop Offset="0" Color="#FFE0E0E0" />
-                                <GradientStop Offset="1" Color="#FFC9C9C0" />
-                            </LinearGradientBrush>
-                        </Border.BorderBrush>
+                    <Border BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                            Background="#E0E0E0" BorderBrush="#888888">
                         <Grid Height="450" Width="450" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <ScrollViewer Margin="10">
                                 <StackPanel>
@@ -201,6 +199,80 @@
                 </Grid>
             </Border>
         </Popup>
+        <Canvas Height="800" Width="800" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Popup Name="CloudInfoPopup" Margin="160" Canvas.Top="-800">
+                <Popup.Resources>
+                    <Storyboard x:Name="CloudInfoDown">
+                        <DoubleAnimation Storyboard.TargetName="CloudInfoPopup" 
+                                     Storyboard.TargetProperty="(Canvas.Top)"
+                                     From="-800" To="0" RepeatBehavior="1x"
+                                     Duration="0:0:.5"/>
+                    </Storyboard>
+                    <Storyboard x:Name="CloudInfoUp">
+                        <DoubleAnimation Storyboard.TargetName="CloudInfoPopup" 
+                                     Storyboard.TargetProperty="(Canvas.Top)"
+                                     From="0" To="-800" RepeatBehavior="1x"
+                                     Duration="0:0:.5"/>
+                    </Storyboard>
+                </Popup.Resources>
+                <Grid Width="480" Height="480">
+                    <Border BorderThickness="2" Width="450" Height="450" Background="#E0E0E0" BorderBrush="#888888">
+                        <ScrollViewer>
+                            <Grid>
+                                <StackPanel Margin="5">
+                                    <StackPanel Orientation="Horizontal" MaxWidth="440">
+                                        <Image Source="{Binding Path=avatar.Normal}">
+                                            <Image.Clip>
+                                                <RectangleGeometry Rect="0,0,100,100" RadiusX="20" RadiusY="20" />
+                                            </Image.Clip>
+                                        </Image>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Path=name}" Foreground="Black"
+                                               FontSize="30" TextWrapping="Wrap" Margin="10,5"
+                                               MaxWidth="300"/>
+                                            <Border CornerRadius="10" Background="#D0D0D0" Margin="5,0">
+                                                <TextBlock Width="290" Text="{Binding Path=description}" Margin="5"
+                                                   TextWrapping="Wrap" FontSize="16"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBlock FontSize="20" Visibility="{Binding Path=ShowRules}">Rules</TextBlock>
+                                    <Border CornerRadius="10" Background="#D0D0D0" Margin="5,0"
+                                            Visibility="{Binding Path=ShowRules}">
+                                        <TextBlock Width="420" Text="{Binding Path=rules}" Margin="5"
+                                                   TextWrapping="Wrap" FontSize="16"/>
+                                    </Border>
+                                    <TextBlock FontSize="20">Owner</TextBlock>
+                                    <StackPanel Orientation="Horizontal" Margin="5,0">
+                                        <Image Source="{Binding Path=FullOwner.avatar.Normal}" Width="50">
+                                            <Image.Clip>
+                                                <RectangleGeometry Rect="0,0,50,50" RadiusX="10" RadiusY="10" />
+                                            </Image.Clip>
+                                        </Image>
+                                        <TextBlock Text="{Binding Path=FullOwner.name}" VerticalAlignment="Center" Margin="5" />
+                                    </StackPanel>
+                                    <TextBlock FontSize="20" Visibility="{Binding Path=ShowMods}">Moderators</TextBlock>
+                                    <ItemsControl ItemsSource="{Binding Path=FullMods}" Visibility="{Binding Path=ShowMods}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Margin="5,5">
+                                                    <Image Source="{Binding Path=avatar.Normal}" Width="50">
+                                                        <Image.Clip>
+                                                            <RectangleGeometry Rect="0,0,50,50" RadiusX="10" RadiusY="10" />
+                                                        </Image.Clip>
+                                                    </Image>
+                                                    <TextBlock Text="{Binding Path=name}" VerticalAlignment="Center" Margin="5" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Grid>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </Popup>
+        </Canvas>
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>

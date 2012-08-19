@@ -7,8 +7,8 @@
         <GradientStop Color="#FFF0F0F0" Offset="1" />
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="LandscapeBackground" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#FF1A91DB" Offset="0.22" />
-        <GradientStop Color="#FFF0F0F0" Offset="0.22" />
+        <GradientStop Color="#FF1A91DB" Offset="0.2365" />
+        <GradientStop Color="#FFF0F0F0" Offset="0.2365" />
         <GradientStop Color="#FFF0F0F0" Offset="1" />
     </LinearGradientBrush>
     <Style TargetType="ButtonBase" x:Key="XTiltButtonStyle">

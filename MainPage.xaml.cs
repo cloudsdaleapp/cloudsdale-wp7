@@ -154,8 +154,11 @@ namespace Cloudsdale {
         }
     }
 
+    [JsonObject]
     public class SavedUser {
+        [JsonProperty]
         public LoggedInUser user;
+        [JsonProperty]
         public string id;
     }
 

@@ -59,9 +59,10 @@ namespace Cloudsdale.Models {
                     for (var i = 0; i < split.Length; ++i) {
                         if (string.IsNullOrWhiteSpace(split[i])) split[i] = " ";
                         lines[i] = new ChatLine {
-                            Text = split[i],
+                            Text = split[i].StartsWith("/me ") ? '*' + split[i].Substring(4).Trim() + '*' : split[i].Trim(),
                             Color = new SolidColorBrush(split[i].StartsWith(">") ?
-                                Color.FromArgb(0xFF, 0x32, 0x82, 0x32) : Colors.Black)
+                                Color.FromArgb(0xFF, 0x32, 0x82, 0x32) : 
+                                split[i].StartsWith("/me ") ? Colors.Purple : Colors.Black)
                         };
                     }
                     return lines;

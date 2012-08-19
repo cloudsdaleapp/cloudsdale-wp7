@@ -2,6 +2,7 @@
 #if DEBUG
 using System.Diagnostics;
 #endif
+using System.Reflection;
 using System.Windows;
 using System.Windows.Navigation;
 using BugSense;
@@ -48,9 +49,8 @@ namespace Cloudsdale {
             // Caution:- Use this under debug mode only. Application that disables user idle detection will continue to run
             // and consume battery power when the user is not using the phone.
             PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
+
 #endif
-
-
 
         }
 
