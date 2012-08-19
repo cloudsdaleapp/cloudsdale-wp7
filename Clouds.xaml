@@ -211,12 +211,20 @@
                                      Storyboard.TargetProperty="(Canvas.Top)"
                                      From="-800" To="0" RepeatBehavior="1x"
                                      Duration="0:0:.5"/>
+                        <DoubleAnimation Storyboard.TargetName="cloudinfoback"
+                                         Storyboard.TargetProperty="Opacity"
+                                         From="0" To="0.8" RepeatBehavior="1x"
+                                         Duration="0:0:.5"/>
                     </Storyboard>
                     <Storyboard x:Name="CloudInfoUp">
                         <DoubleAnimation Storyboard.TargetName="CloudInfoPopup" 
                                      Storyboard.TargetProperty="(Canvas.Top)"
                                      From="0" To="-800" RepeatBehavior="1x"
                                      Duration="0:0:.5"/>
+                        <DoubleAnimation Storyboard.TargetName="cloudinfoback"
+                                         Storyboard.TargetProperty="Opacity"
+                                         From="0.8" To="0" RepeatBehavior="1x"
+                                         Duration="0:0:.5"/>
                     </Storyboard>
                 </Popup.Resources>
                 <Grid Width="480" Height="480">
@@ -286,6 +294,7 @@
                     </Border>
                 </Grid>
             </Popup>
+            <Grid Width="800" Height="800" Name="cloudinfoback" Visibility="Collapsed" Background="Black" />
         </Canvas>
     </Grid>
 

@@ -75,7 +75,10 @@ namespace Cloudsdale {
                 new Thread(() => {
                     Thread.Sleep(1000);
                     inanim = false;
-                    Dispatcher.BeginInvoke(() => CloudInfoPopup.IsOpen = false);
+                    Dispatcher.BeginInvoke(() => {
+                        CloudInfoPopup.IsOpen = false;
+                        cloudinfoback.Visibility = Visibility.Collapsed;
+                    });
                 }).Start();
             }
             base.OnBackKeyPress(e);
@@ -337,6 +340,7 @@ namespace Cloudsdale {
         private void CloudInfoClick(object sender, RoutedEventArgs e) {
             CloudInfoPopup.DataContext = Connection.CurrentCloud;
             CloudInfoPopup.IsOpen = true;
+            cloudinfoback.Visibility = Visibility.Visible;
             CloudInfoDown.Begin();
         }
 

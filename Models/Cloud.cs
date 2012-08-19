@@ -85,7 +85,7 @@ namespace Cloudsdale.Models {
         }
 
         [JsonProperty("moderator_ids")]
-        public string[] Moderators;
+        public string[] Moderators = new string[0];
 
         public bool IsOwner {
             get { return Owner == Connection.CurrentCloudsdaleUser.id; }

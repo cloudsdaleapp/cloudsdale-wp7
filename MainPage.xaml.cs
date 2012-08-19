@@ -22,19 +22,24 @@ namespace Cloudsdale {
             var settings = IsolatedStorageSettings.ApplicationSettings;
 
             if (settings.Contains("lastuser")) {
-                var user = JsonConvert.DeserializeObject<SavedUser>((string)settings["lastuser"]);
-                if (user.user != null) {
-                    Connection.CloudsdaleClientId = user.id;
-                    Connection.CurrentCloudsdaleUser = user.user;
-                    Dispatcher.BeginInvoke(() => {
-                        NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative));
-                        Connection.Connect(dispatcher: Dispatcher, pulluserclouds: true);
-                    });
-                    return;
+                try {
+                    var user = JsonConvert.DeserializeObject<SavedUser>((string)settings["lastuser"]);
+                    if (user.user != null) {
+                        Connection.CloudsdaleClientId = user.id;
+                        Connection.CurrentCloudsdaleUser = user.user;
+                        Dispatcher.BeginInvoke(() => {
+                            NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative));
+                            Connection.Connect(dispatcher: Dispatcher, pulluserclouds: true);
+                        });
+                        return;
+                    }
+                } catch (Exception e) {
+                    Debug.WriteLine(e);
+                    settings.Remove("lastuser");
                 }
             }
             if (settings.Contains("email")) {
-                UserBox.Text = (string) settings["email"];
+                UserBox.Text = (string)settings["email"];
             }
             ContentPanel.Visibility = Visibility.Visible;
         }
