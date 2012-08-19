@@ -4,15 +4,15 @@ using Newtonsoft.Json;
 namespace Cloudsdale.Models {
     [JsonObject(MemberSerialization.OptIn)]
     public class Avatar {
-        [JsonProperty]
+        [JsonProperty("normal")]
         public virtual Uri Normal { get; set; }
-        [JsonProperty]
+        [JsonProperty("mini")]
         public virtual Uri Mini { get; set; }
-        [JsonProperty]
+        [JsonProperty("thumb")]
         public virtual Uri Thumb { get; set; }
-        [JsonProperty]
+        [JsonProperty("preview")]
         public virtual Uri Preview { get; set; }
-        [JsonProperty]
+        [JsonProperty("chat")]
         public virtual Uri Chat { get; set; }
     }
 }

@@ -42,15 +42,19 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Margin="0,3,0,5" DataContext="{Binding}">
-                                        <Image DataContext="{Binding}" Source="{Binding Path=user.avatar.Preview}"
-                                               HorizontalAlignment="Left" VerticalAlignment="Top" Width="50" Height="50"
+                                        <Border BorderBrush="{Binding Path=user.CloudColor}" Width="50" Height="50"
+                                                HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="5"
+                                                BorderThickness="1">
+                                            <Image DataContext="{Binding}" Source="{Binding Path=user.avatar.Normal}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48"
                                                MouseLeftButtonUp="AvatarMouseUp" MouseLeftButtonDown="AvatarMouseDown"
-                                               MouseLeave="AvatarMouseLeave" Stretch="Fill">
-                                            <Image.Clip>
-                                                <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,50,50" />
-                                            </Image.Clip>
-                                        </Image>
-                                        <StackPanel Orientation="Horizontal" Margin="60,0">
+                                               MouseLeave="AvatarMouseLeave" Stretch="UniformToFill">
+                                                <Image.Clip>
+                                                    <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,48,48" />
+                                                </Image.Clip>
+                                            </Image>
+                                        </Border>
+                                        <StackPanel Orientation="Horizontal" Margin="60,0,0,0">
                                             <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=name}" 
                                                        FontSize="18" Foreground="#FF5F8FCF"/>
                                             <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=RoleTag}"
@@ -128,7 +132,7 @@
                                             Click="UserListClick" Margin="0"
                                             HorizontalAlignment="Left">
                                         <Grid Height="50" Margin="0,0,0,10" HorizontalAlignment="Left">
-                                            <Image Source="{Binding Path=avatar.Thumb}"
+                                            <Image Source="{Binding Path=avatar.Normal}"
                                                Stretch="Fill"
                                                HorizontalAlignment="Left"
                                                Width="50" Height="50">
@@ -216,6 +220,16 @@
                     </Storyboard>
                 </Popup.Resources>
                 <Grid Width="480" Height="480">
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="{Binding Path=ShowEdit}"
+                            Style="{StaticResource XTiltButtonStyle}" Margin="0,-20,-20,0" Click="EditCloudClick"
+                            Canvas.ZIndex="1" Width="90" Height="90" Padding="0" BorderBrush="Transparent">
+                        <Border Background="#B0B0B0" Height="60" Width="60">
+                            <Border.Clip>
+                                <EllipseGeometry RadiusX="27" RadiusY="27" Center="30,30" />
+                            </Border.Clip>
+                            <Image Source="/Images/Icons/edit.png" Width="42" Height="42" />
+                        </Border>
+                    </Button>
                     <Border BorderThickness="2" Width="450" Height="450" Background="#E0E0E0" BorderBrush="#888888">
                         <ScrollViewer>
                             <Grid>

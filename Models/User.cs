@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Media;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Linq;
 
 namespace Cloudsdale.Models {
 
@@ -13,6 +15,7 @@ namespace Cloudsdale.Models {
         [JsonProperty]
         public virtual Avatar avatar { get; set; }
 
+        [JsonIgnore]
         public ListUser AsListUser {
             get { return new ListUser { id = id, name = name, avatar = avatar }; }
         }
@@ -23,6 +26,7 @@ namespace Cloudsdale.Models {
         [JsonProperty]
         public string role;
 
+        [JsonIgnore]
         public string RoleTag {
             get {
                 switch (role.ToLower()) {
@@ -38,6 +42,7 @@ namespace Cloudsdale.Models {
             }
         }
 
+        [JsonIgnore]
         public Color RoleColor {
             get {
                 switch (role) {
@@ -56,13 +61,35 @@ namespace Cloudsdale.Models {
             }
         }
 
+        [JsonIgnore]
         public Brush RoleBrush {
             get { return new SolidColorBrush(RoleColor); }
         }
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class User : SimpleUser {
+    public class User : SimpleUser, INotifyPropertyChanged {
+        [JsonIgnore]
+        public bool OwnerOfCurrent {
+            get { return Connection.CurrentCloud.Owner == id; }
+        }
+
+        [JsonIgnore]
+        public bool ModOfCurrent {
+            get { return Connection.CurrentCloud.Moderators.Contains(id); }
+        }
+
+        [JsonIgnore]
+        public Brush CloudColor {
+            get {
+                return OwnerOfCurrent
+                           ? new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xAF, 0x1F))
+                           : ModOfCurrent
+                                 ? new SolidColorBrush(Color.FromArgb(0xFF, 0xAF, 0xB7, 0xAF))
+                                 : new SolidColorBrush(Colors.Transparent);
+            }
+        }
+
         [JsonProperty]
         public string time_zone;
 
@@ -130,22 +157,32 @@ namespace Cloudsdale.Models {
                 user.prosecutions = prosecutions;
         }
 
+        [JsonIgnore]
         public Visibility ShowSuspended {
             get {
                 return suspended_until != null && suspended_until > DateTime.Now ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
+        [JsonIgnore]
         public string SuspendedUntilMessage {
             get {
                 return "Suspended until " + suspended_until;
             }
         }
 
+        [JsonIgnore]
         public string SuspendedReason {
             get {
                 return reason_for_suspension ?? "No reason given";
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        internal virtual void OnPropertyChanged(string propertyName) {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
@@ -162,7 +199,9 @@ namespace Cloudsdale.Models {
         [JsonProperty]
         public bool? needs_name_change;
 
+        [JsonIgnore]
         private readonly ObservableCollection<Cloud> _cloudCol = new ObservableCollection<Cloud>();
+        [JsonIgnore]
         private Cloud[] _clouds;
         [JsonProperty("clouds")]
         public Cloud[] clouds {
@@ -178,6 +217,7 @@ namespace Cloudsdale.Models {
                 }
             }
         }
+        [JsonIgnore]
         public ObservableCollection<Cloud> Clouds {
             get { return _cloudCol; }
         }
@@ -192,11 +232,11 @@ namespace Cloudsdale.Models {
 
         public void CopyTo(LoggedInUser user) {
             base.CopyTo(user);
-            if (auth_token != null) 
+            if (auth_token != null)
                 user.auth_token = auth_token;
-            if (email != null) 
+            if (email != null)
                 user.email = email;
-            if (needs_to_confirm_registration != null) 
+            if (needs_to_confirm_registration != null)
                 user.needs_to_confirm_registration = needs_to_confirm_registration;
             if (needs_name_change != null)
                 user.needs_name_change = needs_name_change;

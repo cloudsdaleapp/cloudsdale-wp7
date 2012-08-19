@@ -19,28 +19,7 @@ namespace Cloudsdale.Managers {
 
         public List<CensusUser> Users {
             get {
-                return Cache.Values.ToList<CensusUser>();
-            }
-        }
-
-        public static void Save() {
-            using (var file = IsolatedStorageFile.GetUserStoreForApplication().
-                OpenFile("cache.usercache.json", FileMode.OpenOrCreate, FileAccess.Write))
-            using (var writer = new StreamWriter(file, Encoding.UTF8)) {
-                writer.Write(JsonConvert.SerializeObject(Cache));
-            }
-        }
-
-        public static void Load() {
-            if (!IsolatedStorageFile.GetUserStoreForApplication().FileExists("cache.usercache.json")) return;
-            using (var file = IsolatedStorageFile.GetUserStoreForApplication().
-                OpenFile("cache.usercache.json", FileMode.Open, FileAccess.Read))
-            using (var reader = new StreamReader(file, Encoding.UTF8)) {
-                var newstore = JsonConvert.DeserializeObject<UserStore>(reader.ReadToEnd());
-                var enumer = newstore.GetEnumerator();
-                while (enumer.MoveNext()) {
-                    Cache[enumer.Current.Key] = enumer.Current.Value;
-                }
+                return (from reference in Cache.Values select reference.Target as CensusUser).ToList();
             }
         }
 
@@ -48,21 +27,27 @@ namespace Cloudsdale.Managers {
             Cache = new UserStore();
         }
 
-        public static User GetUser(string id) {
+        public static CensusUser GetUser(string id) {
             lock (Cache) {
-                return Cache.ContainsKey(id) ? Cache[id] : Cache[id] = new CensusUser(id);
+                if (Cache.ContainsKey(id)) {
+                    var user = Cache[id].Target as CensusUser;
+                    if (user != null) {
+                        return user;
+                    }
+                }
+                var newuser = new CensusUser(id);
+                Cache[id] = new WeakReference(newuser);
+                return newuser;
             }
         }
 
         // ReSharper disable RedundantCheckBeforeAssignment
         // The check is hardly redundant. I don't want to go calling property updates if nothing is even changing lol.
         public static CensusUser Heartbeat(UserReference user) {
+            CensusUser cacheUser;
             lock (Cache) {
-                if (!Cache.ContainsKey(user.id)) {
-                    Cache[user.id] = new CensusUser(user.id);
-                }
+                cacheUser = GetUser(user.id);
             }
-            var cacheUser = Cache[user.id];
             if (cacheUser.id == null) cacheUser.id = user.id;
             if (user is ListUser) {
                 var luser = user as ListUser;
@@ -108,6 +93,7 @@ namespace Cloudsdale.Managers {
             new Thread(() => {
                 var wc = new WebClient();
                 wc.DownloadStringCompleted += (sender, args) => {
+                    GC.Collect();
                     var data = JsonConvert.DeserializeObject<GetUserResult>(args.Result);
                     data.result.CopyTo(this);
                 };
@@ -133,9 +119,9 @@ namespace Cloudsdale.Managers {
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public new event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged(string propertyName) {
+        internal override void OnPropertyChanged(string propertyName) {
             if (Deployment.Current.CheckAccess()) {
                 var handler = PropertyChanged;
                 if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
@@ -229,7 +215,7 @@ namespace Cloudsdale.Managers {
         }
     }
 
-    public class UserStore : Dictionary<string, CensusUser> {
+    public class UserStore : Dictionary<string, WeakReference> {
 
     }
 }

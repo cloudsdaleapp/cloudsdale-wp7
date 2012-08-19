@@ -108,6 +108,9 @@
     <Compile Include="DropViewer.xaml.cs">
       <DependentUpon>DropViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EditCloud.xaml.cs">
+      <DependentUpon>EditCloud.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FacebookAuth\FBOANegotiator.cs" />
     <Compile Include="FacebookAuth\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
@@ -178,6 +181,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="EditCloud.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="FacebookAuth\Login.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -231,6 +238,7 @@
     <Content Include="Images\Icons\back.png" />
     <Resource Include="Images\Icons\i.png" />
     <Content Include="Images\Icons\back_white.png" />
+    <Content Include="Images\Icons\edit.png" />
     <Content Include="Images\Icons\iwhite.png" />
     <Content Include="Images\Icons\refresh.png" />
     <Content Include="Images\ajax-spinner.gif" />

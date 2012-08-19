@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,10 +13,13 @@ using Cloudsdale.Models;
 
 namespace Cloudsdale.Managers {
     public class PonyvilleDirectory {
+        private static readonly Dictionary<string, Cloud> Clouds = new Dictionary<string, Cloud>(); 
+        public static void RegisterCloud(Cloud cloud) {
+            Clouds[cloud.id] = cloud;
+        }
 
-    }
-
-    public class DirectoryCloud : Cloud {
-        public bool IsMember;
+        public static Cloud GetCloud(string id) {
+            return Clouds[id];
+        }
     }
 }

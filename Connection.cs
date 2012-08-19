@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Newtonsoft.Json;
@@ -63,11 +65,11 @@ namespace Cloudsdale {
             Faye.HandshakeComplete += (sender, args) => {
                 if (dispatcher == null)
                     foreach (var cloud in CurrentCloudsdaleUser.clouds) {
-                        Managers.DerpyHoovesMailCenter.Subscribe(cloud.id);
+                        DerpyHoovesMailCenter.Subscribe(cloud.id);
                     }
 
 
-                Managers.DerpyHoovesMailCenter.Init();
+                DerpyHoovesMailCenter.Init();
 
                 if (page == null) {
                     if (dispatcher != null) {
@@ -142,8 +144,18 @@ namespace Cloudsdale {
         }
 
         public static void SaveUser() {
+            var serial = JsonConvert.SerializeObject(new SavedUser { id = CloudsdaleClientId, user = CurrentCloudsdaleUser },
+                new JsonSerializerSettings {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    DefaultValueHandling = DefaultValueHandling.Ignore,
+                });
+            Deployment.Current.Dispatcher.BeginInvoke(() => SaveUserInternal(serial));
+        }
+
+        private static void SaveUserInternal(string serial) {
             var settings = IsolatedStorageSettings.ApplicationSettings;
-            settings["lastuser"] = new SavedUser { id = CloudsdaleClientId, user = CurrentCloudsdaleUser };
+            settings["lastuser"] = serial;
+            settings.Save();
         }
 
         public static bool IsMemberOfCloud(string cloud) {

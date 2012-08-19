@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +21,8 @@ namespace Cloudsdale.Managers {
             drops = PinkiePieEntertainmentDojo.GetForCloud(cid);
         }
 
+        public readonly object _lock = new object();
+
         private static readonly Dictionary<string, DerpyHoovesMailCenter> Cache =
             new Dictionary<string, DerpyHoovesMailCenter>();
         public static void Init() {
@@ -29,7 +32,10 @@ namespace Cloudsdale.Managers {
                 foreach (var cloud in Cache.Keys) {
                     var user = Connection.CurrentCloudsdaleUser.AsListUser;
                     var request =
-                        JsonConvert.SerializeObject(new PresenceObject { channel = "/clouds/" + cloud + "/users", data = user }).Replace(";", "");
+                        JsonConvert.SerializeObject(new PresenceObject {
+                            channel = "/clouds/" + cloud + "/users",
+                            data = user,
+                        }).Replace(";", "");
                     Connection.Faye.SendRaw(request);
                 }
             }, null, 5000, 30000);
@@ -38,31 +44,39 @@ namespace Cloudsdale.Managers {
         static void FayeMessageRecieved(object sender, FayeConnector.FayeConnector.DataReceivedEventArgs args) {
             try {
                 var chansplit = args.Channel.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-                if (chansplit.Length < 3) return;
+                if (chansplit.Length < 2) return;
                 if (chansplit[0] != "clouds") return;
                 if (!Cache.ContainsKey(chansplit[1])) return;
-                switch (chansplit[2]) {
-                    case "drops":
-                        var drop = JsonConvert.DeserializeObject<FayeDropResponse>(args.Data).data;
-                        Cache[chansplit[1]].drops.AddDrop(drop);
-                        break;
-                    case "users":
-                        var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
-                        if (user.data == null) break;
-                        Deployment.Current.Dispatcher.BeginInvoke(() => Cache[chansplit[1]].users.Heartbeat(user.data));
-                        break;
-                    case "chat":
-                        var message = JsonConvert.DeserializeObject<FayeMessageResponse>(args.Data, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }).data;
-                        if (message == null || message.user == null || message.content == null) break;
-#if DEBUG
-                        Debug.WriteLine("[{2}] {0}: {1}", message.user.name, message.content, chansplit[1]);
-#endif
-                        var cache = Cache[chansplit[1]];
-                        cache.messages.Add(message);
-                        cache.unread++;
-                        cache.DoUpdates();
-                        break;
+                if (chansplit.Length == 2) {
+                    Deployment.Current.Dispatcher.BeginInvoke(
+                        () => PonyvilleDirectory.GetCloud(chansplit[1]).UpdateCloud(args.Data));
+                } else {
+                    switch (chansplit[2]) {
+                        case "drops":
+                            var drop = JsonConvert.DeserializeObject<FayeDropResponse>(args.Data).data;
+                            Cache[chansplit[1]].drops.AddDrop(drop);
+                            break;
+                        case "users":
+                            var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
+                            if (user.data == null) break;
+                            Deployment.Current.Dispatcher.BeginInvoke(
+                                () => Cache[chansplit[1]].users.Heartbeat(user.data));
+                            break;
+                        case "chat":
+                            var message =
+                                JsonConvert.DeserializeObject<FayeMessageResponse>
+                                (args.Data, new JsonSerializerSettings {
+                                    ObjectCreationHandling = ObjectCreationHandling.Replace
+                                }).data;
+                            if (message == null || message.user == null || message.content == null) break;
+                            var cache = Cache[chansplit[1]];
+                            lock (cache._lock)
+                                cache.messages.Add(message);
+                            cache.unread++;
+                            cache.DoUpdates();
+                            break;
 
+                    }
                 }
             } catch (Exception e) {
 #if DEBUG
@@ -117,9 +131,10 @@ namespace Cloudsdale.Managers {
                     Cache[cloud] = new DerpyHoovesMailCenter(cloud);
                 }
             }
-            if (Connection.Faye.IsSubscribed("/clouds/" + cloud + "/users")) {
+            if (Connection.Faye.IsSubscribed("/clouds/" + cloud)) {
                 return Cache[cloud];
             }
+            Connection.Faye.Subscribe("/clouds/" + cloud);
             Connection.Faye.Subscribe("/clouds/" + cloud + "/users");
             Connection.Faye.Subscribe("/clouds/" + cloud + "/chat/messages");
             Connection.Faye.Subscribe("/clouds/" + cloud + "/drops");
@@ -127,12 +142,19 @@ namespace Cloudsdale.Managers {
             DownloadStringCompletedEventHandler dlm = (sender, args) => { };
             dlm = (sender, args) => {
                 var ms = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }).result;
-                foreach (var m in ms) {
-                    if (m == null || m.user == null || m.id == null || m.content == null) {
-                        Debugger.Break();
-                        continue;
+                lock (Cache[cloud]._lock) {
+                    var cm = Cache[cloud].messages.Cache.ToList();
+                    Cache[cloud].messages.Cache.Clear();
+                    foreach (var m in ms) {
+                        if (m == null || m.user == null || m.id == null || m.content == null) {
+                            Debugger.Break();
+                            continue;
+                        }
+                        Cache[cloud].messages.Add(m);
                     }
-                    Cache[cloud].messages.Add(m);
+                    foreach (var m in cm) {
+                        Cache[cloud].messages.Add(m);
+                    }
                 }
                 wc.DownloadStringCompleted -= dlm;
                 wc.DownloadStringCompleted += (o, eventArgs) => {

@@ -339,5 +339,9 @@ namespace Cloudsdale {
             CloudInfoPopup.IsOpen = true;
             CloudInfoDown.Begin();
         }
+
+        private void EditCloudClick(object sender, RoutedEventArgs e) {
+            NavigationService.Navigate(new Uri("/EditCloud.xaml", UriKind.Relative));
+        }
     }
 }

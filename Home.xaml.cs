@@ -62,6 +62,7 @@ namespace Cloudsdale {
         }
 
         public void AddCloud(Cloud cloud) {
+            PonyvilleDirectory.RegisterCloud(cloud);
             var controller = DerpyHoovesMailCenter.Subscribe(cloud.id);
             var grid = new Grid {
                 Margin = new Thickness(0, 0, 0, 5),
@@ -117,6 +118,7 @@ namespace Cloudsdale {
         }
 
         public void AddExploreCloud(Cloud cloud) {
+            PonyvilleDirectory.RegisterCloud(cloud);
             var grid = new Grid {
                 Margin = new Thickness(0, 0, 0, 5),
                 Height = 50

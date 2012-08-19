@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Windows;
+using System.Windows.Threading;
 using System.Xml.Linq;
 using Cloudsdale.Managers;
 using Newtonsoft.Json;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace Cloudsdale.Models {
     [JsonObject(MemberSerialization.OptIn)]
@@ -44,16 +47,24 @@ namespace Cloudsdale.Models {
                 OnPropertyChanged("rules");
             }
         }
+
         [JsonProperty]
-        public bool? hidden;
+        public bool? hidden { get; set; }
+
+        private Avatar _avatar;
+
         [JsonProperty]
-        public Avatar avatar { get; set; }
+        public Avatar avatar {
+            get { return _avatar; }
+            set {
+                _avatar = value;
+                OnPropertyChanged("avatar");
+            }
+        }
         [JsonProperty]
         public bool? is_transient;
         [JsonProperty("owner_id")]
         public string Owner;
-        [JsonProperty]
-        public UserReference[] moderators;
         [JsonProperty]
         public CloudChatInfo chat;
 
@@ -65,7 +76,7 @@ namespace Cloudsdale.Models {
             get { return PonyvilleCensus.GetUser(Owner); }
         }
 
-        public IEnumerable<User> FullMods {
+        public IEnumerable<CensusUser> FullMods {
             get { return from uid in Moderators.Distinct() where uid != Owner select PonyvilleCensus.GetUser(uid); }
         }
 
@@ -76,11 +87,12 @@ namespace Cloudsdale.Models {
         [JsonProperty("moderator_ids")]
         public string[] Moderators;
 
-        [JsonProperty("user_ids")]
-        public string[] Users;
-
         public bool IsOwner {
             get { return Owner == Connection.CurrentCloudsdaleUser.id; }
+        }
+
+        public Visibility ShowEdit {
+            get { return IsOwner ? Visibility.Visible : Visibility.Collapsed; }
         }
 
         public bool IsModerator {
@@ -102,61 +114,48 @@ namespace Cloudsdale.Models {
             PostMods();
         }
 
-        public void ChangeProperty(string property, object value) {
-            UpdateCloudValue(id, property, value);
+        public void ChangeProperty(string property, object value, Action<string> callback = null) {
+            UpdateCloudValue(id, property, value, callback);
         }
 
         public void PostMods() {
             UpdateCloudValue(id, "x_moderator_ids", Moderators);
         }
 
-        public override bool Equals(object obj) {
-            if (obj is Cloud) {
-                return (obj as Cloud).id == id;
-            }
-            return Equals(this, obj);
-        }
-
-        public override int GetHashCode() {
-            // ReSharper disable NonReadonlyFieldInGetHashCode
-            return id.GetHashCode();
-            // ReSharper restore NonReadonlyFieldInGetHashCode
-        }
-
-        public static bool operator ==(Cloud x, Cloud y) {
-            if (ReferenceEquals(x, null) && ReferenceEquals(y, null)) {
-                return true;
-            }
-            if (ReferenceEquals(x, null) || ReferenceEquals(y, null)) {
-                return false;
-            }
-
-            return x.Equals(y);
-        }
-
-        public static bool operator !=(Cloud x, Cloud y) {
-            return !(x == y);
-        }
-
-        private static void UpdateCloudValue(string id, string property, object value) {
+        private static void UpdateCloudValue(string id, string property, object value, Action<string> callback = null) {
             var dataXDocument = new XDocument();
             var root = new XElement("cloud");
             var mods = new XElement(property, value);
             root.AddFirst(mods);
             dataXDocument.AddFirst(root);
             var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeXNode(dataXDocument));
-            var request = WebRequest.CreateHttp("http://cloudsdale.org/v1/clouds/" + id + ".json");
-            request.Method = "PUT";
+            var request = WebRequest.CreateHttp("http://www.cloudsdale.org/v1/clouds/" + id);
+            request.Method = "POST";
             request.ContentType = "application/json";
+            request.Accept = "application/json";
             request.Headers["X-Auth-Token"] = Connection.CurrentCloudsdaleUser.auth_token;
             request.Headers["Content-Length"] = data.Length.ToString();
             request.BeginGetRequestStream(result => {
-                using (var requestStream = request.EndGetRequestStream(result)) {
-                    requestStream.Write(data, 0, data.Length);
-                }
+                var requestStream = request.EndGetRequestStream(result);
+                requestStream.Write(data, 0, data.Length);
+                requestStream.Close();
                 request.BeginGetResponse(responseResult => {
-                    var response = request.EndGetResponse(responseResult);
-                    response.Close();
+                    try {
+                        var response = request.EndGetResponse(responseResult);
+                        string responseString;
+                        using (var responseStream = response.GetResponseStream())
+                        using (var responseReader = new StreamReader(responseStream, Encoding.UTF8)) {
+                            responseString = responseReader.ReadToEnd();
+                        }
+                        response.Close();
+                        if (callback != null) {
+                            Deployment.Current.Dispatcher.BeginInvoke(() => callback(responseString));
+                        }
+                    } catch (WebException e) {
+                        if (callback != null) {
+                            Deployment.Current.Dispatcher.BeginInvoke(() => callback(e.Response.Headers["Status"]));
+                        }
+                    }
                 }, null);
             }, null);
         }
@@ -166,6 +165,42 @@ namespace Cloudsdale.Models {
         protected virtual void OnPropertyChanged(string propertyName) {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void UpdateCloud(string fayedata) {
+            var response = JObject.Parse(fayedata);
+            var data = response["data"];
+            name = (string)data["name"];
+
+            description = (string)data["description"];
+
+            rules = (string)data["rules"];
+
+            var davatar = data["avatar"];
+            avatar = new Avatar {
+                Normal = new Uri((string)davatar["normal"]),
+                Mini = new Uri((string)davatar["mini"]),
+                Thumb = new Uri((string)davatar["thumb"]),
+                Preview = new Uri((string)davatar["preview"]),
+                Chat = new Uri((string)davatar["chat"]),
+            };
+
+            hidden = (bool)data["hidden"];
+            OnPropertyChanged("hidden");
+
+            Owner = (string)data["owner_id"];
+            OnPropertyChanged("FullOwner");
+            OnPropertyChanged("IsOwner");
+
+            var moderator_oids = (JArray)data["moderator_ids"];
+            var newmods = new string[moderator_oids.Count];
+            for (var i = 0; i < moderator_oids.Count; ++i) {
+                newmods[i] = (string)moderator_oids[i];
+            }
+            Moderators = newmods;
+            OnPropertyChanged("IsModerator");
+            OnPropertyChanged("FullMods");
+            OnPropertyChanged("ShowMods");
         }
     }
 

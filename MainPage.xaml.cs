@@ -22,7 +22,7 @@ namespace Cloudsdale {
             var settings = IsolatedStorageSettings.ApplicationSettings;
 
             if (settings.Contains("lastuser")) {
-                var user = (SavedUser) settings["lastuser"];
+                var user = JsonConvert.DeserializeObject<SavedUser>((string)settings["lastuser"]);
                 if (user.user != null) {
                     Connection.CloudsdaleClientId = user.id;
                     Connection.CurrentCloudsdaleUser = user.user;
