@@ -139,12 +139,10 @@ namespace Cloudsdale.Managers {
             Connection.Faye.Subscribe("/clouds/" + cloud + "/chat/messages");
             Connection.Faye.Subscribe("/clouds/" + cloud + "/drops");
             var wc = new WebClient();
-            DownloadStringCompletedEventHandler dlm = (sender, args) => { };
-            dlm = (sender, args) => {
+            DownloadStringCompletedEventHandler[] dlm = {(sender, args) => { }};
+            dlm[0] = (sender, args) => {
                 var ms = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }).result;
                 lock (Cache[cloud]._lock) {
-                    var cm = Cache[cloud].messages.Cache.ToList();
-                    Cache[cloud].messages.Cache.Clear();
                     foreach (var m in ms) {
                         if (m == null || m.user == null || m.id == null || m.content == null) {
                             Debugger.Break();
@@ -152,11 +150,8 @@ namespace Cloudsdale.Managers {
                         }
                         Cache[cloud].messages.Add(m);
                     }
-                    foreach (var m in cm) {
-                        Cache[cloud].messages.Add(m);
-                    }
                 }
-                wc.DownloadStringCompleted -= dlm;
+                wc.DownloadStringCompleted -= dlm[0];
                 wc.DownloadStringCompleted += (o, eventArgs) => {
                     var result = JsonConvert.DeserializeObject<WebDropResponse>(eventArgs.Result);
                     var drops = result.result;
@@ -164,7 +159,7 @@ namespace Cloudsdale.Managers {
                 };
                 wc.DownloadStringAsync(new Uri(Resources.PreviousDropsEndpoint.Replace("{cloudid}", cloud)));
             };
-            wc.DownloadStringCompleted += dlm;
+            wc.DownloadStringCompleted += dlm[0];
             wc.DownloadStringAsync(new Uri(Resources.PreviousMessagesEndpoint.Replace("{cloudid}", cloud)));
 
             return Cache[cloud];
