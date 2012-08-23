@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using Cloudsdale.FayeConnector.ResponseTypes;
@@ -55,7 +56,28 @@ namespace Cloudsdale.FayeConnector {
         }
 
         public bool IsSubscribed(string channel) {
-            return subbedchans.Contains(channel);
+            if (subbedchans.Contains(channel)) return true;
+
+            var chansplit = channel.Split(
+                new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var temp = subbedchans.Where(s => s.EndsWith("*"));
+            foreach (var chan in temp) {
+                var stem = chan.Split(
+                    new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                if (chan.EndsWith("**")) {
+                    if (stem.Length < chansplit.Length) continue;
+                } else {
+                    if (stem.Length != chansplit.Length) continue;
+                }
+                var matches = true;
+                for (var i = 0; i < stem.Length - 1; ++i) {
+                    if (stem[i] == chansplit[i]) continue;
+                    matches = false;
+                    break;
+                }
+                return matches;
+            }
+            return false;
         }
 
         /// <summary>
@@ -230,7 +252,7 @@ namespace Cloudsdale.FayeConnector {
                 // It's something else. If it's one of the subbed channels, CALL IT IN!
                 default:
                     if (ChannelMessageRecieved == null) break;
-                    if (subbedchans.Contains(channel)) {
+                    if (IsSubscribed(channel)) {
                         ChannelMessageRecieved(this, new DataReceivedEventArgs(this, data, channel));
                     }
                     break;
@@ -260,9 +282,11 @@ namespace Cloudsdale.FayeConnector {
                 var builder = new StringWriter();
                 serializer.Serialize(builder, request);
                 socket.Send(builder.ToString());
-            } catch (Exception e) {
+            } catch (Exception ex) {
 #if DEBUG
                 Debugger.Break();
+#else
+                BugSense.BugSenseHandler.Instance.LogError(ex);
 #endif
             }
         }
