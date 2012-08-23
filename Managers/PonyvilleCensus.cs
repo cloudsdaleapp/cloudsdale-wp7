@@ -54,20 +54,22 @@ namespace Cloudsdale.Managers {
                 if (luser.name != null && cacheUser.name != luser.name)
                     cacheUser.name = luser.name;
 
-                if (luser.avatar.Chat != null && cacheUser.avatar.Chat != luser.avatar.Chat)
-                    cacheUser.avatar.Chat = luser.avatar.Chat;
+                if (luser.avatar != null) {
+                    if (luser.avatar.Chat != null && cacheUser.avatar.Chat != luser.avatar.Chat)
+                        cacheUser.avatar.Chat = luser.avatar.Chat;
 
-                if (luser.avatar.Mini != null && cacheUser.avatar.Mini != luser.avatar.Mini)
-                    cacheUser.avatar.Mini = luser.avatar.Mini;
+                    if (luser.avatar.Mini != null && cacheUser.avatar.Mini != luser.avatar.Mini)
+                        cacheUser.avatar.Mini = luser.avatar.Mini;
 
-                if (luser.avatar.Normal != null && cacheUser.avatar.Normal != luser.avatar.Normal)
-                    cacheUser.avatar.Normal = luser.avatar.Normal;
+                    if (luser.avatar.Normal != null && cacheUser.avatar.Normal != luser.avatar.Normal)
+                        cacheUser.avatar.Normal = luser.avatar.Normal;
 
-                if (luser.avatar.Preview != null && cacheUser.avatar.Preview != luser.avatar.Preview)
-                    cacheUser.avatar.Preview = luser.avatar.Preview;
+                    if (luser.avatar.Preview != null && cacheUser.avatar.Preview != luser.avatar.Preview)
+                        cacheUser.avatar.Preview = luser.avatar.Preview;
 
-                if (luser.avatar.Thumb != null && cacheUser.avatar.Thumb != luser.avatar.Thumb)
-                    cacheUser.avatar.Thumb = luser.avatar.Thumb;
+                    if (luser.avatar.Thumb != null && cacheUser.avatar.Thumb != luser.avatar.Thumb)
+                        cacheUser.avatar.Thumb = luser.avatar.Thumb;
+                }
             }
             if (user is SimpleUser) {
                 var suser = user as SimpleUser;

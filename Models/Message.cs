@@ -26,7 +26,7 @@ namespace Cloudsdale.Models {
             }
         }
 
-        [JsonProperty]
+        [JsonProperty("author")]
         public SimpleUser user { get; set; }
         [JsonProperty]
         public Topic topic;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -277,11 +276,8 @@ namespace Cloudsdale.FayeConnector {
 
         public void Publish<T>(string channel, T data) {
             try {
-                var request = new[] { new PublishRequest<T> { channel = channel, data = data, clientId = clientId } };
-                var serializer = JsonSerializer.Create(new JsonSerializerSettings());
-                var builder = new StringWriter();
-                serializer.Serialize(builder, request);
-                socket.Send(builder.ToString());
+                var request = new PublishRequest<T> { channel = channel, data = data, clientId = clientId };
+                socket.Send(JsonConvert.SerializeObject(request));
             } catch (Exception ex) {
 #if DEBUG
                 Debugger.Break();

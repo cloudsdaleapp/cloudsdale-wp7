@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,7 +20,7 @@ namespace Cloudsdale.Managers {
             drops = PinkiePieEntertainmentDojo.GetForCloud(cid);
         }
 
-        public readonly object _lock = new object();
+        public readonly object Lock = new object();
 
         private static readonly Dictionary<string, DerpyHoovesMailCenter> Cache =
             new Dictionary<string, DerpyHoovesMailCenter>();
@@ -30,13 +29,8 @@ namespace Cloudsdale.Managers {
             if (PresenceAnnouncer == null) PresenceAnnouncer = new Timer(o => {
                 Thread.CurrentThread.Name = "PresenceAnnouncement";
                 foreach (var cloud in Cache.Keys) {
-                    var user = Connection.CurrentCloudsdaleUser.AsListUser;
-                    var request =
-                        JsonConvert.SerializeObject(new PresenceObject {
-                            channel = "/clouds/" + cloud + "/users",
-                            data = user,
-                        }).Replace(";", "");
-                    Connection.Faye.SendRaw(request);
+                    Connection.Faye.Publish("/clouds/" + cloud + "/users/" + 
+                        Connection.CurrentCloudsdaleUser.id, new object());
                 }
             }, null, 5000, 30000);
         }
@@ -57,10 +51,19 @@ namespace Cloudsdale.Managers {
                             Cache[chansplit[1]].drops.AddDrop(drop);
                             break;
                         case "users":
-                            var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
-                            if (user.data == null) break;
-                            Deployment.Current.Dispatcher.BeginInvoke(
-                                () => Cache[chansplit[1]].users.Heartbeat(user.data));
+                            if (chansplit.Length == 3) {
+                                var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
+                                if (user.data == null) break;
+                                Deployment.Current.Dispatcher.BeginInvoke(
+                                    () => Cache[chansplit[1]].users.Heartbeat(user.data));
+                            } else if (chansplit.Length == 4) {
+                                var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
+                                if (user.data.id == null) {
+                                    user.data.id = chansplit[3];
+                                }
+                                Deployment.Current.Dispatcher.BeginInvoke(
+                                    () => Cache[chansplit[1]].users.Heartbeat(user.data));
+                            }
                             break;
                         case "chat":
                             var message =
@@ -70,7 +73,7 @@ namespace Cloudsdale.Managers {
                                 }).data;
                             if (message == null || message.user == null || message.content == null) break;
                             var cache = Cache[chansplit[1]];
-                            lock (cache._lock)
+                            lock (cache.Lock)
                                 cache.messages.Add(message);
                             cache.unread++;
                             cache.DoUpdates();
@@ -94,7 +97,8 @@ namespace Cloudsdale.Managers {
         private readonly SweetAppleAcres messages = new SweetAppleAcres(50);
         private readonly PinkiePieEntertainmentDojo drops;
         private readonly PonyTracker users = new PonyTracker();
-        private readonly GenericBinding<String> textblockbinding = new GenericBinding<string>(TextBlock.TextProperty);
+        private readonly GenericBinding<String> textblockbinding = 
+            new GenericBinding<string>(TextBlock.TextProperty);
         private int unread;
         public void MarkAsRead() {
             unread = 0;
@@ -135,14 +139,15 @@ namespace Cloudsdale.Managers {
                 return Cache[cloud];
             }
             Connection.Faye.Subscribe("/clouds/" + cloud);
-            Connection.Faye.Subscribe("/clouds/" + cloud + "/users");
+            Connection.Faye.Subscribe("/clouds/" + cloud + "/users/**");
             Connection.Faye.Subscribe("/clouds/" + cloud + "/chat/messages");
             Connection.Faye.Subscribe("/clouds/" + cloud + "/drops");
             var wc = new WebClient();
-            DownloadStringCompletedEventHandler[] dlm = {(sender, args) => { }};
+            DownloadStringCompletedEventHandler[] dlm = { (sender, args) => { } };
             dlm[0] = (sender, args) => {
-                var ms = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }).result;
-                lock (Cache[cloud]._lock) {
+                var ms = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result, 
+                    new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }).result;
+                lock (Cache[cloud].Lock) {
                     foreach (var m in ms) {
                         if (m == null || m.user == null || m.id == null || m.content == null) {
                             Debugger.Break();
