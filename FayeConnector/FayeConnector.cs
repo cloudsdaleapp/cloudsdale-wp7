@@ -74,8 +74,9 @@ namespace Cloudsdale.FayeConnector {
                     matches = false;
                     break;
                 }
-                return matches;
+                if (matches) return true;
             }
+            Debug.WriteLine("subbed to " + channel + ": " + false);
             return false;
         }
 

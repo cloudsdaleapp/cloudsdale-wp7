@@ -13,7 +13,7 @@ namespace Cloudsdale.Managers {
         internal PonyTracker() {
         }
 
-        public void Heartbeat(ListUser use) {
+        public void Heartbeat(UserReference use) {
             var user = PonyvilleCensus.Heartbeat(use);
             if (users.ContainsKey(user.id)) {
                 Reset(user.id);

@@ -29,7 +29,7 @@ namespace Cloudsdale.Managers {
             if (PresenceAnnouncer == null) PresenceAnnouncer = new Timer(o => {
                 Thread.CurrentThread.Name = "PresenceAnnouncement";
                 foreach (var cloud in Cache.Keys) {
-                    Connection.Faye.Publish("/clouds/" + cloud + "/users/" + 
+                    Connection.Faye.Publish("/clouds/" + cloud + "/users/" +
                         Connection.CurrentCloudsdaleUser.id, new object());
                 }
             }, null, 5000, 30000);
@@ -51,19 +51,17 @@ namespace Cloudsdale.Managers {
                             Cache[chansplit[1]].drops.AddDrop(drop);
                             break;
                         case "users":
-                            if (chansplit.Length == 3) {
-                                var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
-                                if (user.data == null) break;
-                                Deployment.Current.Dispatcher.BeginInvoke(
-                                    () => Cache[chansplit[1]].users.Heartbeat(user.data));
-                            } else if (chansplit.Length == 4) {
-                                var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
-                                if (user.data.id == null) {
-                                    user.data.id = chansplit[3];
-                                }
-                                Deployment.Current.Dispatcher.BeginInvoke(
-                                    () => Cache[chansplit[1]].users.Heartbeat(user.data));
+                            var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
+                            UserReference uref;
+                            if (user.data.id == null) {
+                                uref = new UserReference {
+                                    id = chansplit[3]
+                                };
+                            } else {
+                                uref = user.data;
                             }
+                            Deployment.Current.Dispatcher.BeginInvoke(
+                                () => Cache[chansplit[1]].users.Heartbeat(uref));
                             break;
                         case "chat":
                             var message =
@@ -97,7 +95,7 @@ namespace Cloudsdale.Managers {
         private readonly SweetAppleAcres messages = new SweetAppleAcres(50);
         private readonly PinkiePieEntertainmentDojo drops;
         private readonly PonyTracker users = new PonyTracker();
-        private readonly GenericBinding<String> textblockbinding = 
+        private readonly GenericBinding<String> textblockbinding =
             new GenericBinding<string>(TextBlock.TextProperty);
         private int unread;
         public void MarkAsRead() {
@@ -145,7 +143,7 @@ namespace Cloudsdale.Managers {
             var wc = new WebClient();
             DownloadStringCompletedEventHandler[] dlm = { (sender, args) => { } };
             dlm[0] = (sender, args) => {
-                var ms = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result, 
+                var ms = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result,
                     new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }).result;
                 lock (Cache[cloud].Lock) {
                     foreach (var m in ms) {
