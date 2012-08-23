@@ -51,6 +51,7 @@ namespace Cloudsdale.Managers {
                             Cache[chansplit[1]].drops.AddDrop(drop);
                             break;
                         case "users":
+                            if (chansplit.Length < 4) break;
                             var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
                             UserReference uref;
                             if (user.data.id == null) {
