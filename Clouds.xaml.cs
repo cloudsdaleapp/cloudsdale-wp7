@@ -97,6 +97,7 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
+            cloudinfoback.Visibility = Visibility.Collapsed;
             Leaving = true;
             Controller.Messages.CollectionChanged += ScrollDown;
             ScrollDown(null, null);
