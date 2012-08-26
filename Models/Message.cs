@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Cloudsdale.Models {
     [JsonObject(MemberSerialization.OptIn)]
-    public class Message : CloudsdaleItem {
+    public class Message : CloudsdaleItem, IComparable<Message> {
         public Message() {
             subs = new List<Message>();
         }
@@ -30,6 +30,9 @@ namespace Cloudsdale.Models {
         public SimpleUser user { get; set; }
         [JsonProperty]
         public Topic topic;
+
+        [JsonProperty]
+        public string client_id;
 
         internal readonly List<Message> subs;
 
@@ -82,6 +85,18 @@ namespace Cloudsdale.Models {
             var greatest = 0;
             while (greatest < subs.Count && subs[greatest].timestamp < item.timestamp) greatest++;
             subs.Insert(greatest, item);
+        }
+
+        public int CompareTo(Message other) {
+            return timestamp.CompareTo(other.timestamp);
+        }
+
+        public static bool operator >(Message m1, Message m2) {
+            return m1.timestamp > m2.timestamp;
+        }
+
+        public static bool operator <(Message m1, Message m2) {
+            return m1.timestamp < m2.timestamp;
         }
     }
 

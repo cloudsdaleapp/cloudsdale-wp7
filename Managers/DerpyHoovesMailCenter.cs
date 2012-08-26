@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using Cloudsdale.Models;
 using Newtonsoft.Json;
 using System.Threading;
+using Newtonsoft.Json.Linq;
 
 namespace Cloudsdale.Managers {
     /// <summary>
@@ -37,6 +38,9 @@ namespace Cloudsdale.Managers {
 
         static void FayeMessageRecieved(object sender, FayeConnector.FayeConnector.DataReceivedEventArgs args) {
             try {
+                var jobj = JObject.Parse(args.Data);
+                if (jobj.Root["successful"] != null) return;
+
                 var chansplit = args.Channel.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                 if (chansplit.Length < 2) return;
                 if (chansplit[0] != "clouds") return;
@@ -71,6 +75,12 @@ namespace Cloudsdale.Managers {
                                     ObjectCreationHandling = ObjectCreationHandling.Replace
                                 }).data;
                             if (message == null || message.user == null || message.content == null) break;
+                            if (message.client_id == Connection.Faye.ClientId) {
+#if DEBUG
+                                Debug.WriteLine("Message comes from this client. Skipping...");
+#endif
+                                break;
+                            }
                             var cache = Cache[chansplit[1]];
                             lock (cache.Lock)
                                 cache.messages.Add(message);
@@ -93,7 +103,7 @@ namespace Cloudsdale.Managers {
             return Cache.ContainsKey(name) ? Cache[name] : Subscribe(name);
         }
 
-        private readonly SweetAppleAcres messages = new SweetAppleAcres(50);
+        internal readonly SweetAppleAcres messages = new SweetAppleAcres(50);
         private readonly PinkiePieEntertainmentDojo drops;
         private readonly PonyTracker users = new PonyTracker();
         private readonly GenericBinding<String> textblockbinding =
@@ -157,9 +167,12 @@ namespace Cloudsdale.Managers {
                 }
                 wc.DownloadStringCompleted -= dlm[0];
                 wc.DownloadStringCompleted += (o, eventArgs) => {
-                    var result = JsonConvert.DeserializeObject<WebDropResponse>(eventArgs.Result);
-                    var drops = result.result;
-                    Cache[cloud].drops.PreLoad(drops);
+                    try {
+                        var result = JsonConvert.DeserializeObject<WebDropResponse>(eventArgs.Result);
+                        var drops = result.result;
+                        Cache[cloud].drops.PreLoad(drops);
+                    } catch(WebException) {
+                    }
                 };
                 wc.DownloadStringAsync(new Uri(Resources.PreviousDropsEndpoint.Replace("{cloudid}", cloud)));
             };

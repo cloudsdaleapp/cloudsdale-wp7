@@ -114,8 +114,23 @@ namespace Cloudsdale {
 
         private void SendBoxKeyDown(object sender, KeyEventArgs e) {
             if (e.Key != Key.Enter) return;
+
+            var controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud.id);
+            var cmessages = controller.messages;
+            var lastchat = controller.Messages[controller.Messages.Count - 1];
+            cmessages.Add(new Message {
+                id = Connection.CurrentCloudsdaleUser.id,
+                content = SendBox.Text,
+                timestamp = DateTimeMax(DateTime.Now, lastchat.timestamp.AddSeconds(1)),
+                user = PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id)
+            });
+
             Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text);
             SendBox.Text = "";
+        }
+
+        public static DateTime DateTimeMax(DateTime d1, DateTime d2) {
+            return d1 > d2 ? d1 : d2;
         }
 
         private void DropItemClick(object sender, RoutedEventArgs e) {
@@ -234,16 +249,19 @@ namespace Cloudsdale {
             var nextpage = ((Controller.DropController.Capacity / 10) + 1).ToString(CultureInfo.InvariantCulture);
             request.Headers["X-Result-Page"] = nextpage;
             request.BeginGetResponse(ai => {
-                var response = request.EndGetResponse(ai);
-                string resultString;
-                using (var stream = response.GetResponseStream())
-                using (var reader = new StreamReader(stream, Encoding.UTF8)) {
-                    resultString = reader.ReadToEnd();
+                try {
+                    var response = request.EndGetResponse(ai);
+                    string resultString;
+                    using (var stream = response.GetResponseStream())
+                    using (var reader = new StreamReader(stream, Encoding.UTF8)) {
+                        resultString = reader.ReadToEnd();
+                    }
+                    var result = JsonConvert.DeserializeObject<WebDropResponse>(resultString);
+                    Controller.DropController.IncreaseCapacity(result.result);
+                    if (Controller.DropController.CanIncreaseCapacity)
+                        Dispatcher.BeginInvoke(() => MoreDrops.Visibility = Visibility.Visible);
+                } catch (WebException) {
                 }
-                var result = JsonConvert.DeserializeObject<WebDropResponse>(resultString);
-                Controller.DropController.IncreaseCapacity(result.result);
-                if (Controller.DropController.CanIncreaseCapacity)
-                    Dispatcher.BeginInvoke(() => MoreDrops.Visibility = Visibility.Visible);
             }, null);
         }
 
