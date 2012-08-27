@@ -3,3 +3,4 @@ obj/
 gitpush.bat
 gitpush.txt
 _ReSharper\.Cloudsdale-WP7/
+*.suo
