@@ -119,7 +119,7 @@ namespace Cloudsdale {
             var cmessages = controller.messages;
             var lastchat = controller.Messages[controller.Messages.Count - 1];
             cmessages.Add(new Message {
-                id = Connection.CurrentCloudsdaleUser.id,
+                id = Guid.NewGuid().ToString(),
                 content = SendBox.Text,
                 timestamp = DateTimeMax(DateTime.Now, lastchat.timestamp.AddSeconds(1)),
                 user = PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id)
