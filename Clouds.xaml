@@ -56,7 +56,7 @@
                                         </Border>
                                         <StackPanel Orientation="Horizontal" Margin="60,0,0,0">
                                             <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=name}" 
-                                                       FontSize="18" Foreground="#FF5F8FCF"/>
+                                                       FontSize="18" Foreground="{Binding Path=CloudColor}"/>
                                             <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=RoleTag}"
                                                        Foreground="{Binding Path=RoleBrush}" FontSize="12" Margin="5,3"/>
                                         </StackPanel>
@@ -181,7 +181,7 @@
                                        HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,10,10"
                                        Stretch="Fill">
                                             <Image.Clip>
-                                                <RectangleGeometry Rect="0,0,100,100" RadiusX="20" RadiusY="20" />
+                                                <RectangleGeometry Rect="0,0,100,100" RadiusX="10" RadiusY="10" />
                                             </Image.Clip>
                                         </Image>
                                         <StackPanel>

@@ -30,12 +30,11 @@ namespace Cloudsdale.Models {
         public string RoleTag {
             get {
                 switch (role.ToLower()) {
-                    case "creator":
-                        return "founder";
+                    case "founder":
                     case "donor":
                     case "admin":
                     case "developer":
-                    case "moderator":
+                    //case "moderator":
                         return role.ToLower();
                 }
                 return "";
@@ -48,7 +47,7 @@ namespace Cloudsdale.Models {
                 switch (role) {
                     case "donor":
                         return Color.FromArgb(0xFF, 0x66, 0x00, 0xCC);
-                    case "creator":
+                    case "founder":
                         return Color.FromArgb(0xFF, 0xFF, 0x1F, 0x1F);
                     case "admin":
                         return Color.FromArgb(0xFF, 0x1F, 0x7F, 0x1F);
@@ -83,10 +82,10 @@ namespace Cloudsdale.Models {
         public Brush CloudColor {
             get {
                 return OwnerOfCurrent
-                           ? new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xAF, 0x1F))
+                           ? new SolidColorBrush(Color.FromArgb(0xFF, 0x80, 0x00, 0xFF))
                            : ModOfCurrent
-                                 ? new SolidColorBrush(Color.FromArgb(0xFF, 0xAF, 0xB7, 0xAF))
-                                 : new SolidColorBrush(Colors.Transparent);
+                                 ? new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x66, 0xFF))
+                                 : new SolidColorBrush(Colors.Black);
             }
         }
 
