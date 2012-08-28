@@ -17,8 +17,9 @@ namespace Cloudsdale.Managers {
     public class DerpyHoovesMailCenter {
         internal static Timer PresenceAnnouncer = null;
 
-        private DerpyHoovesMailCenter(string cid) {
-            drops = PinkiePieEntertainmentDojo.GetForCloud(cid);
+        private DerpyHoovesMailCenter(Cloud cloud) {
+            users = new PonyTracker(cloud);
+            drops = PinkiePieEntertainmentDojo.GetForCloud(cloud.id);
         }
 
         public readonly object Lock = new object();
@@ -99,13 +100,13 @@ namespace Cloudsdale.Managers {
             }
         }
 
-        public static DerpyHoovesMailCenter GetCloud(string name) {
-            return Cache.ContainsKey(name) ? Cache[name] : Subscribe(name);
+        public static DerpyHoovesMailCenter GetCloud(Cloud cloud) {
+            return Cache.ContainsKey(cloud.id) ? Cache[cloud.id] : Subscribe(cloud);
         }
 
         internal readonly SweetAppleAcres messages = new SweetAppleAcres(50);
         private readonly PinkiePieEntertainmentDojo drops;
-        private readonly PonyTracker users = new PonyTracker();
+        private readonly PonyTracker users;
         private readonly GenericBinding<String> textblockbinding =
             new GenericBinding<string>(TextBlock.TextProperty);
         private int unread;
@@ -138,31 +139,31 @@ namespace Cloudsdale.Managers {
             display.Binding = textblockbinding;
         }
 
-        public static DerpyHoovesMailCenter Subscribe(string cloud) {
+        public static DerpyHoovesMailCenter Subscribe(Cloud cloud) {
             lock (Cache) {
-                if (!Cache.ContainsKey(cloud)) {
-                    Cache[cloud] = new DerpyHoovesMailCenter(cloud);
+                if (!Cache.ContainsKey(cloud.id)) {
+                    Cache[cloud.id] = new DerpyHoovesMailCenter(cloud);
                 }
             }
-            if (Connection.Faye.IsSubscribed("/clouds/" + cloud)) {
-                return Cache[cloud];
+            if (Connection.Faye.IsSubscribed("/clouds/" + cloud.id)) {
+                return Cache[cloud.id];
             }
-            Connection.Faye.Subscribe("/clouds/" + cloud);
-            Connection.Faye.Subscribe("/clouds/" + cloud + "/users/**");
-            Connection.Faye.Subscribe("/clouds/" + cloud + "/chat/messages");
-            Connection.Faye.Subscribe("/clouds/" + cloud + "/drops");
+            Connection.Faye.Subscribe("/clouds/" + cloud.id);
+            Connection.Faye.Subscribe("/clouds/" + cloud.id + "/users/**");
+            Connection.Faye.Subscribe("/clouds/" + cloud.id + "/chat/messages");
+            Connection.Faye.Subscribe("/clouds/" + cloud.id + "/drops");
             var wc = new WebClient();
             DownloadStringCompletedEventHandler[] dlm = { (sender, args) => { } };
             dlm[0] = (sender, args) => {
                 var ms = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result,
                     new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }).result;
-                lock (Cache[cloud].Lock) {
+                lock (Cache[cloud.id].Lock) {
                     foreach (var m in ms) {
                         if (m == null || m.user == null || m.id == null || m.content == null) {
                             Debugger.Break();
                             continue;
                         }
-                        Cache[cloud].messages.Add(m);
+                        Cache[cloud.id].messages.Add(m);
                     }
                 }
                 wc.DownloadStringCompleted -= dlm[0];
@@ -170,16 +171,16 @@ namespace Cloudsdale.Managers {
                     try {
                         var result = JsonConvert.DeserializeObject<WebDropResponse>(eventArgs.Result);
                         var drops = result.result;
-                        Cache[cloud].drops.PreLoad(drops);
+                        Cache[cloud.id].drops.PreLoad(drops);
                     } catch(WebException) {
                     }
                 };
-                wc.DownloadStringAsync(new Uri(Resources.PreviousDropsEndpoint.Replace("{cloudid}", cloud)));
+                wc.DownloadStringAsync(new Uri(Resources.PreviousDropsEndpoint.Replace("{cloudid}", cloud.id)));
             };
             wc.DownloadStringCompleted += dlm[0];
-            wc.DownloadStringAsync(new Uri(Resources.PreviousMessagesEndpoint.Replace("{cloudid}", cloud)));
+            wc.DownloadStringAsync(new Uri(Resources.PreviousMessagesEndpoint.Replace("{cloudid}", cloud.id)));
 
-            return Cache[cloud];
+            return Cache[cloud.id];
         }
 
         public static void Unsubscribe(string cloud) {

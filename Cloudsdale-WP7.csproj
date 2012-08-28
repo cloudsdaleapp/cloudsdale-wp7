@@ -54,6 +54,7 @@
     <Reference Include="Facebook">
       <HintPath>Lib\Facebook.dll</HintPath>
     </Reference>
+    <Reference Include="IsolatedStorageExplorer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Controls.Toolkit, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b772ad94eb9ca604, processorArchitecture=MSIL" />
@@ -139,12 +140,14 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Managers\AppleFarm.cs" />
+    <Compile Include="Managers\BoolToVis.cs" />
     <Compile Include="Managers\GenericBinding.cs" />
     <Compile Include="Managers\DerpyHoovesMailCenter.cs" />
     <Compile Include="Managers\PinkiePieEntertainmentDojo.cs" />
     <Compile Include="Managers\PonyvilleCensus.cs" />
     <Compile Include="Managers\PonyvilleDirectory.cs" />
     <Compile Include="Managers\SweetAppleAcres.cs" />
+    <Compile Include="Managers\WebPriorityManager.cs" />
     <Compile Include="Models\Avatar.cs" />
     <Compile Include="Models\Cloud.cs" />
     <Compile Include="Models\CloudsdaleItem.cs" />
@@ -240,6 +243,7 @@
     <Content Include="Images\Icons\back_white.png" />
     <Content Include="Images\Icons\edit.png" />
     <Content Include="Images\Icons\iwhite.png" />
+    <Content Include="Images\Icons\minus.png" />
     <Content Include="Images\Icons\refresh.png" />
     <Content Include="Images\ajax-spinner.gif" />
     <Content Include="Images\cloudsdale-thin-bright-logo.png" />

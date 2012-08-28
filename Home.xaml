@@ -65,17 +65,10 @@
                     </Button>
                 </Grid>
             </controls:PivotItem>
-            <controls:PivotItem Header="Explore" Foreground="Black" Visibility="Collapsed" IsEnabled="False">
+            <controls:PivotItem Header="Explore" Foreground="Black">
                 <Grid>
                     <Grid Margin="-12,-26,-12,-30" Height="110" VerticalAlignment="Top">
-                        <Grid.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <GradientStop Color="#FFF0F0F0" Offset="1" />
-                                <GradientStop Color="#FFA7A7A7" Offset="0.6" />
-                                <GradientStop Color="#FFA7A7A7" Offset="0" />
-                            </LinearGradientBrush>
-                        </Grid.Background>
-                        <TextBox VerticalAlignment="Top" Margin="0,0,75,0" />
+                        <TextBox VerticalAlignment="Top" Margin="0,0,75,0" BorderBrush="#888888" />
                         <Button VerticalAlignment="Top" HorizontalAlignment="Right" 
                                 BorderBrush="Transparent" Margin="0,-9"
                                 Style="{StaticResource XTiltButtonStyle}">

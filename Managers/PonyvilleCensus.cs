@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Text;
 using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace Cloudsdale.Managers {
     public class PonyvilleCensus {
@@ -38,6 +39,33 @@ namespace Cloudsdale.Managers {
                 var newuser = new CensusUser(id);
                 Cache[id] = new WeakReference(newuser);
                 return newuser;
+            }
+        }
+
+        public static void Save() {
+            var storage = IsolatedStorageFile.GetUserStoreForApplication();
+            if (!storage.DirectoryExists("users")) {
+                storage.CreateDirectory("users");
+            }
+            foreach (var user in Cache.Select(userRef => userRef.Value.Target).OfType<CensusUser>()) {
+                SaveUser(user, storage);
+            }
+        }
+
+        private static void SaveUser(CensusUser user, IsolatedStorageFile storage) {
+            var obj = new JObject();
+            obj["user"] = JObject.FromObject(user);
+            obj["clouds"] = new JArray(from cloud in user.ExtClouds
+                                       select JObject.FromObject(cloud));
+
+            if (storage.FileExists("users\\" + user.id)) {
+                storage.DeleteFile("users\\" + user.id);
+            }
+
+            var data = obj.ToString();
+            using (var file = storage.OpenFile("users\\" + user.id, FileMode.OpenOrCreate, FileAccess.Write))
+            using (var writer = new StreamWriter(file, Encoding.UTF8)) {
+                writer.WriteLine(data);
             }
         }
 
@@ -84,23 +112,48 @@ namespace Cloudsdale.Managers {
 
     public sealed class CensusUser : User, INotifyPropertyChanged {
 
+        [JsonConstructor]
+        public CensusUser() {
+        }
+
         public CensusUser(string id) {
             this.id = id;
             avatar = new CensusAvatar();
             name = "(Identifying)";
+
+            var storage = IsolatedStorageFile.GetUserStoreForApplication();
+            if (storage.FileExists(@"users\" + id)) {
+                string data;
+                using (var file = storage.OpenFile("users\\" + id, FileMode.Open, FileAccess.Read))
+                using (var reader = new StreamReader(file, Encoding.UTF8)) {
+                    data = reader.ReadToEnd();
+                }
+                try {
+                    var jObj = JObject.Parse(data);
+                    jObj["user"].ToObject<CensusUser>().CopyTo(this);
+                    var clouds = (JArray)jObj["clouds"];
+                    _extClouds = from jcloud in clouds select jcloud.ToObject<Cloud>();
+                } catch (JsonException e) {
+                }
+            }
+
             if (Connection.CurrentCloudsdaleUser != null)
                 if (id == Connection.CurrentCloudsdaleUser.id) {
                     Connection.CurrentCloudsdaleUser.CopyTo(this);
                 }
-            new Thread(() => {
-                var wc = new WebClient();
-                wc.DownloadStringCompleted += (sender, args) => {
-                    GC.Collect();
+
+            WebPriorityManager.BeginMediumPriorityRequest(
+                new Uri(Resources.getUserEndpoint.Replace("{0}", id)),
+                args => {
                     var data = JsonConvert.DeserializeObject<GetUserResult>(args.Result);
                     data.result.CopyTo(this);
-                };
-                wc.DownloadStringAsync(new Uri(Resources.getUserEndpoint.Replace("{0}", id)));
-            }).Start();
+                });
+            WebPriorityManager.BeginLowPriorityRequest(
+                new Uri(Resources.UserCloudsEndpoint.Replace("{userid}", id)),
+                args => {
+                    _extClouds = JsonConvert.DeserializeObject<WebResponse<Cloud[]>>(args.Result).result;
+                    OnPropertyChanged("ExtClouds");
+                });
         }
 
         public override string name {
@@ -133,6 +186,12 @@ namespace Cloudsdale.Managers {
                     if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
                 });
             }
+        }
+
+        private IEnumerable<Cloud> _extClouds = new Cloud[0];
+        [JsonIgnore]
+        public IEnumerable<Cloud> ExtClouds {
+            get { return from cloud in _extClouds where !(cloud.hidden ?? false) select cloud; }
         }
     }
 

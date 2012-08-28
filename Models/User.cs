@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Media;
+using Cloudsdale.Managers;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -10,6 +11,7 @@ namespace Cloudsdale.Models {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class ListUser : UserReference {
+
         [JsonProperty]
         public virtual string name { get; set; }
         [JsonProperty]
@@ -29,45 +31,24 @@ namespace Cloudsdale.Models {
         [JsonIgnore]
         public string RoleTag {
             get {
-                switch (role.ToLower()) {
+                switch (role) {
                     case "founder":
                     case "donor":
-                    case "admin":
                     case "developer":
-                    //case "moderator":
-                        return role.ToLower();
+                        return " [ " + role.ToLower() + " ]";
                 }
                 return "";
             }
-        }
-
-        [JsonIgnore]
-        public Color RoleColor {
-            get {
-                switch (role) {
-                    case "donor":
-                        return Color.FromArgb(0xFF, 0x66, 0x00, 0xCC);
-                    case "founder":
-                        return Color.FromArgb(0xFF, 0xFF, 0x1F, 0x1F);
-                    case "admin":
-                        return Color.FromArgb(0xFF, 0x1F, 0x7F, 0x1F);
-                    case "moderator":
-                        return Color.FromArgb(0xFF, 0xFF, 0xAF, 0x1F);
-                    case "developer":
-                        return Color.FromArgb(0xFF, 0xCC, 0x66, 0x99);
-                }
-                return default(Color);
-            }
-        }
-
-        [JsonIgnore]
-        public Brush RoleBrush {
-            get { return new SolidColorBrush(RoleColor); }
         }
     }
 
     [JsonObject(MemberSerialization.OptIn)]
     public class User : SimpleUser, INotifyPropertyChanged {
+
+        public User CurrentUser {
+            get { return PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id); }
+        }
+
         [JsonIgnore]
         public bool OwnerOfCurrent {
             get { return Connection.CurrentCloud.Owner == id; }
@@ -75,7 +56,7 @@ namespace Cloudsdale.Models {
 
         [JsonIgnore]
         public bool ModOfCurrent {
-            get { return Connection.CurrentCloud.Moderators.Contains(id); }
+            get { return OwnerOfCurrent || Connection.CurrentCloud.Moderators.Contains(id); }
         }
 
         [JsonIgnore]
@@ -85,7 +66,19 @@ namespace Cloudsdale.Models {
                            ? new SolidColorBrush(Color.FromArgb(0xFF, 0x80, 0x00, 0xFF))
                            : ModOfCurrent
                                  ? new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x66, 0xFF))
-                                 : new SolidColorBrush(Colors.Black);
+                                 : new SolidColorBrush(Color.FromArgb(0xFF, 0x44, 0x44, 0x44));
+            }
+        }
+
+        [JsonIgnore]
+        public Brush RoleBrush {
+            get {
+                switch (role) {
+                    case "founder":
+                    case "developer":
+                        return CloudColor;
+                }
+                return new SolidColorBrush(Color.FromArgb(0xFF, 0x99, 0x99, 0x99));
             }
         }
 

@@ -57,7 +57,9 @@ namespace Cloudsdale {
         // Code to execute when the application is launching (eg, from Start)
         // This code will not execute when the application is reactivated
         private void ApplicationLaunching(object sender, LaunchingEventArgs e) {
-
+#if DEBUG
+            IsolatedStorageExplorer.Explorer.Start("localhost");
+#endif
         }
 
         // Code to execute when the application is activated (brought to foreground)
@@ -75,6 +77,7 @@ namespace Cloudsdale {
         // Code to execute when the application is deactivated (sent to background)
         // This code will not execute when the application is closing
         private void ApplicationDeactivated(object sender, DeactivatedEventArgs e) {
+            Managers.PonyvilleCensus.Save();
 
             if (Managers.DerpyHoovesMailCenter.PresenceAnnouncer != null)
                 Managers.DerpyHoovesMailCenter.PresenceAnnouncer.Dispose();
@@ -86,6 +89,7 @@ namespace Cloudsdale {
         // Code to execute when the application is closing (eg, user hit Back)
         // This code will not execute when the application is deactivated
         private void ApplicationClosing(object sender, ClosingEventArgs e) {
+            Managers.PonyvilleCensus.Save();
 
             if (Connection.Faye != null)
                 Connection.Faye.Disconnect();
@@ -110,6 +114,7 @@ namespace Cloudsdale {
         // Code to execute on Unhandled Exceptions
         private static void ApplicationUnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e) {
             if (e.ExceptionObject is ApplicationTerminationException) {
+                Managers.PonyvilleCensus.Save();
                 throw e.ExceptionObject;
             }
 #if DEBUG

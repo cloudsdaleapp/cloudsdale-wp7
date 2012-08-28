@@ -63,7 +63,7 @@ namespace Cloudsdale {
 
         public void AddCloud(Cloud cloud) {
             PonyvilleDirectory.RegisterCloud(cloud);
-            var controller = DerpyHoovesMailCenter.Subscribe(cloud.id);
+            var controller = DerpyHoovesMailCenter.Subscribe(cloud);
             var grid = new Grid {
                 Margin = new Thickness(0, 0, 0, 5),
                 Height = 50
@@ -146,7 +146,6 @@ namespace Cloudsdale {
                 };
                 grid.Projection = proj;
             };
-            var doGoToCloud = Connection.CurrentCloudsdaleUser.clouds.Any(c => c.name == cloud.name);
             grid.MouseLeftButtonUp += (sender, args) => {
                 grid.Projection = baseproj;
                 var points = args.StylusDevice.GetStylusPoints(LayoutRoot);
@@ -157,16 +156,8 @@ namespace Cloudsdale {
                         points[0].Y > buttondownpoints[0].Y + 40)
                         return;
                 }
-
-                if (!doGoToCloud) {
-                    if (MessageBox.Show("Do you want to join the cloud " + cloud.name + "?", "",
-                        MessageBoxButton.OKCancel) == MessageBoxResult.OK) {
-
-                    }
-                } else {
-                    Connection.CurrentCloud = cloud;
-                    NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
-                }
+                Connection.CurrentCloud = cloud;
+                NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
             };
             grid.MouseLeave += (sender, args) => {
                 grid.Projection = baseproj;

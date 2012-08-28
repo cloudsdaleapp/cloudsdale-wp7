@@ -12,6 +12,7 @@ using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Cloudsdale {
     /// <summary>
@@ -65,7 +66,7 @@ namespace Cloudsdale {
             Faye.HandshakeComplete += (sender, args) => {
                 if (dispatcher == null)
                     foreach (var cloud in CurrentCloudsdaleUser.clouds) {
-                        DerpyHoovesMailCenter.Subscribe(cloud.id);
+                        DerpyHoovesMailCenter.Subscribe(cloud);
                     }
 
 
@@ -119,7 +120,10 @@ namespace Cloudsdale {
         }
 
         public static void JoinCloud(string id) {
-            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new CloudsdaleItem { id = CurrentCloudsdaleUser.id }));
+            var jObj = new JObject();
+            jObj["id"] = CurrentCloudsdaleUser.id;
+            var dataString = jObj.ToString();
+            var data = Encoding.UTF8.GetBytes(dataString);
             var request = WebRequest.CreateHttp(Resources.JoinCloudEndpoint.Replace("{cloudid}", id));
             request.Accept = "application/json";
             request.Method = "POST";
@@ -131,14 +135,53 @@ namespace Cloudsdale {
                 requestStream.Write(data, 0, data.Length);
                 requestStream.Close();
                 request.BeginGetResponse(a => {
-                    var response = request.EndGetResponse(a);
-                    string message;
-                    using (var responseStream = response.GetResponseStream())
-                    using (var streamReader = new StreamReader(responseStream)) {
-                        message = streamReader.ReadToEnd();
+                    try {
+                        var response = request.EndGetResponse(a);
+                        string message;
+                        using (var responseStream = response.GetResponseStream())
+                        using (var streamReader = new StreamReader(responseStream)) {
+                            message = streamReader.ReadToEnd();
+                        }
+                        var user = JsonConvert.DeserializeObject<WebResponse<LoggedInUser>>(message).result;
+                        user.CopyTo(CurrentCloudsdaleUser);
+                    } catch (WebException ex) {
+#if DEBUG
+                        Debugger.Break();
+#endif
                     }
-                    var user = JsonConvert.DeserializeObject<WebResponse<LoggedInUser>>(message).result;
-                    user.CopyTo(CurrentCloudsdaleUser);
+                }, null);
+            }, null);
+        }
+
+        public static void LeaveCloud(string id) {
+            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new CloudsdaleItem { id = CurrentCloudsdaleUser.id }));
+            var request = WebRequest.CreateHttp(Resources.LeaveCloudEndpoint.
+                Replace("{cloudid}", id).
+                Replace("{userid}", CurrentCloudsdaleUser.id));
+            request.Accept = "application/json";
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Headers["Content-Length"] = data.Length.ToString();
+            request.Headers["X-Auth-Token"] = CurrentCloudsdaleUser.auth_token;
+            request.BeginGetRequestStream(ar => {
+                var requestStream = request.EndGetRequestStream(ar);
+                requestStream.Write(data, 0, data.Length);
+                requestStream.Close();
+                request.BeginGetResponse(a => {
+                    try {
+                        var response = request.EndGetResponse(a);
+                        string message;
+                        using (var responseStream = response.GetResponseStream())
+                        using (var streamReader = new StreamReader(responseStream)) {
+                            message = streamReader.ReadToEnd();
+                        }
+                        var user = JsonConvert.DeserializeObject<WebResponse<LoggedInUser>>(message).result;
+                        user.CopyTo(CurrentCloudsdaleUser);
+                    } catch (WebException ex) {
+#if DEBUG
+                        Debugger.Break();
+#endif
+                    }
                 }, null);
             }, null);
         }

@@ -20,6 +20,7 @@ using Microsoft.Phone.Shell;
 using Newtonsoft.Json;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 using Res = Cloudsdale.Resources;
+using System.Linq;
 
 // http://i.qkme.me/3597jb.jpg GO TO BED
 
@@ -34,8 +35,12 @@ namespace Cloudsdale {
                 NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
                 return;
             }
-            Controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud.id);
+            Controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);
             InitializeComponent();
+
+            if (Connection.CurrentCloudsdaleUser.Clouds.All(cloud => cloud.id != Connection.CurrentCloud.id)) {
+                Connection.JoinCloud(Connection.CurrentCloud.id);
+            }
 
             cloudPivot.Title = Connection.CurrentCloud.name;
 
@@ -115,7 +120,7 @@ namespace Cloudsdale {
         private void SendBoxKeyDown(object sender, KeyEventArgs e) {
             if (e.Key != Key.Enter) return;
 
-            var controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud.id);
+            var controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);
             var cmessages = controller.messages;
             var lastchat = controller.Messages[controller.Messages.Count - 1];
             cmessages.Add(new Message {
@@ -314,14 +319,8 @@ namespace Cloudsdale {
             }
         }
 
-        private void AddOrRemoveCloudClick(object sender, RoutedEventArgs e) {
-            if (Connection.CurrentCloudsdaleUser.Clouds.Contains(Connection.CurrentCloud)) {
-                Connection.CurrentCloudsdaleUser.Clouds.Remove(Connection.CurrentCloud);
-                NavigationService.GoBack();
-            } else {
-                Connection.JoinCloud(Connection.CurrentCloud.id);
-                Connection.CurrentCloudsdaleUser.Clouds.Add(Connection.CurrentCloud);
-            }
+        private void RemoveThisCloud(object sender, RoutedEventArgs e) {
+            Connection.LeaveCloud(Connection.CurrentCloud.id);
         }
 
         private void UserListClick(object sender, RoutedEventArgs e) {
@@ -365,6 +364,13 @@ namespace Cloudsdale {
 
         private void EditCloudClick(object sender, RoutedEventArgs e) {
             NavigationService.Navigate(new Uri("/EditCloud.xaml", UriKind.Relative));
+        }
+
+        private void BanBanBan(object sender, RoutedEventArgs e) {
+            var button = (Button) sender;
+            var user = (CensusUser) button.DataContext;
+
+            MessageBox.Show("Sorry, banning does not work yet :<");
         }
     }
 }

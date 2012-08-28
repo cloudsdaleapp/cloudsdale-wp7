@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Managers="clr-namespace:Cloudsdale.Managers">
     <LinearGradientBrush x:Key="PortraitBackground" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="#FF1A91DB" Offset="0.1425" />
         <GradientStop Color="#FFF0F0F0" Offset="0.1425" />
@@ -52,5 +52,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
+    <Managers:BoolToVis x:Key="BoolToVis" />
 </ResourceDictionary>
     

@@ -20,6 +20,77 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="XamlResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <DataTemplate x:Name="UserlistTemplate">
+                <Button BorderBrush="Transparent" Padding="-12"
+                                            Style="{StaticResource XTiltButtonStyle}"
+                                            Click="UserListClick" Margin="0"
+                                            HorizontalAlignment="Left">
+                    <Grid Height="50" Margin="0,0,0,10" HorizontalAlignment="Left">
+                        <Image Source="{Binding Path=avatar.Normal}"
+                                               Stretch="Fill"
+                                               HorizontalAlignment="Left"
+                                               Width="50" Height="50">
+                            <Image.Clip>
+                                <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,50,50" />
+                            </Image.Clip>
+                        </Image>
+                        <TextBlock Text="{Binding Path=name}"
+                                                   FontSize="34" Foreground="{Binding Path=CloudColor}"
+                                                   Margin="60,0,0,0"/>
+                    </Grid>
+                </Button>
+            </DataTemplate>
+            <DataTemplate x:Name="ChatsTemplate">
+                <Grid Margin="0,3,0,5" DataContext="{Binding}">
+                    <Border BorderBrush="#FF444444" Width="50" Height="50"
+                                                HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="5"
+                                                BorderThickness="1">
+                        <Image DataContext="{Binding}" Source="{Binding Path=user.avatar.Normal}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48"
+                                               MouseLeftButtonUp="AvatarMouseUp" MouseLeftButtonDown="AvatarMouseDown"
+                                               MouseLeave="AvatarMouseLeave" Stretch="UniformToFill">
+                            <Image.Clip>
+                                <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,48,48" />
+                            </Image.Clip>
+                        </Image>
+                    </Border>
+                    <StackPanel Orientation="Horizontal" Margin="60,0,0,0">
+                        <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=name}" 
+                                                       FontSize="18" Foreground="{Binding Path=CloudColor}"/>
+                        <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=RoleTag}"
+                                                       Foreground="{Binding Path=RoleBrush}" FontSize="12" Margin="5,3"/>
+                    </StackPanel>
+                    <TextBlock DataContext="{Binding}"
+                                                   Text="{Binding Path=CorrectedTimestamp, StringFormat=HH:mm:ss}" 
+                                                   HorizontalAlignment="Right" 
+                                                   VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f"/>
+                    <ItemsControl DataContext="{Binding}" ItemsSource="{Binding Path=Split}" 
+                                                      Margin="60,20,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock DataContext="{Binding}" Text="{Binding Path=Text}" 
+                                                               Foreground="{Binding Path=Color}" FontSize="16" 
+                                                               TextWrapping="Wrap" FontFamily="Verdana"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:Name="DropsTemplate">
+                <Button BorderBrush="Transparent" Padding="-12" 
+                                            Click="DropItemClick" DataContext="{Binding}" 
+                                            Style="{StaticResource XTiltButtonStyle}"
+                                            HorizontalAlignment="Left">
+                    <Grid>
+                        <Image DataContext="{Binding}" Source="{Binding Path=preview}"
+                                                   Width="120" Height="90" HorizontalAlignment="Left"
+                                                   VerticalAlignment="Top" ImageFailed="DropImageFailed" />
+                        <TextBlock DataContext="{Binding}" Text="{Binding Path=title}" 
+                                                       Margin="125,0,0,0" TextWrapping="Wrap" Foreground="Black" 
+                                                       FontSize="24" VerticalAlignment="Top" />
+                    </Grid>
+                </Button>
+            </DataTemplate>
         </ResourceDictionary>
     </phone:PhoneApplicationPage.Resources>
 
@@ -38,46 +109,7 @@
                     </Grid>
                     <ScrollViewer x:Name="ChatScroller" 
                                    Margin="0,0,0,64" Tap="ChatScrollerTap">
-                        <ItemsControl x:Name="Chats">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,3,0,5" DataContext="{Binding}">
-                                        <Border BorderBrush="{Binding Path=user.CloudColor}" Width="50" Height="50"
-                                                HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="5"
-                                                BorderThickness="1">
-                                            <Image DataContext="{Binding}" Source="{Binding Path=user.avatar.Normal}"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48"
-                                               MouseLeftButtonUp="AvatarMouseUp" MouseLeftButtonDown="AvatarMouseDown"
-                                               MouseLeave="AvatarMouseLeave" Stretch="UniformToFill">
-                                                <Image.Clip>
-                                                    <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,48,48" />
-                                                </Image.Clip>
-                                            </Image>
-                                        </Border>
-                                        <StackPanel Orientation="Horizontal" Margin="60,0,0,0">
-                                            <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=name}" 
-                                                       FontSize="18" Foreground="{Binding Path=CloudColor}"/>
-                                            <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=RoleTag}"
-                                                       Foreground="{Binding Path=RoleBrush}" FontSize="12" Margin="5,3"/>
-                                        </StackPanel>
-                                        <TextBlock DataContext="{Binding}"
-                                                   Text="{Binding Path=CorrectedTimestamp, StringFormat=HH:mm:ss}" 
-                                                   HorizontalAlignment="Right" 
-                                                   VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f"/>
-                                        <ItemsControl DataContext="{Binding}" ItemsSource="{Binding Path=Split}" 
-                                                      Margin="60,20,0,0">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock DataContext="{Binding}" Text="{Binding Path=Text}" 
-                                                               Foreground="{Binding Path=Color}" FontSize="16" 
-                                                               TextWrapping="Wrap" FontFamily="Verdana"/>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                        <ItemsControl x:Name="Chats" ItemTemplate="{StaticResource ChatsTemplate}" />
                     </ScrollViewer>
                 </Grid>
             </controls:PivotItem>
@@ -96,25 +128,7 @@
                                     </Button>
                                 </Grid>
                             </Grid>
-                            <ItemsControl x:Name="MediaList" Margin="12,0,12,0">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Button BorderBrush="Transparent" Padding="-12" 
-                                            Click="DropItemClick" DataContext="{Binding}" 
-                                            Style="{StaticResource XTiltButtonStyle}"
-                                            HorizontalAlignment="Left">
-                                            <Grid>
-                                                <Image DataContext="{Binding}" Source="{Binding Path=preview}"
-                                                   Width="120" Height="90" HorizontalAlignment="Left"
-                                                   VerticalAlignment="Top" ImageFailed="DropImageFailed" />
-                                                <TextBlock DataContext="{Binding}" Text="{Binding Path=title}" 
-                                                       Margin="125,0,0,0" TextWrapping="Wrap" Foreground="Black" 
-                                                       FontSize="24" VerticalAlignment="Top" />
-                                            </Grid>
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                            <ItemsControl x:Name="MediaList" Margin="12,0,12,0" ItemTemplate="{StaticResource DropsTemplate}" />
                             <Button Width="200" Foreground="Black" BorderBrush="Black"
                                     Click="MoreDropsClick" Name="MoreDrops">Load More</Button>
                         </StackPanel>
@@ -124,30 +138,7 @@
             <controls:PivotItem x:Name="peopleTab" Header="Ponies">
                 <Grid Margin="0,-26,0,0">
                     <ScrollViewer>
-                        <ItemsControl x:Name="Ponies">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button BorderBrush="Transparent" Padding="-12"
-                                            Style="{StaticResource XTiltButtonStyle}"
-                                            Click="UserListClick" Margin="0"
-                                            HorizontalAlignment="Left">
-                                        <Grid Height="50" Margin="0,0,0,10" HorizontalAlignment="Left">
-                                            <Image Source="{Binding Path=avatar.Normal}"
-                                               Stretch="Fill"
-                                               HorizontalAlignment="Left"
-                                               Width="50" Height="50">
-                                                <Image.Clip>
-                                                    <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,50,50" />
-                                                </Image.Clip>
-                                            </Image>
-                                            <TextBlock Text="{Binding Path=name}"
-                                                   FontSize="34" Foreground="Black"
-                                                   Margin="60,0,0,0"/>
-                                        </Grid>
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                        <ItemsControl x:Name="Ponies" ItemTemplate="{StaticResource UserlistTemplate}" />
                     </ScrollViewer>
                 </Grid>
             </controls:PivotItem>
@@ -162,10 +153,10 @@
         </Button>
         <Button  HorizontalAlignment="Right" VerticalAlignment="Top" 
                  Padding="-10" BorderBrush="Transparent" Margin="0,16,50,0"
-                 Style="{StaticResource XTiltButtonStyle}"
-                 Click="AddOrRemoveCloudClick" IsEnabled="False">
+                 Style="{StaticResource XTiltButtonStyle}" Click="RemoveThisCloud"
+                 Visibility="Collapsed">
             <Button.Content>
-                <Image Source="/Images/Icons/add.png" Width="40" />
+                <Image Source="/Images/Icons/minus.png" Width="40" />
             </Button.Content>
         </Button>
         <Popup Name="userpopup" HorizontalAlignment="Center" VerticalAlignment="Center" Width="800" Height="800">
@@ -196,6 +187,25 @@
                                         <TextBlock Text="{Binding Path=SuspendedReason}" FontSize="18" 
                                                    Width="430" TextWrapping="Wrap" />
                                     </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Name="ModTools" 
+                                                Visibility="{Binding Path=CurrentUser.ModOfCurrent,
+                                                                     Converter={StaticResource BoolToVis}}">
+                                        <Button Foreground="#FF444444" BorderBrush="#FF444444"
+                                                DataContext="{Binding}" Click="BanBanBan">Ban</Button>
+                                    </StackPanel>
+                                    <TextBlock FontSize="32" Foreground="#FF888888">Clouds</TextBlock>
+                                    <ItemsControl ItemsSource="{Binding Path=ExtClouds}" Margin="5">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Margin="2">
+                                                    <Image Source="{Binding Path=avatar.Normal}"
+                                                           Width="50" Height="50" Margin="0,0,5,0" />
+                                                    <TextBlock Text="{Binding Path=name}" Foreground="#FF444444"
+                                                               VerticalAlignment="Center" FontSize="24"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </StackPanel>
                             </ScrollViewer>
                         </Grid>

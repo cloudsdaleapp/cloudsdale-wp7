@@ -1,0 +1,57 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Shapes;
+
+namespace Cloudsdale.Managers {
+    public static class WebPriorityManager {
+        private static readonly List<Request> QueueL = new List<Request>();
+        private static readonly List<Request> QueueM = new List<Request>();
+        private static readonly Timer TimerL = new Timer(HandleL, null, 10, 200);
+        private static readonly Timer TimerM = new Timer(HandleM, null, 10, 100);
+
+        private static void HandleL(object state) {
+            if (QueueL.Count == 0) return;
+            var item = QueueL[0];
+            QueueL.RemoveAt(0);
+            var wc = new WebClient();
+            wc.DownloadStringCompleted += (sender, args) => item.callback(args);
+            wc.DownloadStringAsync(item.uri);
+        }
+
+        private static void HandleM(object state) {
+            if (QueueM.Count == 0) return;
+            var item = QueueM[0];
+            QueueM.RemoveAt(0);
+            var wc = new WebClient();
+            wc.DownloadStringCompleted += (sender, args) => item.callback(args);
+            wc.DownloadStringAsync(item.uri);
+        }
+
+        public static void BeginLowPriorityRequest(Uri uri, Action<DownloadStringCompletedEventArgs> callback) {
+            QueueL.Add(new Request {
+                uri = uri, callback = callback
+            });
+        }
+
+        public static void BeginMediumPriorityRequest(Uri uri, Action<DownloadStringCompletedEventArgs> callback) {
+            QueueM.Add(new Request {
+                uri = uri, callback = callback
+            });
+        }
+
+        private class Request {
+            internal Uri uri;
+            internal Action<DownloadStringCompletedEventArgs> callback;
+        }
+    }
+}

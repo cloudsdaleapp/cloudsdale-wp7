@@ -4,13 +4,16 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using Cloudsdale.Models;
 using System.Windows;
+using System.Linq;
 
 namespace Cloudsdale.Managers {
     public class PonyTracker {
         private readonly Dictionary<string, UserObject> users = new Dictionary<string, UserObject>();
         private readonly ObservableCollection<CensusUser> userlist = new ObservableCollection<CensusUser>();
+        private readonly Cloud cloud;
 
-        internal PonyTracker() {
+        internal PonyTracker(Cloud cloud) {
+            this.cloud = cloud;
         }
 
         public void Heartbeat(UserReference use) {
@@ -18,7 +21,11 @@ namespace Cloudsdale.Managers {
             if (users.ContainsKey(user.id)) {
                 Reset(user.id);
             } else {
-                userlist.Add((users[user.id] = new UserObject {
+                var comp = new UserListSorter(cloud);
+                var i = 0;
+                while (i < userlist.Count && comp.Compare(user, userlist[i]) > -1) ++i;
+
+                userlist.Insert(i, (users[user.id] = new UserObject {
                     id = user,
                     update = new Timer(o => {
                         users[user.id].Destroy();
@@ -44,6 +51,30 @@ namespace Cloudsdale.Managers {
         public ObservableCollection<CensusUser> Users {
             get { return userlist; }
         }
+    }
+
+    public class UserListSorter : IComparer<ListUser> {
+        private readonly Cloud cloud;
+
+        public UserListSorter(Cloud cloud) {
+            this.cloud = cloud;
+        }
+
+        #region Implementation of IComparer<ListUser>
+
+        public int Compare(ListUser x, ListUser y) {
+            var xisowner = x.id == cloud.Owner;
+            var yisowner = y.id == cloud.Owner;
+            if (xisowner) return -1;
+            if (yisowner) return 1;
+
+            var xismod = cloud.Moderators.Contains(x.id);
+            var yismod = cloud.Moderators.Contains(y.id);
+
+            return xismod ? (yismod ? 0 : -1) : 1;
+        }
+
+        #endregion
     }
 
     public class UserUpdateEventArgs : EventArgs {
