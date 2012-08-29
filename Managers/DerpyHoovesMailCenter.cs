@@ -43,7 +43,7 @@ namespace Cloudsdale.Managers {
                 }
             }, null, 5000, 30000);
 
-            Connection.Faye.Subscribe("/users/" + Connection.CurrentCloudsdaleUser.id);
+            Connection.Faye.Subscribe("/users/" + Connection.CurrentCloudsdaleUser.id + "/private");
         }
 
         static void FayeMessageRecieved(object sender, FayeConnector.FayeConnector.DataReceivedEventArgs args) {
