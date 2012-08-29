@@ -52,7 +52,7 @@ namespace Cloudsdale.Managers {
             }
         }
 
-        private static void SaveUser(CensusUser user, IsolatedStorageFile storage) {
+        internal static void SaveUser(CensusUser user, IsolatedStorageFile storage) {
             var obj = new JObject();
             obj["user"] = JObject.FromObject(user);
             obj["clouds"] = new JArray(from cloud in user.ExtClouds
@@ -122,7 +122,7 @@ namespace Cloudsdale.Managers {
             name = "(Identifying)";
 
             var storage = IsolatedStorageFile.GetUserStoreForApplication();
-            if (storage.FileExists(@"users\" + id)) {
+            if (storage.FileExists("users\\" + id)) {
                 string data;
                 using (var file = storage.OpenFile("users\\" + id, FileMode.Open, FileAccess.Read))
                 using (var reader = new StreamReader(file, Encoding.UTF8)) {
@@ -154,6 +154,14 @@ namespace Cloudsdale.Managers {
                     _extClouds = JsonConvert.DeserializeObject<WebResponse<Cloud[]>>(args.Result).result;
                     OnPropertyChanged("ExtClouds");
                 });
+        }
+
+        ~CensusUser() {
+            var storage = IsolatedStorageFile.GetUserStoreForApplication();
+            if (!storage.DirectoryExists("users")) {
+                storage.CreateDirectory("users");
+            }
+            PonyvilleCensus.SaveUser(this, storage);
         }
 
         public override string name {

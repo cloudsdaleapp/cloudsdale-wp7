@@ -18,8 +18,15 @@ namespace Cloudsdale.Models {
         [JsonProperty]
         public string content { get; set; }
 
+        [JsonProperty]
+        public string device;
+
+        public string DeviceStub {
+            get { return device == "mobile" ? "☎" : ""; }
+        }
+
         public DateTime CorrectedTimestamp {
-            get { 
+            get {
                 var tzi = TimeZoneInfo.Local;
                 var offset = tzi.BaseUtcOffset + TimeSpan.FromHours(1);
                 return timestamp + offset;
@@ -64,7 +71,7 @@ namespace Cloudsdale.Models {
                         lines[i] = new ChatLine {
                             Text = split[i].StartsWith("/me ") ? '*' + split[i].Substring(4).Trim() + '*' : split[i].Trim(),
                             Color = new SolidColorBrush(split[i].StartsWith(">") ?
-                                Color.FromArgb(0xFF, 0x32, 0x82, 0x32) : 
+                                Color.FromArgb(0xFF, 0x32, 0x82, 0x32) :
                                 split[i].StartsWith("/me ") ? Colors.Purple : Colors.Black)
                         };
                     }

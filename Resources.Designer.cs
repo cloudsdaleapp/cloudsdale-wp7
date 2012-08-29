@@ -196,7 +196,7 @@ namespace Cloudsdale {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/{cloudid}/users.
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/{cloudid}/users/{userid}.json.
         /// </summary>
         internal static string JoinCloudEndpoint {
             get {
@@ -205,7 +205,7 @@ namespace Cloudsdale {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/{cloudid}/users/{userid}.
+        ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/{cloudid}/users/{userid}.json.
         /// </summary>
         internal static string LeaveCloudEndpoint {
             get {

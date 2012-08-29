@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+#if DEBUG
 using System.Diagnostics;
+#endif
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,11 +24,16 @@ namespace Cloudsdale.Managers {
             drops = PinkiePieEntertainmentDojo.GetForCloud(cloud.id);
         }
 
+        public static readonly Dictionary<string, bool> ValidPreloadedData = new Dictionary<string, bool>();
+
         public readonly object Lock = new object();
 
         private static readonly Dictionary<string, DerpyHoovesMailCenter> Cache =
             new Dictionary<string, DerpyHoovesMailCenter>();
         public static void Init() {
+
+            ValidPreloadedData.Clear();
+
             Connection.Faye.ChannelMessageRecieved += FayeMessageRecieved;
             if (PresenceAnnouncer == null) PresenceAnnouncer = new Timer(o => {
                 Thread.CurrentThread.Name = "PresenceAnnouncement";
@@ -35,6 +42,8 @@ namespace Cloudsdale.Managers {
                         Connection.CurrentCloudsdaleUser.id, new object());
                 }
             }, null, 5000, 30000);
+
+            Connection.Faye.Subscribe("/users/" + Connection.CurrentCloudsdaleUser.id);
         }
 
         static void FayeMessageRecieved(object sender, FayeConnector.FayeConnector.DataReceivedEventArgs args) {
@@ -44,12 +53,24 @@ namespace Cloudsdale.Managers {
 
                 var chansplit = args.Channel.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                 if (chansplit.Length < 2) return;
-                if (chansplit[0] != "clouds") return;
                 if (!Cache.ContainsKey(chansplit[1])) return;
                 if (chansplit.Length == 2) {
-                    Deployment.Current.Dispatcher.BeginInvoke(
-                        () => PonyvilleDirectory.GetCloud(chansplit[1]).UpdateCloud(args.Data));
+                    if (chansplit[0] == "clouds") {
+                        Deployment.Current.Dispatcher.BeginInvoke(
+                            () => PonyvilleDirectory.GetCloud(chansplit[1]).UpdateCloud(args.Data));
+                    } else if (chansplit[0] == "users") {
+                        var user = JsonConvert.DeserializeObject<FayeResult<User>>(args.Data);
+                        user.data.CopyTo(Connection.CurrentCloudsdaleUser);
+                        if ((Connection.CurrentCloudsdaleUser.suspended_until ?? new DateTime(0)) > DateTime.Now) {
+                            Deployment.Current.Dispatcher.BeginInvoke(() => {
+                                MessageBox.Show("You are banned until" + Connection.CurrentCloudsdaleUser.suspended_until + 
+                                    "\n" + Connection.CurrentCloudsdaleUser.reason_for_suspension);
+                                throw new ApplicationTerminationException();
+                            });
+                        }
+                    }
                 } else {
+                    if (chansplit[0] != "clouds") return;
                     switch (chansplit[2]) {
                         case "drops":
                             var drop = JsonConvert.DeserializeObject<FayeDropResponse>(args.Data).data;
@@ -149,38 +170,44 @@ namespace Cloudsdale.Managers {
                 return Cache[cloud.id];
             }
             Connection.Faye.Subscribe("/clouds/" + cloud.id);
-            Connection.Faye.Subscribe("/clouds/" + cloud.id + "/users/**");
             Connection.Faye.Subscribe("/clouds/" + cloud.id + "/chat/messages");
             Connection.Faye.Subscribe("/clouds/" + cloud.id + "/drops");
-            var wc = new WebClient();
-            DownloadStringCompletedEventHandler[] dlm = { (sender, args) => { } };
-            dlm[0] = (sender, args) => {
-                var ms = JsonConvert.DeserializeObject<WebMessageResponse>(args.Result,
-                    new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }).result;
-                lock (Cache[cloud.id].Lock) {
-                    foreach (var m in ms) {
-                        if (m == null || m.user == null || m.id == null || m.content == null) {
-                            Debugger.Break();
-                            continue;
-                        }
-                        Cache[cloud.id].messages.Add(m);
-                    }
-                }
-                wc.DownloadStringCompleted -= dlm[0];
-                wc.DownloadStringCompleted += (o, eventArgs) => {
+
+            WebPriorityManager.BeginMediumPriorityRequest(
+                new Uri(Resources.PreviousDropsEndpoint.Replace("{cloudid}", cloud.id)), eventArgs => {
                     try {
                         var result = JsonConvert.DeserializeObject<WebDropResponse>(eventArgs.Result);
                         var drops = result.result;
                         Cache[cloud.id].drops.PreLoad(drops);
-                    } catch(WebException) {
+                    } catch (WebException) {
                     }
-                };
-                wc.DownloadStringAsync(new Uri(Resources.PreviousDropsEndpoint.Replace("{cloudid}", cloud.id)));
-            };
-            wc.DownloadStringCompleted += dlm[0];
-            wc.DownloadStringAsync(new Uri(Resources.PreviousMessagesEndpoint.Replace("{cloudid}", cloud.id)));
+                });
 
             return Cache[cloud.id];
+        }
+
+        public static void VerifyCloud(string id) {
+            if (ValidPreloadedData.ContainsKey(id) && ValidPreloadedData[id]) {
+                return;
+            }
+            ValidPreloadedData[id] = true;
+
+            Connection.Faye.Subscribe("/clouds/" + id + "/users/**");
+
+            WebPriorityManager.BeginHighPriorityRequest(new Uri(Resources.PreviousMessagesEndpoint.Replace("{cloudid}", id)), e => {
+                try {
+                    var result = JsonConvert.DeserializeObject<WebMessageResponse>(e.Result);
+                    lock (Cache[id].Lock) {
+                        foreach (var m in result.result) {
+                            if (m == null || m.user == null || m.id == null || m.content == null) {
+                                continue;
+                            }
+                            Cache[id].messages.Add(m);
+                        }
+                    }
+                } catch (WebException) {
+                }
+            });
         }
 
         public static void Unsubscribe(string cloud) {

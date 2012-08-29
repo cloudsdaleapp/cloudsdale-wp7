@@ -43,12 +43,12 @@
             <DataTemplate x:Name="ChatsTemplate">
                 <Grid Margin="0,3,0,5" DataContext="{Binding}">
                     <Border BorderBrush="#FF444444" Width="50" Height="50"
-                                                HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="5"
-                                                BorderThickness="1">
+                            HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="5"
+                            BorderThickness="1">
                         <Image DataContext="{Binding}" Source="{Binding Path=user.avatar.Normal}"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48"
-                                               MouseLeftButtonUp="AvatarMouseUp" MouseLeftButtonDown="AvatarMouseDown"
-                                               MouseLeave="AvatarMouseLeave" Stretch="UniformToFill">
+                               HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48"
+                               MouseLeftButtonUp="AvatarMouseUp" MouseLeftButtonDown="AvatarMouseDown"
+                               MouseLeave="AvatarMouseLeave" Stretch="UniformToFill">
                             <Image.Clip>
                                 <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,48,48" />
                             </Image.Clip>
@@ -56,21 +56,23 @@
                     </Border>
                     <StackPanel Orientation="Horizontal" Margin="60,0,0,0">
                         <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=name}" 
-                                                       FontSize="18" Foreground="{Binding Path=CloudColor}"/>
+                                   FontSize="18" Foreground="{Binding Path=CloudColor}"/>
+                        <TextBlock DataContext="{Binding}" Text="{Binding Path=DeviceStub}"
+                                   FontSize="16" Foreground="CornflowerBlue" />
                         <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=RoleTag}"
-                                                       Foreground="{Binding Path=RoleBrush}" FontSize="12" Margin="5,3"/>
+                                   Foreground="{Binding Path=RoleBrush}" FontSize="12" Margin="5,3"/>
                     </StackPanel>
                     <TextBlock DataContext="{Binding}"
-                                                   Text="{Binding Path=CorrectedTimestamp, StringFormat=HH:mm:ss}" 
-                                                   HorizontalAlignment="Right" 
-                                                   VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f"/>
+                               Text="{Binding Path=CorrectedTimestamp, StringFormat=HH:mm:ss}" 
+                               HorizontalAlignment="Right" 
+                               VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f"/>
                     <ItemsControl DataContext="{Binding}" ItemsSource="{Binding Path=Split}" 
-                                                      Margin="60,20,0,0">
+                                  Margin="60,20,0,0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock DataContext="{Binding}" Text="{Binding Path=Text}" 
-                                                               Foreground="{Binding Path=Color}" FontSize="16" 
-                                                               TextWrapping="Wrap" FontFamily="Verdana"/>
+                                           Foreground="{Binding Path=Color}" FontSize="16" 
+                                           TextWrapping="Wrap" FontFamily="Verdana"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -153,8 +155,7 @@
         </Button>
         <Button  HorizontalAlignment="Right" VerticalAlignment="Top" 
                  Padding="-10" BorderBrush="Transparent" Margin="0,16,50,0"
-                 Style="{StaticResource XTiltButtonStyle}" Click="RemoveThisCloud"
-                 Visibility="Collapsed">
+                 Style="{StaticResource XTiltButtonStyle}" Click="RemoveThisCloud">
             <Button.Content>
                 <Image Source="/Images/Icons/minus.png" Width="40" />
             </Button.Content>

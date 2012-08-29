@@ -167,10 +167,10 @@
     <value>/clouds/{cloudid}/drops</value>
   </data>
   <data name="JoinCloudEndpoint" xml:space="preserve">
-    <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/users</value>
+    <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/users/{userid}.json</value>
   </data>
   <data name="LeaveCloudEndpoint" xml:space="preserve">
-    <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/users/{userid}</value>
+    <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/users/{userid}.json</value>
   </data>
   <data name="FayeUsersChannel" xml:space="preserve">
     <value>/clouds/{cloudid}/users</value>

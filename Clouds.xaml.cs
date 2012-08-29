@@ -102,6 +102,8 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
+            DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id);
+
             cloudinfoback.Visibility = Visibility.Collapsed;
             Leaving = true;
             Controller.Messages.CollectionChanged += ScrollDown;
@@ -321,6 +323,11 @@ namespace Cloudsdale {
 
         private void RemoveThisCloud(object sender, RoutedEventArgs e) {
             Connection.LeaveCloud(Connection.CurrentCloud.id);
+            Connection.CurrentCloudsdaleUser.clouds = (
+                from cloud in Connection.CurrentCloudsdaleUser.clouds
+                where cloud.id != Connection.CurrentCloud.id
+                select cloud                           ).ToArray();
+            NavigationService.GoBack();
         }
 
         private void UserListClick(object sender, RoutedEventArgs e) {
@@ -367,8 +374,8 @@ namespace Cloudsdale {
         }
 
         private void BanBanBan(object sender, RoutedEventArgs e) {
-            var button = (Button) sender;
-            var user = (CensusUser) button.DataContext;
+            var button = (Button)sender;
+            var user = (CensusUser)button.DataContext;
 
             MessageBox.Show("Sorry, banning does not work yet :<");
         }

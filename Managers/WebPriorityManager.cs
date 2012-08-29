@@ -16,8 +16,10 @@ namespace Cloudsdale.Managers {
     public static class WebPriorityManager {
         private static readonly List<Request> QueueL = new List<Request>();
         private static readonly List<Request> QueueM = new List<Request>();
+        private static readonly List<Request> QueueH = new List<Request>();
         private static readonly Timer TimerL = new Timer(HandleL, null, 10, 200);
         private static readonly Timer TimerM = new Timer(HandleM, null, 10, 100);
+        private static readonly Timer TimerH = new Timer(HandleH, null, 10, 50);
 
         private static void HandleL(object state) {
             if (QueueL.Count == 0) return;
@@ -37,6 +39,15 @@ namespace Cloudsdale.Managers {
             wc.DownloadStringAsync(item.uri);
         }
 
+        private static void HandleH(object state) {
+            if (QueueH.Count == 0) return;
+            var item = QueueH[0];
+            QueueH.RemoveAt(0);
+            var wc = new WebClient();
+            wc.DownloadStringCompleted += (sender, args) => item.callback(args);
+            wc.DownloadStringAsync(item.uri);
+        }
+
         public static void BeginLowPriorityRequest(Uri uri, Action<DownloadStringCompletedEventArgs> callback) {
             QueueL.Add(new Request {
                 uri = uri, callback = callback
@@ -45,6 +56,12 @@ namespace Cloudsdale.Managers {
 
         public static void BeginMediumPriorityRequest(Uri uri, Action<DownloadStringCompletedEventArgs> callback) {
             QueueM.Add(new Request {
+                uri = uri, callback = callback
+            });
+        }
+
+        public static void BeginHighPriorityRequest(Uri uri, Action<DownloadStringCompletedEventArgs> callback) {
+            QueueH.Add(new Request {
                 uri = uri, callback = callback
             });
         }

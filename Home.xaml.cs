@@ -22,7 +22,7 @@ namespace Cloudsdale {
 
             InitializeComponent();
 
-            pivotView.Items.RemoveAt(2);
+            //pivotView.Items.RemoveAt(2);
 
             UserInfoPane.DataContext = CurrentUser;
 

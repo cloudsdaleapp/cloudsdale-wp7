@@ -47,6 +47,15 @@ namespace Cloudsdale {
                     return;
             }
 
+            if ((CurrentCloudsdaleUser.suspended_until ?? new DateTime(0)) > DateTime.Now) {
+                Deployment.Current.Dispatcher.BeginInvoke(() => {
+                    MessageBox.Show("You are banned until" + CurrentCloudsdaleUser.suspended_until +
+                        "\n" + CurrentCloudsdaleUser.reason_for_suspension);
+                    throw new ApplicationTerminationException();
+                });
+                return;
+            }
+
             if (!(CurrentCloudsdaleUser.is_member_of_a_cloud ?? false)) {
                 JoinCloud(Resources.HammockID);
                 CurrentCloudsdaleUser.is_member_of_a_cloud = true;
@@ -68,7 +77,6 @@ namespace Cloudsdale {
                     foreach (var cloud in CurrentCloudsdaleUser.clouds) {
                         DerpyHoovesMailCenter.Subscribe(cloud);
                     }
-
 
                 DerpyHoovesMailCenter.Init();
 
@@ -121,12 +129,13 @@ namespace Cloudsdale {
 
         public static void JoinCloud(string id) {
             var jObj = new JObject();
-            jObj["id"] = CurrentCloudsdaleUser.id;
             var dataString = jObj.ToString();
             var data = Encoding.UTF8.GetBytes(dataString);
-            var request = WebRequest.CreateHttp(Resources.JoinCloudEndpoint.Replace("{cloudid}", id));
+            var request = WebRequest.CreateHttp(Resources.JoinCloudEndpoint.
+                Replace("{cloudid}", id).
+                Replace("{userid}", CurrentCloudsdaleUser.id));
             request.Accept = "application/json";
-            request.Method = "POST";
+            request.Method = "PUT";
             request.ContentType = "application/json";
             request.Headers["Content-Length"] = data.Length.ToString();
             request.Headers["X-Auth-Token"] = CurrentCloudsdaleUser.auth_token;
@@ -154,12 +163,14 @@ namespace Cloudsdale {
         }
 
         public static void LeaveCloud(string id) {
-            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new CloudsdaleItem { id = CurrentCloudsdaleUser.id }));
+            var jObj = new JObject();
+            var dataString = jObj.ToString();
+            var data = Encoding.UTF8.GetBytes(dataString);
             var request = WebRequest.CreateHttp(Resources.LeaveCloudEndpoint.
                 Replace("{cloudid}", id).
                 Replace("{userid}", CurrentCloudsdaleUser.id));
             request.Accept = "application/json";
-            request.Method = "POST";
+            request.Method = "DELETE";
             request.ContentType = "application/json";
             request.Headers["Content-Length"] = data.Length.ToString();
             request.Headers["X-Auth-Token"] = CurrentCloudsdaleUser.auth_token;
