@@ -26,10 +26,6 @@ namespace Cloudsdale {
 
             UserInfoPane.DataContext = CurrentUser;
 
-            if (Connection.CurrentCloudsdaleUser.clouds != null)
-                foreach (var cloud in Connection.CurrentCloudsdaleUser.clouds) {
-                    AddCloud(cloud);
-                }
             var wc = new WebClient();
             wc.DownloadStringCompleted += (sender, args) => {
                 var clouds = JsonConvert.DeserializeObject<CloudsRequest>(args.Result).result;
@@ -49,6 +45,12 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
+            if (Connection.CurrentCloudsdaleUser.clouds != null) {
+                CloudList.Items.Clear();
+                foreach (var cloud in Connection.CurrentCloudsdaleUser.clouds) {
+                    AddCloud(cloud);
+                }
+            }
             if (comingfromlogin) {
                 comingfromlogin = false;
                 while (NavigationService.CanGoBack) {

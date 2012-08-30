@@ -19,6 +19,8 @@ namespace Cloudsdale.Managers {
     public class DerpyHoovesMailCenter {
         internal static Timer PresenceAnnouncer = null;
 
+        public static TimeSpan ServerDiff = new TimeSpan();
+
         private DerpyHoovesMailCenter(Cloud cloud) {
             users = new PonyTracker(cloud);
             drops = PinkiePieEntertainmentDojo.GetForCloud(cloud.id);
@@ -97,6 +99,9 @@ namespace Cloudsdale.Managers {
                                     ObjectCreationHandling = ObjectCreationHandling.Replace
                                 }).data;
                             if (message == null || message.user == null || message.content == null) break;
+
+                            ServerDiff = message.timestamp - DateTime.Now;
+
                             if (message.client_id == Connection.Faye.ClientId) {
 #if DEBUG
                                 Debug.WriteLine("Message comes from this client. Skipping...");

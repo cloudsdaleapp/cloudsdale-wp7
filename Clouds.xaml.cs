@@ -30,6 +30,8 @@ namespace Cloudsdale {
         public DerpyHoovesMailCenter Controller { get; set; }
         public bool Leaving;
 
+        public static bool DoARemove;
+
         public Clouds() {
             if (Connection.CurrentCloud == null) {
                 NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
@@ -102,6 +104,10 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
+            if (DoARemove) {
+                NavigationService.RemoveBackEntry();
+            }
+
             DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id);
 
             cloudinfoback.Visibility = Visibility.Collapsed;
@@ -124,20 +130,15 @@ namespace Cloudsdale {
 
             var controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);
             var cmessages = controller.messages;
-            var lastchat = controller.Messages[controller.Messages.Count - 1];
             cmessages.Add(new Message {
                 id = Guid.NewGuid().ToString(),
                 content = SendBox.Text,
-                timestamp = DateTimeMax(DateTime.Now, lastchat.timestamp.AddSeconds(1)),
+                timestamp = DateTime.Now + DerpyHoovesMailCenter.ServerDiff,
                 user = PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id)
             });
 
             Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text);
             SendBox.Text = "";
-        }
-
-        public static DateTime DateTimeMax(DateTime d1, DateTime d2) {
-            return d1 > d2 ? d1 : d2;
         }
 
         private void DropItemClick(object sender, RoutedEventArgs e) {
@@ -322,11 +323,11 @@ namespace Cloudsdale {
         }
 
         private void RemoveThisCloud(object sender, RoutedEventArgs e) {
-            Connection.LeaveCloud(Connection.CurrentCloud.id);
             Connection.CurrentCloudsdaleUser.clouds = (
                 from cloud in Connection.CurrentCloudsdaleUser.clouds
                 where cloud.id != Connection.CurrentCloud.id
-                select cloud                           ).ToArray();
+                select cloud).ToArray();
+            Connection.LeaveCloud(Connection.CurrentCloud.id);
             NavigationService.GoBack();
         }
 
