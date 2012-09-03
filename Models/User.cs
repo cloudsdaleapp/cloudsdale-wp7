@@ -35,7 +35,7 @@ namespace Cloudsdale.Models {
                     case "founder":
                     case "donor":
                     case "developer":
-                        return " [ " + role.ToLower() + " ]";
+                        return "[ " + role.ToLower() + " ]";
                 }
                 return "";
             }

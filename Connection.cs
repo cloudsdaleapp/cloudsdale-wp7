@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows;
@@ -56,11 +57,6 @@ namespace Cloudsdale {
                 return;
             }
 
-            if (!(CurrentCloudsdaleUser.is_member_of_a_cloud ?? false)) {
-                JoinCloud(Resources.HammockID);
-                CurrentCloudsdaleUser.is_member_of_a_cloud = true;
-            }
-
             if (pulluserclouds) {
                 PullUserClouds(() => FinishConnecting(page, dispatcher));
             } else {
@@ -73,6 +69,15 @@ namespace Cloudsdale {
             Faye = new FayeConnector.FayeConnector(Resources.pushUrl);
 
             Faye.HandshakeComplete += (sender, args) => {
+
+                CurrentCloudsdaleUser.clouds = (from cloud in CurrentCloudsdaleUser.clouds
+                                                select PonyvilleDirectory.RegisterCloud(cloud)).ToArray();
+
+                if (!(CurrentCloudsdaleUser.is_member_of_a_cloud ?? false)) {
+                    JoinCloud(Resources.HammockID);
+                    CurrentCloudsdaleUser.is_member_of_a_cloud = true;
+                }
+
                 if (dispatcher == null)
                     foreach (var cloud in CurrentCloudsdaleUser.clouds) {
                         DerpyHoovesMailCenter.Subscribe(cloud);
@@ -103,8 +108,9 @@ namespace Cloudsdale {
                 var settings = new JsonSerializerSettings {
                     DefaultValueHandling = DefaultValueHandling.Populate,
                 };
-                var result = JsonConvert.DeserializeObject<CloudGetResponse>(args.Result, settings).result;
-                CurrentCloudsdaleUser.clouds = result;
+                var result = JsonConvert.DeserializeObject<CloudGetResponse>(args.Result, settings);
+                CurrentCloudsdaleUser.clouds = (from cloud in result.result
+                                                select PonyvilleDirectory.RegisterCloud(cloud)).ToArray();
                 SaveUser();
                 complete();
             };
@@ -112,7 +118,11 @@ namespace Cloudsdale {
         }
 
         public static void SendMessage(string cloud, string message) {
-            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new SentMessage { content = message, client_id = Faye.ClientId }));
+            var dataObject = new JObject();
+            dataObject["content"] = message;
+            dataObject["client_id"] = Faye.ClientId;
+            dataObject["device"] = "mobile";
+            var data = Encoding.UTF8.GetBytes(dataObject.ToString());
             var request = WebRequest.CreateHttp(Resources.SendEndpoint.Replace("{cloudid}", cloud));
             request.Accept = "application/json";
             request.Method = "POST";

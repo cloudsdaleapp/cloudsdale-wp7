@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Device.Location;
 using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;

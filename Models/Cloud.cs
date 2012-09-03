@@ -163,8 +163,15 @@ namespace Cloudsdale.Models {
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName) {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            if (Deployment.Current.Dispatcher.CheckAccess()) {
+                PropertyChangedEventHandler handler = PropertyChanged;
+                if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            } else {
+                Deployment.Current.Dispatcher.BeginInvoke(() => {
+                    PropertyChangedEventHandler handler = PropertyChanged;
+                    if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+                });
+            }
         }
 
         public void UpdateCloud(string fayedata) {
@@ -201,6 +208,47 @@ namespace Cloudsdale.Models {
             OnPropertyChanged("IsModerator");
             OnPropertyChanged("FullMods");
             OnPropertyChanged("ShowMods");
+        }
+
+        public void CopyFrom(Cloud cloud) {
+            if (cloud.Moderators != null) {
+                Moderators = cloud.Moderators;
+                OnPropertyChanged("IsModerator");
+                OnPropertyChanged("FullMods");
+                OnPropertyChanged("ShowMods");
+            }
+
+            if (cloud.Owner != null) {
+                Owner = cloud.Owner;
+                OnPropertyChanged("IsOwner");
+                OnPropertyChanged("FullOwner");
+            }
+
+            if (cloud.avatar != null) {
+                avatar = cloud.avatar;
+            }
+
+            if (cloud.description != null) {
+                description = cloud.description;
+            }
+
+            if (cloud.hidden != null) {
+                hidden = cloud.hidden;
+            }
+
+            if (cloud.name != null) {
+                name = cloud.name;
+            }
+
+            if (cloud.rules != null) {
+                rules = cloud.rules;
+            }
+        }
+
+        public DerpyHoovesMailCenter Controller {
+            get {
+                return DerpyHoovesMailCenter.GetCloud(this);
+            }
         }
     }
 

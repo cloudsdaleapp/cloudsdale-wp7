@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Navigation;
 using BugSense;
+using Cloudsdale.Managers;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Res = Cloudsdale.Resources;
@@ -66,6 +67,9 @@ namespace Cloudsdale {
         // This code will not execute when the application is first launched
         private void ApplicationActivated(object sender, ActivatedEventArgs e) {
 
+            if (Connection.CurrentCloud != null) {
+                DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id);
+            }
 
             try {
                 if (RootFrame.Content is MainPage || RootFrame.Content is FacebookAuth.Login) return;

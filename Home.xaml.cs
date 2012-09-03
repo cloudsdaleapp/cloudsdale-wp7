@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
@@ -10,6 +11,7 @@ using System.Windows.Media.Imaging;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
@@ -17,24 +19,19 @@ namespace Cloudsdale {
         public static bool comingfromhome = false;
         public static bool comingfromlogin = true;
 
+        public static readonly ObservableCollection<Cloud> ExploreClouds = new ObservableCollection<Cloud>(); 
+
         public Home() {
             comingfromhome = true;
 
             InitializeComponent();
 
-            //pivotView.Items.RemoveAt(2);
 
             UserInfoPane.DataContext = CurrentUser;
 
-            var wc = new WebClient();
-            wc.DownloadStringCompleted += (sender, args) => {
-                var clouds = JsonConvert.DeserializeObject<CloudsRequest>(args.Result).result;
-                searchResults.Items.Clear();
-                foreach (var cloud in clouds) {
-                    AddExploreCloud(cloud);
-                }
-            };
-            wc.DownloadStringAsync(new Uri(Res.PopularCloudsEndpoint));
+            searchResults.ItemsSource = ExploreClouds;
+
+            PopularClick(null, null);
 
             if (IsolatedStorageSettings.ApplicationSettings.Contains("ux.allowaltcodes")) {
                 allowaltcodes.IsChecked = true;
@@ -45,12 +42,7 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
-            if (Connection.CurrentCloudsdaleUser.clouds != null) {
-                CloudList.Items.Clear();
-                foreach (var cloud in Connection.CurrentCloudsdaleUser.clouds) {
-                    AddCloud(cloud);
-                }
-            }
+            CloudList.ItemsSource = Connection.CurrentCloudsdaleUser.Clouds;
             if (comingfromlogin) {
                 comingfromlogin = false;
                 while (NavigationService.CanGoBack) {
@@ -63,124 +55,49 @@ namespace Cloudsdale {
             get { return Connection.CurrentCloudsdaleUser; }
         }
 
-        public void AddCloud(Cloud cloud) {
-            PonyvilleDirectory.RegisterCloud(cloud);
-            var controller = DerpyHoovesMailCenter.Subscribe(cloud);
-            var grid = new Grid {
-                Margin = new Thickness(0, 0, 0, 5),
-                Height = 50
-            };
-            var img = new Image {
-                Source = new BitmapImage(cloud.avatar.Preview),
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Width = 50
-            };
-            grid.Children.Add(img);
-            var cloudname = new TextBlock {
-                Text = cloud.name,
-                FontSize = 32,
-                Margin = new Thickness(60, 0, 0, 0),
-                Foreground = new SolidColorBrush(Colors.Black)
-            };
-            grid.Children.Add(cloudname);
-            var unreadnum = new Controls.CountDisplay {
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top
-            };
-            controller.BindMsgCount(unreadnum);
-            grid.Children.Add(unreadnum);
-            var baseproj = grid.Projection;
-            var buttondownpoints = new StylusPointCollection();
-            grid.MouseLeftButtonDown += (sender, args) => {
-                buttondownpoints = args.StylusDevice.GetStylusPoints(LayoutRoot);
-                var proj = new PlaneProjection {
-                    RotationX = 15,
-                    RotationY = -15,
-                };
-                grid.Projection = proj;
-            };
-            grid.MouseLeftButtonUp += (sender, args) => {
-                grid.Projection = baseproj;
-                var points = args.StylusDevice.GetStylusPoints(LayoutRoot);
-                if (points.Count > 0 && buttondownpoints.Count > 0) {
-                    if (points[0].X < buttondownpoints[0].X - 40 ||
-                        points[0].X > buttondownpoints[0].X + 40 ||
-                        points[0].Y < buttondownpoints[0].Y - 40 ||
-                        points[0].Y > buttondownpoints[0].Y + 40)
-                        return;
-                }
-                Connection.CurrentCloud = cloud;
-                NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
-            };
-            grid.MouseLeave += (sender, args) => {
-                grid.Projection = baseproj;
-            };
-
-            CloudList.Items.Add(grid);
-        }
-
-        public void AddExploreCloud(Cloud cloud) {
-            PonyvilleDirectory.RegisterCloud(cloud);
-            var grid = new Grid {
-                Margin = new Thickness(0, 0, 0, 5),
-                Height = 50
-            };
-            var img = new Image {
-                Source = new BitmapImage(cloud.avatar.Preview),
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Width = 50
-            };
-            grid.Children.Add(img);
-            var cloudname = new TextBlock {
-                Text = cloud.name,
-                FontSize = 32,
-                Margin = new Thickness(60, 0, 0, 0),
-                Foreground = new SolidColorBrush(Colors.Black)
-            };
-            grid.Children.Add(cloudname);
-            var baseproj = grid.Projection;
-            var buttondownpoints = new StylusPointCollection();
-            grid.MouseLeftButtonDown += (sender, args) => {
-                buttondownpoints = args.StylusDevice.GetStylusPoints(LayoutRoot);
-                var proj = new PlaneProjection {
-                    RotationX = 15,
-                    RotationY = -15,
-                };
-                grid.Projection = proj;
-            };
-            grid.MouseLeftButtonUp += (sender, args) => {
-                grid.Projection = baseproj;
-                var points = args.StylusDevice.GetStylusPoints(LayoutRoot);
-                if (points.Count > 0 && buttondownpoints.Count > 0) {
-                    if (points[0].X < buttondownpoints[0].X - 40 ||
-                        points[0].X > buttondownpoints[0].X + 40 ||
-                        points[0].Y < buttondownpoints[0].Y - 40 ||
-                        points[0].Y > buttondownpoints[0].Y + 40)
-                        return;
-                }
-                Connection.CurrentCloud = cloud;
-                NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
-            };
-            grid.MouseLeave += (sender, args) => {
-                grid.Projection = baseproj;
-            };
-
-            searchResults.Items.Add(grid);
-        }
-
         private void PopularClick(object sender, RoutedEventArgs e) {
-            searchResults.Items.Clear();
-            searchResults.Items.Add(new TextBlock { Text = "Loading..." });
+            searchResults.ItemsSource = new Cloud[0];
+            WebPriorityManager.BeginHighPriorityRequest(new Uri(
+                Res.PopularCloudsEndpoint), result => {
+                    var response = JObject.Parse(result.Result);
+                    var jclouds = (JArray)response["result"];
+                    var clouds = from jcloud in jclouds select PonyvilleDirectory.RegisterCloud(jcloud.ToObject<Cloud>());
+                    Dispatcher.BeginInvoke(() => {
+                        searchResults.ItemsSource = clouds;
+                    });
+                });
         }
 
         private void RecentClick(object sender, RoutedEventArgs e) {
-            searchResults.Items.Clear();
-            searchResults.Items.Add(new TextBlock { Text = "Loading..." });
+            searchResults.ItemsSource = new Cloud[0];
+            WebPriorityManager.BeginHighPriorityRequest(new Uri(
+                Res.RecentCloudsEndpoint), result => {
+                    var response = JObject.Parse(result.Result);
+                    var jclouds = (JArray)response["result"];
+                    var clouds = from jcloud in jclouds select PonyvilleDirectory.RegisterCloud(jcloud.ToObject<Cloud>());
+                    Dispatcher.BeginInvoke(() => {
+                        searchResults.ItemsSource = clouds;
+                    });
+                });
         }
 
-        private void ExploreRefreshClick(object sender, RoutedEventArgs e) {
-            searchResults.Items.Clear();
-            searchResults.Items.Add(new TextBlock { Text = "Loading..." });
+        private void SearchClick(object sender, RoutedEventArgs e) {
+            if (string.IsNullOrWhiteSpace(SearchQuery.Text)) {
+                MessageBox.Show("Please enter some text");
+                return;
+            }
+
+
+            searchResults.ItemsSource = new Cloud[0];
+            WebPriorityManager.BeginHighPriorityRequest(new Uri(
+                Res.SearchCloudsEndpoint.Replace("{query}", SearchQuery.Text)), result => {
+                    var response = JObject.Parse(result.Result);
+                    var jclouds = (JArray)response["result"];
+                    var clouds = from jcloud in jclouds select PonyvilleDirectory.RegisterCloud(jcloud.ToObject<Cloud>());
+                    Dispatcher.BeginInvoke(() => {
+                        searchResults.ItemsSource = clouds;
+                    });
+                });
         }
 
         private void LogoutClick(object sender, RoutedEventArgs e) {
@@ -213,6 +130,12 @@ namespace Cloudsdale {
             var settings = IsolatedStorageSettings.ApplicationSettings;
             settings.Remove("ux.recursivealtcodeentry");
             settings.Save();
+        }
+
+        private void CloudClick(object sender, RoutedEventArgs e) {
+            var cloud = (Cloud)((FrameworkElement)sender).DataContext;
+            Connection.CurrentCloud = cloud;
+            NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
         }
     }
 }

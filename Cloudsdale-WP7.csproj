@@ -71,6 +71,7 @@
     <Reference Include="SuperSocket.ClientEngine.Protocol, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>Lib\SuperSocket.ClientEngine.Protocol.dll</HintPath>
     </Reference>
+    <Reference Include="System.Device" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows" />
     <Reference Include="system" />
@@ -151,14 +152,12 @@
     <Compile Include="Models\Avatar.cs" />
     <Compile Include="Models\Cloud.cs" />
     <Compile Include="Models\CloudsdaleItem.cs" />
-    <Compile Include="Models\CloudsRequest.cs" />
     <Compile Include="Managers\PonyTracker.cs" />
     <Compile Include="Models\Drop.cs" />
     <Compile Include="Models\FayeMessageResponse.cs" />
     <Compile Include="Models\LoginResponse.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Prosecution.cs" />
-    <Compile Include="Models\SentMessage.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

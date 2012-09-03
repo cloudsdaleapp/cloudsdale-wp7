@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
@@ -42,6 +43,8 @@ namespace Cloudsdale {
 
             if (Connection.CurrentCloudsdaleUser.Clouds.All(cloud => cloud.id != Connection.CurrentCloud.id)) {
                 Connection.JoinCloud(Connection.CurrentCloud.id);
+                Connection.CurrentCloudsdaleUser.clouds = new List<Cloud>
+                    (Connection.CurrentCloudsdaleUser.clouds) { Connection.CurrentCloud }.ToArray();
             }
 
             cloudPivot.Title = Connection.CurrentCloud.name;
@@ -132,6 +135,7 @@ namespace Cloudsdale {
             var cmessages = controller.messages;
             cmessages.Add(new Message {
                 id = Guid.NewGuid().ToString(),
+                device = "mobile",
                 content = SendBox.Text,
                 timestamp = DateTime.Now + DerpyHoovesMailCenter.ServerDiff,
                 user = PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id)
@@ -323,6 +327,10 @@ namespace Cloudsdale {
         }
 
         private void RemoveThisCloud(object sender, RoutedEventArgs e) {
+            if (MessageBox.Show("Are you sure you want to leave this cloud?",
+                "", MessageBoxButton.OKCancel) != MessageBoxResult.OK) {
+                return;
+            }
             Connection.CurrentCloudsdaleUser.clouds = (
                 from cloud in Connection.CurrentCloudsdaleUser.clouds
                 where cloud.id != Connection.CurrentCloud.id
@@ -379,6 +387,47 @@ namespace Cloudsdale {
             var user = (CensusUser)button.DataContext;
 
             MessageBox.Show("Sorry, banning does not work yet :<");
+        }
+
+        private void UserCloudClick(object sender, RoutedEventArgs e) {
+            var cloud = (Cloud) ((FrameworkElement) sender).DataContext;
+            Connection.CurrentCloud = cloud;
+
+            userpopup.IsOpen = false;
+
+            Chats.ItemsSource = new Message[0];
+            MediaList.ItemsSource = new Drop[0];
+            Ponies.ItemsSource = new CensusUser[0];
+            cloudPivot.Title = "";
+
+            new Thread(() => {
+                Thread.Sleep(100);
+                Dispatcher.BeginInvoke(() => {
+                    Controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);
+
+                    if (Connection.CurrentCloudsdaleUser.Clouds.All(cloud1 => cloud1.id != Connection.CurrentCloud.id)) {
+                        Connection.JoinCloud(Connection.CurrentCloud.id);
+                        Connection.CurrentCloudsdaleUser.clouds = new List<Cloud>
+                            (Connection.CurrentCloudsdaleUser.clouds) { Connection.CurrentCloud }.ToArray();
+                    }
+
+                    cloudPivot.Title = Connection.CurrentCloud.name;
+
+                    DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id);
+
+                    new Thread(() => {
+                        Thread.Sleep(75);
+                        Dispatcher.BeginInvoke(() => {
+                            Chats.ItemsSource = Controller.Messages;
+                            MediaList.ItemsSource = Controller.Drops;
+                            Ponies.ItemsSource = Controller.Users;
+                            ScrollDown(null, null);
+                        });
+                    }).Start();
+
+                    Wasoncloud = true;
+                });
+            }).Start();
         }
     }
 }

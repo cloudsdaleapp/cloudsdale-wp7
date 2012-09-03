@@ -1,45 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
+using System.Windows.Data;
 
 namespace Cloudsdale.Controls {
-    public partial class CountDisplay : UserControl {
+    public partial class CountDisplay {
         public CountDisplay() {
             InitializeComponent();
             Visibility = Visibility.Collapsed;
+
+            var binding = new Binding("Count") {Source = this};
+            var prop = DependencyProperty.RegisterAttached(
+                "Count",
+                typeof (int),
+                typeof (CountDisplay),
+                new PropertyMetadata(Changed));
+            SetBinding(prop, binding);
         }
 
-        private Managers.GenericBinding<String> binding; 
-        public Managers.GenericBinding<String> Binding {
-            get { return binding; }
-            set {
-                binding = value;
-                binding.Bind(text);
-                binding.PropertyChanged += (sender, args) => {
-                    if (Dispatcher.CheckAccess()) {
-                        Update();
-                    } else {
-                        Dispatcher.BeginInvoke(Update);
-                    }
-                };
-            }
+        public void Changed(DependencyObject o, DependencyPropertyChangedEventArgs args) {
+            Dispatcher.BeginInvoke(() => Update((int)args.NewValue));
         }
-        private void Update() {
-            if (binding.Value.Length == 0) {
+
+        public int Count {
+            get { return (int) GetValue(CountProperty); }
+            set { SetValue(CountProperty, value); }
+        }
+
+        public static readonly DependencyProperty CountProperty =
+            DependencyProperty.Register("Count", typeof (int), typeof (CountDisplay), new PropertyMetadata(0));
+
+        private void Update(int count) {
+            var value = count.ToString();
+            if (value.Length == 0) {
                 Visibility = Visibility.Collapsed;
             } else if (Visibility == Visibility.Collapsed) {
                 Visibility = Visibility.Visible;
             }
-            text.FontSize = 28 - binding.Value.Length * 4;
-            text.Margin = new Thickness(Math.Max(11 - binding.Value.Length * 3, 2), -1 + binding.Value.Length * 2.8, 0, 0);
+            text.Text = value;
+            text.FontSize = 28 - value.Length * 4;
+            text.Margin = new Thickness(Math.Max(11 - value.Length * 3, 2), -1 + value.Length * 2.8, 0, 0);
         }
     }
 }

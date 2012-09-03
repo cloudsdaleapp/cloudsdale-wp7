@@ -22,14 +22,18 @@ namespace Cloudsdale.Models {
         public string device;
 
         public string DeviceStub {
-            get { return device == "mobile" ? "☎" : ""; }
+            get { return device == "mobile" ? " ☎" : ""; }
         }
 
-        public DateTime CorrectedTimestamp {
+        public string CorrectedTimestamp {
             get {
                 var tzi = TimeZoneInfo.Local;
                 var offset = tzi.BaseUtcOffset + TimeSpan.FromHours(1);
-                return timestamp + offset;
+                var time = timestamp + offset;
+
+                string datestring = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern;
+
+                return time > DateTime.Now.AddDays(-1) ? time.ToString("HH:mm:ss") : time.ToString(datestring + " HH:mm:ss");
             }
         }
 

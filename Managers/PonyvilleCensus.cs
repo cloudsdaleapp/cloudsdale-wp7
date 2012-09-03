@@ -132,7 +132,7 @@ namespace Cloudsdale.Managers {
                     var jObj = JObject.Parse(data);
                     jObj["user"].ToObject<CensusUser>().CopyTo(this);
                     var clouds = (JArray)jObj["clouds"];
-                    _extClouds = from jcloud in clouds select jcloud.ToObject<Cloud>();
+                    _extClouds = from jcloud in clouds select PonyvilleDirectory.RegisterCloud(jcloud.ToObject<Cloud>());
                 } catch (JsonException e) {
                 }
             }
@@ -151,7 +151,8 @@ namespace Cloudsdale.Managers {
             WebPriorityManager.BeginLowPriorityRequest(
                 new Uri(Resources.UserCloudsEndpoint.Replace("{userid}", id)),
                 args => {
-                    _extClouds = JsonConvert.DeserializeObject<WebResponse<Cloud[]>>(args.Result).result;
+                    _extClouds = from cloud in JsonConvert.DeserializeObject<WebResponse<Cloud[]>>(args.Result).result
+                                 select PonyvilleDirectory.RegisterCloud(cloud);
                     OnPropertyChanged("ExtClouds");
                 });
         }

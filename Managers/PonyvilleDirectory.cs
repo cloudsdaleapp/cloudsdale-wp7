@@ -15,8 +15,14 @@ using Newtonsoft.Json.Linq;
 namespace Cloudsdale.Managers {
     public class PonyvilleDirectory {
         private static readonly Dictionary<string, Cloud> Clouds = new Dictionary<string, Cloud>(); 
-        public static void RegisterCloud(Cloud cloud) {
-            Clouds[cloud.id] = cloud;
+        public static Cloud RegisterCloud(Cloud cloud) {
+            lock (Clouds) {
+                if (Clouds.ContainsKey(cloud.id)) {
+                    Clouds[cloud.id].CopyFrom(cloud);
+                    return Clouds[cloud.id];
+                }
+                return Clouds[cloud.id] = cloud;
+            }
         }
 
         public static Cloud GetCloud(string id) {

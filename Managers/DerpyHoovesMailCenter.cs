@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 #if DEBUG
 using System.Diagnostics;
 #endif
+using System.ComponentModel;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +17,7 @@ namespace Cloudsdale.Managers {
     /// <summary>
     /// Used to control all incoming data for a cloud
     /// </summary>
-    public class DerpyHoovesMailCenter {
+    public class DerpyHoovesMailCenter : INotifyPropertyChanged {
         internal static Timer PresenceAnnouncer = null;
 
         public static TimeSpan ServerDiff = new TimeSpan();
@@ -29,6 +30,14 @@ namespace Cloudsdale.Managers {
         public static readonly Dictionary<string, bool> ValidPreloadedData = new Dictionary<string, bool>();
 
         public readonly object Lock = new object();
+
+        public int Unread {
+            get { return unread; }
+            set {
+                unread = value;
+                OnPropertyChanged("Unread");
+            }
+        }
 
         private static readonly Dictionary<string, DerpyHoovesMailCenter> Cache =
             new Dictionary<string, DerpyHoovesMailCenter>();
@@ -65,7 +74,7 @@ namespace Cloudsdale.Managers {
                         user.data.CopyTo(Connection.CurrentCloudsdaleUser);
                         if ((Connection.CurrentCloudsdaleUser.suspended_until ?? new DateTime(0)) > DateTime.Now) {
                             Deployment.Current.Dispatcher.BeginInvoke(() => {
-                                MessageBox.Show("You are banned until" + Connection.CurrentCloudsdaleUser.suspended_until + 
+                                MessageBox.Show("You are banned until" + Connection.CurrentCloudsdaleUser.suspended_until +
                                     "\n" + Connection.CurrentCloudsdaleUser.reason_for_suspension);
                                 throw new ApplicationTerminationException();
                             });
@@ -111,8 +120,7 @@ namespace Cloudsdale.Managers {
                             var cache = Cache[chansplit[1]];
                             lock (cache.Lock)
                                 cache.messages.Add(message);
-                            cache.unread++;
-                            cache.DoUpdates();
+                            cache.Unread++;
                             break;
 
                     }
@@ -137,16 +145,7 @@ namespace Cloudsdale.Managers {
             new GenericBinding<string>(TextBlock.TextProperty);
         private int unread;
         public void MarkAsRead() {
-            unread = 0;
-            DoUpdates();
-        }
-        private void DoUpdates() {
-            if (Deployment.Current.Dispatcher.CheckAccess()) {
-                textblockbinding.Value = (unread > 0) ? unread.ToString() : "";
-            } else {
-                Deployment.Current.Dispatcher.BeginInvoke(
-                    () => textblockbinding.Value = (unread > 0) ? unread.ToString() : "");
-            }
+            Unread = 0;
         }
 
         public ObservableCollection<Message> Messages {
@@ -160,9 +159,6 @@ namespace Cloudsdale.Managers {
         }
         public ObservableCollection<CensusUser> Users {
             get { return users.Users; }
-        }
-        public void BindMsgCount(Controls.CountDisplay display) {
-            display.Binding = textblockbinding;
         }
 
         public static DerpyHoovesMailCenter Subscribe(Cloud cloud) {
@@ -183,6 +179,7 @@ namespace Cloudsdale.Managers {
                     try {
                         var result = JsonConvert.DeserializeObject<WebDropResponse>(eventArgs.Result);
                         var drops = result.result;
+                        if (!Cache.ContainsKey(cloud.id)) return;
                         Cache[cloud.id].drops.PreLoad(drops);
                     } catch (WebException) {
                     }
@@ -202,6 +199,7 @@ namespace Cloudsdale.Managers {
             WebPriorityManager.BeginHighPriorityRequest(new Uri(Resources.PreviousMessagesEndpoint.Replace("{cloudid}", id)), e => {
                 try {
                     var result = JsonConvert.DeserializeObject<WebMessageResponse>(e.Result);
+                    if (!Cache.ContainsKey(id)) return;
                     lock (Cache[id].Lock) {
                         foreach (var m in result.result) {
                             if (m == null || m.user == null || m.id == null || m.content == null) {
@@ -222,42 +220,11 @@ namespace Cloudsdale.Managers {
             if (Cache.ContainsKey(cloud)) Cache.Remove(cloud);
         }
 
-        public class PresenceObject {
-            public string channel;
-            public PresenceUser data;
-            public string clientId = Connection.Faye.ClientId;
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public class PresenceUser {
-            public string name;
-            public string id;
-            public PresenceAvatar avatar;
-
-            public static implicit operator PresenceUser(ListUser u) {
-                return new PresenceUser {
-                    name = u.name,
-                    id = u.id,
-                    avatar = u.avatar
-                };
-            }
-        }
-
-        public class PresenceAvatar {
-            public string chat;
-            public string mini;
-            public string normal;
-            public string preview;
-            public string thumb;
-
-            public static implicit operator PresenceAvatar(Avatar a) {
-                return new PresenceAvatar {
-                    chat = a.Chat.ToString(),
-                    mini = a.Mini.ToString(),
-                    normal = a.Normal.ToString(),
-                    preview = a.Preview.ToString(),
-                    thumb = a.Thumb.ToString(),
-                };
-            }
+        protected virtual void OnPropertyChanged(string propertyName) {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
