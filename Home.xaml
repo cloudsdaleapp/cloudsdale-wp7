@@ -7,7 +7,8 @@
     xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:Controls="clr-namespace:Cloudsdale.Controls" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
+    xmlns:mycontrols="clr-namespace:Cloudsdale.Controls"
+    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     FontFamily="Segoe WP Bold"
     FontSize="28"
@@ -78,12 +79,14 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <toolkit:HubTile
-                                        Title="{Binding Path=name}" Margin="3"
-                                        Source="{Binding Path=avatar.Normal}"
-                                        Background="#FFD0D0D0" Style="{StaticResource HubTileStyle0}"
-                                        Tap="CloudTap">
-                                    </toolkit:HubTile>
+                                    <mycontrols:TiltGrid mycontrols:TiltEffect.IsTiltEnabled="True">
+                                        <toolkit:HubTile
+                                            Title="{Binding Path=name}" Margin="3"
+                                            Source="{Binding Path=avatar.Normal}"
+                                            Background="#FFD0D0D0" Style="{StaticResource HubTileStyle0}"
+                                            Tap="CloudTap">
+                                        </toolkit:HubTile>
+                                    </mycontrols:TiltGrid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>

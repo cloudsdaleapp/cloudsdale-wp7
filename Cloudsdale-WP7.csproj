@@ -54,7 +54,6 @@
     <Reference Include="Facebook">
       <HintPath>Lib\Facebook.dll</HintPath>
     </Reference>
-    <Reference Include="IsolatedStorageExplorer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Controls.Toolkit, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b772ad94eb9ca604, processorArchitecture=MSIL" />
@@ -107,6 +106,8 @@
     <Compile Include="Controls\CountDisplay.xaml.cs">
       <DependentUpon>CountDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TiltEffect.cs" />
+    <Compile Include="Controls\TiltGrid.cs" />
     <Compile Include="DropViewer.xaml.cs">
       <DependentUpon>DropViewer.xaml</DependentUpon>
     </Compile>
