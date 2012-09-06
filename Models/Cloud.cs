@@ -250,6 +250,10 @@ namespace Cloudsdale.Models {
                 return DerpyHoovesMailCenter.GetCloud(this);
             }
         }
+
+        public string TileDescription {
+            get { return string.IsNullOrWhiteSpace(description) ? "This cloud has no description" : description; }
+        }
     }
 
     [JsonObject(MemberSerialization.OptIn)]

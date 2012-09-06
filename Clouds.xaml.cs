@@ -35,7 +35,7 @@ namespace Cloudsdale {
 
         public Clouds() {
             if (Connection.CurrentCloud == null) {
-                NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                Dispatcher.BeginInvoke(() => NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative)));
                 return;
             }
             Controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);

@@ -8,6 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Controls="clr-namespace:Cloudsdale.Controls" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     FontFamily="Segoe WP Bold"
     FontSize="28"
     Foreground="Black"
@@ -24,20 +25,13 @@
                 <Button Click="CloudClick" DataContext="{Binding}" Style="{StaticResource XTiltButtonStyle}"
                         HorizontalAlignment="Left" BorderBrush="Transparent" Padding="-10">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Image Source="{Binding Path=avatar.Preview}" Width="50" Height="50" Margin="0,0,5,0" />
-                        <TextBlock Text="{Binding name}" Foreground="Black" FontSize="30" />
-                    </StackPanel>
-                </Button>
-            </DataTemplate>
-            <DataTemplate x:Key="MyCloudsTemplate">
-                <Button Click="CloudClick" DataContext="{Binding}" Style="{StaticResource XTiltButtonStyle}"
-                        HorizontalAlignment="Left" BorderBrush="Transparent" Padding="-10">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <Grid>
-                            <Image Source="{Binding Path=avatar.Preview}" Width="50" Height="50" Margin="0,0,5,0" />
-                            <Controls:CountDisplay Count="{Binding Path=Controller.Unread}" Margin="-25,-25,0,0" />
-                        </Grid>
-                        <TextBlock Text="{Binding name}" Foreground="Black" FontSize="30" />
+                        <Image Source="{Binding Path=avatar.Preview}" Width="50" Height="50" Margin="0,0,5,0"
+                               VerticalAlignment="Top"/>
+                        <StackPanel Width="400">
+                            <TextBlock Text="{Binding name}" Foreground="Black" FontSize="30" FontFamily="Segoe WP" />
+                            <TextBlock Text="{Binding description}" Foreground="#f777" FontSize="26" FontFamily="Segoe WP"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
                     </StackPanel>
                 </Button>
             </DataTemplate>
@@ -52,41 +46,49 @@
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem Header="Home" Foreground="#FF2A81DB">
-                <StackPanel x:Name="UserInfoPane">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100" 
+                <ScrollViewer Margin="0,-26,0,0">
+                    <StackPanel x:Name="UserInfoPane">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100" 
                                HorizontalAlignment="Left" VerticalAlignment="Top">
-                            <Image.Clip>
-                                <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,100,100" />
-                            </Image.Clip>
-                        </Image>
-                        <StackPanel>
-                            <TextBlock Margin="10,0,0,0" Foreground="#FF202020">
+                                <Image.Clip>
+                                    <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,100,100" />
+                                </Image.Clip>
+                            </Image>
+                            <StackPanel>
+                                <TextBlock Margin="10,0,0,0" Foreground="#FF202020">
                                 <Run Text="{Binding Path=name}" />
-                            </TextBlock>
-                            <Button Content="Logout" Foreground="#FF202020" BorderBrush="#FF202020" Margin="0"
+                                </TextBlock>
+                                <Button Content="Logout" Foreground="#FF202020" BorderBrush="#FF202020" Margin="0"
                                 HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Click="LogoutClick" />
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                    <TextBlock TextWrapping="Wrap" FontSize="34" 
-                               Text="Welcome back to cloudsdale!" 
+                        <TextBlock TextWrapping="Wrap" FontSize="34"
+                               Text="Welcome back to cloudsdale!"
                                Margin="0,0,0,20" />
-                    <TextBlock TextWrapping="Wrap" FontSize="18">
-                        You have been a member since <Run Text="{Binding Path=member_since, StringFormat=dd/MM/yy}" />
-                    </TextBlock>
-                </StackPanel>
-            </controls:PivotItem>
-            <controls:PivotItem Header="Clouds">
-                <Grid Margin="-12,-26,-12,0">
-                    <ScrollViewer Margin="12,0,12,50">
-                        <ItemsControl x:Name="CloudList" Margin="0,15,0,0" ItemTemplate="{StaticResource MyCloudsTemplate}" />
-                    </ScrollViewer>
-                    <Button VerticalAlignment="Bottom" BorderBrush="Transparent" Margin="0,0,0,2" 
-                            Height="50" Padding="-25" Width="50"
-                            Style="{StaticResource XTiltButtonStyle}">
-                        <Image Source="/Images/Icons/refresh.png" Width="50" Height="50" />
-                    </Button>
-                </Grid>
+                        <TextBlock TextWrapping="Wrap" FontSize="18">
+                        You have been a member since <Run Text="{Binding Path=member_since,
+                                                          StringFormat='MMMM dd, yyyy'}" />
+                        </TextBlock>
+                        <ItemsControl x:Name="CloudList" Margin="0,15,0,0">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <toolkit:WrapPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <toolkit:HubTile
+                                        Title="{Binding Path=name}" Margin="3"
+                                        Source="{Binding Path=avatar.Normal}"
+                                        Background="#FFD0D0D0" Style="{StaticResource HubTileStyle0}"
+                                        Tap="CloudTap">
+                                    </toolkit:HubTile>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
             </controls:PivotItem>
             <controls:PivotItem Header="Explore" Foreground="Black">
                 <Grid>

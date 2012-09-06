@@ -201,11 +201,15 @@
                                                 <Button DataContext="{Binding}" Style="{StaticResource XTiltButtonStyle}"
                                                         HorizontalAlignment="Left" BorderBrush="Transparent" Padding="-10"
                                                         Click="UserCloudClick">
-                                                    <StackPanel Orientation="Horizontal" Margin="2">
-                                                        <Image Source="{Binding Path=avatar.Normal}"
-                                                           Width="50" Height="50" Margin="0,0,5,0" />
-                                                        <TextBlock Text="{Binding Path=name}" Foreground="#FF444444"
-                                                               VerticalAlignment="Center" FontSize="24"/>
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                                        <Image Source="{Binding Path=avatar.Preview}" Width="50" Height="50" 
+                                                               Margin="0,0,5,0" VerticalAlignment="Top"/>
+                                                        <StackPanel Width="350">
+                                                            <TextBlock Text="{Binding name}" Foreground="Black" FontSize="30" 
+                                                                       FontFamily="Segoe WP" />
+                                                            <TextBlock Text="{Binding description}" Foreground="#f777" FontSize="26" 
+                                                                       FontFamily="Segoe WP" TextWrapping="Wrap"/>
+                                                        </StackPanel>
                                                     </StackPanel>
                                                 </Button>
                                             </DataTemplate>

@@ -1,8 +1,9 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using Cloudsdale.Models;
 
 namespace Cloudsdale.Managers {
-    public class SweetAppleAcres : AppleFarm<Message> {
+    public class SweetAppleAcres : AppleFarm<Message>, INotifyPropertyChanged {
 
         public SweetAppleAcres(int capacity)
             : base(capacity) {
@@ -48,6 +49,25 @@ namespace Cloudsdale.Managers {
                     cache.RemoveAt(0);
                 }
             }
+
+            OnPropertyChanged("LastMessage");
+        }
+
+        public string LastMessage {
+            get {
+                if (cache.Count < 1) return "";
+                var lastmsg = cache[cache.Count - 1];
+                var lines = lastmsg.Split;
+                var line = lines[lines.Length - 1];
+                return lastmsg.user.name + ": " + line.Text;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName) {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

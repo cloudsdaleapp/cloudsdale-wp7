@@ -148,6 +148,10 @@ namespace Cloudsdale.Managers {
             Unread = 0;
         }
 
+        public SweetAppleAcres MessageController {
+            get { return messages; }
+        }
+
         public ObservableCollection<Message> Messages {
             get { return messages.Cache; }
         }
@@ -225,6 +229,10 @@ namespace Cloudsdale.Managers {
         protected virtual void OnPropertyChanged(string propertyName) {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public string LastMessage {
+            get { return ""; }
         }
     }
 

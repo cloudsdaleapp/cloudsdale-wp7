@@ -49,6 +49,9 @@ namespace Cloudsdale {
                     NavigationService.RemoveBackEntry();
                 }
             }
+            if (CurrentUser.needs_name_change ?? false) {
+                
+            }
         }
 
         public LoggedInUser CurrentUser {
@@ -133,6 +136,12 @@ namespace Cloudsdale {
         }
 
         private void CloudClick(object sender, RoutedEventArgs e) {
+            var cloud = (Cloud)((FrameworkElement)sender).DataContext;
+            Connection.CurrentCloud = cloud;
+            NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
+        }
+
+        private void CloudTap(object sender, GestureEventArgs e) {
             var cloud = (Cloud)((FrameworkElement)sender).DataContext;
             Connection.CurrentCloud = cloud;
             NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
