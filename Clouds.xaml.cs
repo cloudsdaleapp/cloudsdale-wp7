@@ -107,10 +107,11 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
-            if (DoARemove) {
-                NavigationService.RemoveBackEntry();
-            }
 
+            if (Connection.CurrentCloud == null) {
+                NavigationService.GoBack();
+                return;
+            }
             DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id);
 
             cloudinfoback.Visibility = Visibility.Collapsed;
