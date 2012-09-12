@@ -32,9 +32,9 @@ namespace Cloudsdale.Controls {
         private void Update(int count) {
             var value = count.ToString();
             if (value.Length == 0) {
-                Visibility = Visibility.Collapsed;
+                LayoutRoot.Visibility = Visibility.Collapsed;
             } else if (Visibility == Visibility.Collapsed) {
-                Visibility = Visibility.Visible;
+                LayoutRoot.Visibility = Visibility.Visible;
             }
             text.Text = value;
             text.FontSize = 28 - value.Length * 4;

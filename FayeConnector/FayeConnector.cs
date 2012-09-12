@@ -59,22 +59,24 @@ namespace Cloudsdale.FayeConnector {
 
             var chansplit = channel.Split(
                 new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            var temp = subbedchans.Where(s => s.EndsWith("*"));
-            foreach (var chan in temp) {
-                var stem = chan.Split(
-                    new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-                if (chan.EndsWith("**")) {
-                    if (stem.Length < chansplit.Length) continue;
-                } else {
-                    if (stem.Length != chansplit.Length) continue;
+            lock (subbedchans) {
+                var temp = subbedchans.Where(s => s.EndsWith("*"));
+                foreach (var chan in temp) {
+                    var stem = chan.Split(
+                        new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (chan.EndsWith("**")) {
+                        if (stem.Length < chansplit.Length) continue;
+                    } else {
+                        if (stem.Length != chansplit.Length) continue;
+                    }
+                    var matches = true;
+                    for (var i = 0; i < stem.Length - 1; ++i) {
+                        if (stem[i] == chansplit[i]) continue;
+                        matches = false;
+                        break;
+                    }
+                    if (matches) return true;
                 }
-                var matches = true;
-                for (var i = 0; i < stem.Length - 1; ++i) {
-                    if (stem[i] == chansplit[i]) continue;
-                    matches = false;
-                    break;
-                }
-                if (matches) return true;
             }
             Debug.WriteLine("subbed to " + channel + ": " + false);
             return false;
@@ -234,7 +236,8 @@ namespace Cloudsdale.FayeConnector {
                         if (SubscriptionFailed != null)
                             SubscriptionFailed(this, new SubscribeEventArgs(this, subscribedata.error, subscribedata.subscription));
                     } else {
-                        subbedchans.Add(subscribedata.subscription);
+                        lock (subbedchans)
+                            subbedchans.Add(subscribedata.subscription);
                         if (SubscriptionComplete != null)
                             SubscriptionComplete(this, new SubscribeEventArgs(this, data, subscribedata.subscription));
                     }
@@ -242,9 +245,11 @@ namespace Cloudsdale.FayeConnector {
                 // unsubscription callback handling
                 case "/meta/unsubscribe":
                     var unsubscribedata = JsonConvert.DeserializeObject<UnsubscribeResponse>(data);
-                    while (subbedchans.Contains(unsubscribedata.channel)) {
-                        subbedchans.Remove(unsubscribedata.channel);
-                    }
+
+                    lock (subbedchans)
+                        while (subbedchans.Contains(unsubscribedata.channel)) {
+                            subbedchans.Remove(unsubscribedata.channel);
+                        }
                     if (UnsubscriptionComplete != null) {
                         UnsubscriptionComplete(this, new UnsubscribeEventArgs(this, data, unsubscribedata.channel));
                     }

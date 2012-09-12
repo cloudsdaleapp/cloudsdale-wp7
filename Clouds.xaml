@@ -13,7 +13,7 @@
     Foreground="Black"
     SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True" OrientationChanged="PhoneApplicationPageOrientationChanged"
-    shell:SystemTray.Opacity="0.01">
+    shell:SystemTray.Opacity="0">
 
     <phone:PhoneApplicationPage.Resources>
         <ResourceDictionary>
@@ -262,11 +262,7 @@
                             <Grid>
                                 <StackPanel Margin="5">
                                     <StackPanel Orientation="Horizontal" MaxWidth="440">
-                                        <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100">
-                                            <Image.Clip>
-                                                <RectangleGeometry Rect="0,0,100,100" RadiusX="20" RadiusY="20" />
-                                            </Image.Clip>
-                                        </Image>
+                                        <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100" />
                                         <StackPanel>
                                             <TextBlock Text="{Binding Path=name}" Foreground="Black"
                                                FontSize="30" TextWrapping="Wrap" Margin="10,5"

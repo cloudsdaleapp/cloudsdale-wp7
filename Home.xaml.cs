@@ -5,13 +5,15 @@ using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Cloudsdale.Controls;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
+using Microsoft.Phone.Controls;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
@@ -19,7 +21,7 @@ namespace Cloudsdale {
         public static bool comingfromhome = false;
         public static bool comingfromlogin = true;
 
-        public static readonly ObservableCollection<Cloud> ExploreClouds = new ObservableCollection<Cloud>(); 
+        public static readonly ObservableCollection<Cloud> ExploreClouds = new ObservableCollection<Cloud>();
 
         public Home() {
             comingfromhome = true;
@@ -42,7 +44,7 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
-            CloudList.ItemsSource = Connection.CurrentCloudsdaleUser.Clouds;
+            CloudList.ItemSource = Connection.CurrentCloudsdaleUser.Clouds;
             if (comingfromlogin) {
                 comingfromlogin = false;
                 while (NavigationService.CanGoBack) {
@@ -50,7 +52,7 @@ namespace Cloudsdale {
                 }
             }
             if (CurrentUser.needs_name_change ?? false) {
-                
+
             }
         }
 
@@ -144,6 +146,15 @@ namespace Cloudsdale {
         private void CloudTap(object sender, GestureEventArgs e) {
             var cloud = (Cloud)((FrameworkElement)sender).DataContext;
             Connection.CurrentCloud = cloud;
+            NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
+        }
+
+        private void CloudListLoaded(object sender, RoutedEventArgs e) {
+            CloudList.Pivot = pivotView;
+        }
+
+        private void CloudClicked(object sender, CloudTileManager.CloudEventArgs args) {
+            Connection.CurrentCloud = args.Cloud;
             NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
         }
     }

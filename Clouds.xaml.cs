@@ -43,8 +43,9 @@ namespace Cloudsdale {
 
             if (Connection.CurrentCloudsdaleUser.Clouds.All(cloud => cloud.id != Connection.CurrentCloud.id)) {
                 Connection.JoinCloud(Connection.CurrentCloud.id);
-                Connection.CurrentCloudsdaleUser.clouds = new List<Cloud>
-                    (Connection.CurrentCloudsdaleUser.clouds) { Connection.CurrentCloud }.ToArray();
+                var list = new List<Cloud> (Connection.CurrentCloudsdaleUser.clouds) {Connection.CurrentCloud};
+                list.Sort(PonyvilleDirectory.GetUserCloudListComparer());
+                Connection.CurrentCloudsdaleUser.clouds = list.ToArray();
             }
 
             cloudPivot.Title = Connection.CurrentCloud.name;

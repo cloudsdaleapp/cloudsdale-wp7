@@ -103,6 +103,9 @@
       <DependentUpon>Connecting.xaml</DependentUpon>
     </Compile>
     <Compile Include="Connection.cs" />
+    <Compile Include="Controls\CloudTileManager.xaml.cs">
+      <DependentUpon>CloudTileManager.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CountDisplay.xaml.cs">
       <DependentUpon>CountDisplay.xaml</DependentUpon>
     </Compile>
@@ -173,6 +176,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Account\SetPassword.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\CloudTileManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

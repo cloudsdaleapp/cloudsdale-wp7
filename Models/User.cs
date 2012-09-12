@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Media;
 using Cloudsdale.Managers;
@@ -201,7 +202,9 @@ namespace Cloudsdale.Models {
                 return _clouds;
             }
             set {
-                _clouds = value;
+                var mylist = new List<Cloud>(value);
+                mylist.Sort(PonyvilleDirectory.GetUserCloudListComparer());
+                _clouds = mylist.ToArray();
                 if (Deployment.Current.Dispatcher.CheckAccess()) {
                     PopulateClouds();
                 } else {

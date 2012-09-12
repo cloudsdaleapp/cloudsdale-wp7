@@ -6,17 +6,9 @@
     mc:Ignorable="d"
     d:DesignHeight="35" d:DesignWidth="35">
 
-    <Canvas Width="35" Height="35">
-        <Ellipse
-            Height="35"
-            Width="35">
-            <Ellipse.Fill>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#FFFA0000" Offset="0" />
-                    <GradientStop Color="#FF9F0000" Offset="1" />
-                </LinearGradientBrush>
-            </Ellipse.Fill>
+    <Canvas Width="35" Height="35" x:Name="LayoutRoot">
+        <Ellipse Height="35" Width="35" Fill="#FF505050">
         </Ellipse>
-        <TextBlock Name="text" FontSize="24" Foreground="White" FontFamily="Comic Sans MS" />
+        <TextBlock Name="text" FontSize="24" Foreground="White" FontFamily="Comic Sans MS"/>
     </Canvas>
 </UserControl>

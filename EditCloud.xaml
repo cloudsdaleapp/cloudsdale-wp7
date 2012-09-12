@@ -11,7 +11,7 @@
     Foreground="Black"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
-    shell:SystemTray.IsVisible="True" shell:SystemTray.Opacity="0.01">
+    shell:SystemTray.IsVisible="True" shell:SystemTray.Opacity="0">
 
     <phone:PhoneApplicationPage.Resources>
         <ResourceDictionary>
