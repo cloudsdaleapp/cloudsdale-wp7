@@ -14,5 +14,10 @@ namespace Cloudsdale.FayeConnector.ResponseTypes {
         public T data;
         public string channel;
         public string clientId;
+        public AuthTokenExt ext = new AuthTokenExt();
+    }
+
+    public class AuthTokenExt {
+        public string auth_token = Connection.CurrentCloudsdaleUser.auth_token;
     }
 }

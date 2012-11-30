@@ -27,13 +27,9 @@ namespace Cloudsdale.Models {
 
         public string CorrectedTimestamp {
             get {
-                var tzi = TimeZoneInfo.Local;
-                var offset = tzi.BaseUtcOffset + TimeSpan.FromHours(1);
-                var time = timestamp + offset;
-
-                string datestring = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern;
-
-                return time > DateTime.Now.AddDays(-1) ? time.ToString("HH:mm:ss") : time.ToString(datestring + " HH:mm:ss");
+                var datestring = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern;
+                return timestamp > DateTime.Now.AddDays(-1) ? timestamp.ToString("HH:mm:ss") : 
+                    timestamp.ToString(datestring + " HH:mm:ss");
             }
         }
 

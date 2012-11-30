@@ -11,6 +11,7 @@ using WebSocket4Net;
 
 namespace Cloudsdale.FayeConnector {
     public class FayeConnector {
+        private const int ConnectTimeout = 30000;
         private readonly string address;
         private WebSocket socket;
         private readonly AutoResetEvent are = new AutoResetEvent(false);
@@ -109,7 +110,7 @@ namespace Cloudsdale.FayeConnector {
                 // Open the socket with hacked-on synchronosity
                 socket.Opened += AreSet;
                 socket.Open();
-                if (!are.WaitOne(5000)) {
+                if (!are.WaitOne(ConnectTimeout)) {
                     timeout();
                     return;
                 }
@@ -127,9 +128,11 @@ namespace Cloudsdale.FayeConnector {
                     are.Set();
                 });
                 socket.MessageReceived += handshakecallback;
-                socket.Send(FayeResources.Handshake);
-                if (!are.WaitOne(5000))
+                socket.Send(FayeResources.Handshake.Replace(":auth", Connection.CurrentCloudsdaleUser.auth_token));
+                if (!are.WaitOne(ConnectTimeout)) {
                     timeout();
+                    return;
+                }
                 socket.MessageReceived -= handshakecallback;
 
                 // If dat response is a failure... THROW THE CHEEEEESE (and by cheese I mean callback)
@@ -141,7 +144,8 @@ namespace Cloudsdale.FayeConnector {
                 clientId = response[0].clientId;
 
                 // Create the infinite loop of meta connects :3
-                var connectdata = FayeResources.Connect.Replace("%CLIENTID%", clientId);
+                var connectdata = FayeResources.Connect.Replace("%CLIENTID%", clientId)
+                    .Replace(":auth", Connection.CurrentCloudsdaleUser.auth_token);
                 socket.MessageReceived += (sender, args) => {
                     try {
                         var res = JsonConvert.DeserializeObject<Response[]>(args.Message);
@@ -269,7 +273,8 @@ namespace Cloudsdale.FayeConnector {
         /// </summary>
         /// <param name="channel"></param>
         public void Subscribe(string channel) {
-            socket.Send(FayeResources.Subscribe.Replace("%CLIENTID%", clientId).Replace("%CHANNEL%", channel));
+            socket.Send(FayeResources.Subscribe.Replace("%CLIENTID%", clientId).Replace("%CHANNEL%", channel)
+                .Replace(":auth", Connection.CurrentCloudsdaleUser.auth_token));
         }
 
         /// <summary>
@@ -277,7 +282,8 @@ namespace Cloudsdale.FayeConnector {
         /// </summary>
         /// <param name="channel"></param>
         public void Unsubscribe(string channel) {
-            socket.Send(FayeResources.Unsubscribe.Replace("%CLIENTID%", clientId).Replace("%CHANNEL%", channel));
+            socket.Send(FayeResources.Unsubscribe.Replace("%CLIENTID%", clientId).Replace("%CHANNEL%", channel)
+                .Replace(":auth", Connection.CurrentCloudsdaleUser.auth_token));
         }
 
         public void Publish<T>(string channel, T data) {

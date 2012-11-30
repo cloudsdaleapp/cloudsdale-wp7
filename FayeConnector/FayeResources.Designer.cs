@@ -61,7 +61,7 @@ namespace Cloudsdale.FayeConnector {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/connect&quot;,&quot;clientId&quot;:&quot;%CLIENTID%&quot;,&quot;connectionType&quot;:&quot;websocket&quot;}].
+        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/connect&quot;,&quot;clientId&quot;:&quot;%CLIENTID%&quot;,&quot;connectionType&quot;:&quot;websocket&quot;,&quot;ext&quot;:{&quot;auth_token&quot;:&quot;:auth&quot;}}].
         /// </summary>
         internal static string Connect {
             get {
@@ -79,7 +79,7 @@ namespace Cloudsdale.FayeConnector {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/handshake&quot;,&quot;version&quot;:&quot;1.0&quot;,&quot;supportedConnectionTypes&quot;:[&quot;websocket&quot;]}].
+        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/handshake&quot;,&quot;version&quot;:&quot;1.0&quot;,&quot;supportedConnectionTypes&quot;:[&quot;websocket&quot;],&quot;ext&quot;:{&quot;auth_token&quot;:&quot;:auth&quot;}}].
         /// </summary>
         internal static string Handshake {
             get {
@@ -88,7 +88,7 @@ namespace Cloudsdale.FayeConnector {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/subscribe&quot;,&quot;clientId&quot;:&quot;%CLIENTID%&quot;,&quot;subscription&quot;:&quot;%CHANNEL%&quot;}].
+        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/subscribe&quot;,&quot;clientId&quot;:&quot;%CLIENTID%&quot;,&quot;subscription&quot;:&quot;%CHANNEL%&quot;,&quot;ext&quot;:{&quot;auth_token&quot;:&quot;:auth&quot;}}].
         /// </summary>
         internal static string Subscribe {
             get {
@@ -97,7 +97,7 @@ namespace Cloudsdale.FayeConnector {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/unsubscribe&quot;,&quot;clientId&quot;:&quot;%CLIENTID%&quot;,&quot;subscription&quot;:&quot;%CHANNEL%&quot;}].
+        ///   Looks up a localized string similar to [{&quot;channel&quot;:&quot;/meta/unsubscribe&quot;,&quot;clientId&quot;:&quot;%CLIENTID%&quot;,&quot;subscription&quot;:&quot;%CHANNEL%&quot;,&quot;ext&quot;:{&quot;auth_token&quot;:&quot;:auth&quot;}}].
         /// </summary>
         internal static string Unsubscribe {
             get {

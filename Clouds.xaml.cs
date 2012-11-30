@@ -137,7 +137,7 @@ namespace Cloudsdale {
             var cmessages = controller.messages;
             cmessages.Add(new Message {
                 id = Guid.NewGuid().ToString(),
-                device = "mobile",
+                device = "robot",
                 content = SendBox.Text,
                 timestamp = DateTime.Now + DerpyHoovesMailCenter.ServerDiff,
                 user = PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id)

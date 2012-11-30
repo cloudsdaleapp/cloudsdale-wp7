@@ -121,8 +121,9 @@ namespace Cloudsdale.Managers {
             avatar = new CensusAvatar();
             name = "(Identifying)";
 
-            var storage = IsolatedStorageFile.GetUserStoreForApplication();
-            if (storage.FileExists("users\\" + id)) {
+            new Thread(() => {
+                var storage = IsolatedStorageFile.GetUserStoreForApplication();
+                if (!storage.FileExists("users\\" + id)) return;
                 string data;
                 using (var file = storage.OpenFile("users\\" + id, FileMode.Open, FileAccess.Read))
                 using (var reader = new StreamReader(file, Encoding.UTF8)) {
@@ -130,12 +131,49 @@ namespace Cloudsdale.Managers {
                 }
                 try {
                     var jObj = JObject.Parse(data);
-                    jObj["user"].ToObject<CensusUser>().CopyTo(this);
+                    var user = jObj["user"].ToObject<CensusUser>();
                     var clouds = (JArray)jObj["clouds"];
-                    _extClouds = from jcloud in clouds select PonyvilleDirectory.RegisterCloud(jcloud.ToObject<Cloud>());
+
+                    if (!_extClouds.Any()) {
+                        _extClouds = from jcloud in clouds select PonyvilleDirectory.RegisterCloud(jcloud.ToObject<Cloud>());
+                    }
+                    if (name == "(Identifying)") {
+                        name = user.name;
+                    }
+                    if (string.IsNullOrWhiteSpace(role)) {
+                        Role = user.role;
+                    }
+                    if (avatar == null) {
+                        avatar = user.avatar;
+                    } else {
+                        if (avatar.Normal == null) {
+                            avatar.Normal = user.avatar.Normal;
+                        }
+                        if (avatar.Mini == null) {
+                            avatar.Mini = user.avatar.Mini;
+                        }
+                        if (avatar.Chat == null) {
+                            avatar.Chat = user.avatar.Chat;
+                        }
+                        if (avatar.Preview == null) {
+                            avatar.Preview = user.avatar.Preview;
+                        }
+                        if (avatar.Thumb == null) {
+                            avatar.Thumb = user.avatar.Thumb;
+                        }
+                    }
+
+
+                    if (member_since == null) {
+                        member_since = user.member_since;
+                    }
+                    if (prosecutions == null) {
+                        prosecutions = user.prosecutions;
+                    }
+
                 } catch (JsonException e) {
                 }
-            }
+            }).Start();
 
             if (Connection.CurrentCloudsdaleUser != null)
                 if (id == Connection.CurrentCloudsdaleUser.id) {

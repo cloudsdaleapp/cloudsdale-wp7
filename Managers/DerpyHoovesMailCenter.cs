@@ -22,6 +22,10 @@ namespace Cloudsdale.Managers {
 
         public static TimeSpan ServerDiff = new TimeSpan();
 
+        static DerpyHoovesMailCenter() {
+            ServerDiff = new TimeSpan();
+        }
+
         private DerpyHoovesMailCenter(Cloud cloud) {
             users = new PonyTracker(cloud);
             drops = PinkiePieEntertainmentDojo.GetForCloud(cloud.id);
