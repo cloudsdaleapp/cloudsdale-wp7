@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Cloudsdale.Models {
     [JsonObject(MemberSerialization.OptIn)]
@@ -17,6 +18,8 @@ namespace Cloudsdale.Models {
         public DateTime timestamp { get; set; }
         [JsonProperty]
         public string content { get; set; }
+        [JsonProperty]
+        public Drop[] drops;
 
         [JsonProperty]
         public string device;
@@ -82,6 +85,14 @@ namespace Cloudsdale.Models {
 #endif
                     return new ChatLine[0];
                 }
+            }
+        }
+
+        public Drop[] Drops {
+            get {
+                return subs.Select(sub => sub.drops)
+                    .Aggregate((IEnumerable<Drop>) (drops ?? new Drop[0]), 
+                    (all, item) => all.Concat(item)).ToArray();
             }
         }
 

@@ -26,6 +26,7 @@ namespace Cloudsdale {
 
             BugSenseHandler.Instance.Init(this, Res.BugsenseApiKey);
             BugSenseHandler.Instance.UnhandledException += ApplicationUnhandledException;
+            //UnhandledException += ApplicationUnhandledException;
 
             // Standard Silverlight initialization
             InitializeComponent();

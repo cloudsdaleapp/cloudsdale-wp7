@@ -162,7 +162,6 @@ namespace Cloudsdale {
                             message = streamReader.ReadToEnd();
                         }
                         var user = JsonConvert.DeserializeObject<WebResponse<LoggedInUser>>(message).result;
-                        user.clouds = (from cloud in user.clouds select PonyvilleDirectory.RegisterCloud(cloud)).ToArray();
                         user.CopyTo(CurrentCloudsdaleUser);
                     } catch (WebException ex) {
 #if DEBUG

@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.IsolatedStorage;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,6 +20,7 @@ using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 using Res = Cloudsdale.Resources;
 using System.Linq;
@@ -30,6 +32,9 @@ namespace Cloudsdale {
         public static bool Wasoncloud;
         public DerpyHoovesMailCenter Controller { get; set; }
         public bool Leaving;
+
+        public static readonly Regex CloudsdaleUrl = new Regex("http\\:\\/\\/(www\\.)?cloudsdale\\.org\\/clouds\\/([a-zA-Z0-9]+)", 
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static bool DoARemove;
 
@@ -43,7 +48,7 @@ namespace Cloudsdale {
 
             if (Connection.CurrentCloudsdaleUser.Clouds.All(cloud => cloud.id != Connection.CurrentCloud.id)) {
                 Connection.JoinCloud(Connection.CurrentCloud.id);
-                var list = new List<Cloud> (Connection.CurrentCloudsdaleUser.clouds) {Connection.CurrentCloud};
+                var list = new List<Cloud>(Connection.CurrentCloudsdaleUser.clouds) { Connection.CurrentCloud };
                 list.Sort(PonyvilleDirectory.GetUserCloudListComparer());
                 Connection.CurrentCloudsdaleUser.clouds = list.ToArray();
             }
@@ -148,15 +153,26 @@ namespace Cloudsdale {
         }
 
         private void DropItemClick(object sender, RoutedEventArgs e) {
-            var button = sender as Button;
+            var button = sender as FrameworkElement;
             if (button == null) return;
             var drop = button.DataContext as Drop;
             if (drop == null) return;
 
             Leaving = false;
 
-            LastDropClicked = drop;
-            NavigationService.Navigate(new Uri("/DropViewer.xaml", UriKind.Relative));
+            if (CloudsdaleUrl.IsMatch(drop.url.ToString())) {
+                LayoutRoot.IsHitTestVisible = false;
+                WebPriorityManager.BeginHighPriorityRequest(new Uri("http://www.cloudsdale.org/v1/clouds/" + drop.url.ToString()
+                    .Split('/').Last()), args => {
+                        var response = JObject.Parse(args.Result);
+                        var cloud = PonyvilleDirectory.RegisterCloud(response["result"].ToObject<Cloud>());
+                        LayoutRoot.IsHitTestVisible = true;
+                        NavigateCloud(cloud);
+                    });
+            } else {
+                LastDropClicked = drop;
+                NavigationService.Navigate(new Uri("/DropViewer.xaml", UriKind.Relative));
+            }
         }
 
         public static Drop LastDropClicked;
@@ -392,44 +408,76 @@ namespace Cloudsdale {
         }
 
         private void UserCloudClick(object sender, RoutedEventArgs e) {
-            var cloud = (Cloud) ((FrameworkElement) sender).DataContext;
-            Connection.CurrentCloud = cloud;
+            NavigateCloud((Cloud)((FrameworkElement)sender).DataContext);
+        }
 
-            userpopup.IsOpen = false;
+        private void NavigateCloud(Cloud cloud) {
+            Dispatcher.BeginInvoke(() => {
+                Controller.Messages.CollectionChanged -= ScrollDown;
 
-            Chats.ItemsSource = new Message[0];
-            MediaList.ItemsSource = new Drop[0];
-            Ponies.ItemsSource = new CensusUser[0];
-            cloudPivot.Title = "";
+                Connection.CurrentCloud = cloud;
 
-            new Thread(() => {
-                Thread.Sleep(100);
-                Dispatcher.BeginInvoke(() => {
-                    Controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);
+                userpopup.IsOpen = false;
 
-                    if (Connection.CurrentCloudsdaleUser.Clouds.All(cloud1 => cloud1.id != Connection.CurrentCloud.id)) {
-                        Connection.JoinCloud(Connection.CurrentCloud.id);
-                        Connection.CurrentCloudsdaleUser.clouds = new List<Cloud>
-                            (Connection.CurrentCloudsdaleUser.clouds) { Connection.CurrentCloud }.ToArray();
-                    }
+                Chats.ItemsSource = new Message[0];
+                MediaList.ItemsSource = new Drop[0];
+                Ponies.ItemsSource = new CensusUser[0];
+                cloudPivot.Title = "";
 
-                    cloudPivot.Title = Connection.CurrentCloud.name;
+                new Thread(() => {
+                    Thread.Sleep(100);
+                    Dispatcher.BeginInvoke(() => {
+                        Controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);
+                        Controller.Messages.CollectionChanged += ScrollDown;
 
-                    DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id);
+                        if (Connection.CurrentCloudsdaleUser.Clouds.All(cloud1 => cloud1.id != Connection.CurrentCloud.id)) {
+                            Connection.JoinCloud(Connection.CurrentCloud.id);
+                            Connection.CurrentCloudsdaleUser.clouds = new List<Cloud>
+                                (Connection.CurrentCloudsdaleUser.clouds) { Connection.CurrentCloud }.ToArray();
+                        }
 
-                    new Thread(() => {
-                        Thread.Sleep(75);
-                        Dispatcher.BeginInvoke(() => {
-                            Chats.ItemsSource = Controller.Messages;
-                            MediaList.ItemsSource = Controller.Drops;
-                            Ponies.ItemsSource = Controller.Users;
-                            ScrollDown(null, null);
-                        });
-                    }).Start();
+                        cloudPivot.Title = Connection.CurrentCloud.name;
 
-                    Wasoncloud = true;
-                });
-            }).Start();
+                        DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id);
+
+                        new Thread(() => {
+                            Thread.Sleep(75);
+                            Dispatcher.BeginInvoke(() => {
+                                Chats.ItemsSource = Controller.Messages;
+                                MediaList.ItemsSource = Controller.Drops;
+                                Ponies.ItemsSource = Controller.Users;
+                                ScrollDown(null, null);
+                            });
+                        }).Start();
+
+                        Wasoncloud = true;
+
+                    });
+                }).Start();
+            });
+        }
+
+        private void InChatDropTap(object sender, Microsoft.Phone.Controls.GestureEventArgs e) {
+            var button = sender as FrameworkElement;
+            if (button == null) return;
+            var drop = button.DataContext as Drop;
+            if (drop == null) return;
+
+            Leaving = false;
+
+            if (CloudsdaleUrl.IsMatch(drop.url.ToString())) {
+                LayoutRoot.IsHitTestVisible = false;
+                WebPriorityManager.BeginHighPriorityRequest(new Uri("http://www.cloudsdale.org/v1/clouds/" + drop.url.ToString()
+                    .Split('/').Last()), args => {
+                        var response = JObject.Parse(args.Result);
+                        var cloud = PonyvilleDirectory.RegisterCloud(response["result"].ToObject<Cloud>());
+                        Dispatcher.BeginInvoke(() => LayoutRoot.IsHitTestVisible = true);
+                        NavigateCloud(cloud);
+                    });
+            } else {
+                LastDropClicked = drop;
+                NavigationService.Navigate(new Uri("/DropViewer.xaml", UriKind.Relative));
+            }
         }
     }
 }

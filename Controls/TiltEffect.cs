@@ -43,7 +43,7 @@ namespace Cloudsdale.Controls
         static TiltEffect()
         {
             // The tiltable items list.
-            TiltableItems = new List<Type> { typeof(ButtonBase), typeof(ListBoxItem), typeof(TiltGrid) };
+            TiltableItems = new List<Type> { typeof(ButtonBase), typeof(ListBoxItem), typeof(TiltGrid), typeof(Border) };
             UseLogarithmicEase = false;
         }
 

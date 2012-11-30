@@ -180,7 +180,7 @@ namespace Cloudsdale.Managers {
                     Connection.CurrentCloudsdaleUser.CopyTo(this);
                 }
 
-            WebPriorityManager.BeginMediumPriorityRequest(
+            WebPriorityManager.BeginLowPriorityRequest(
                 new Uri(Resources.getUserEndpoint.Replace("{0}", id)),
                 args => {
                     var data = JsonConvert.DeserializeObject<GetUserResult>(args.Result);

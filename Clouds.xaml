@@ -7,6 +7,8 @@
     xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:my="clr-namespace:Cloudsdale.Controls"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     FontFamily="Segoe WP Bold"
     FontSize="28"
@@ -66,16 +68,42 @@
                                Text="{Binding Path=CorrectedTimestamp}" 
                                HorizontalAlignment="Right" 
                                VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f"/>
-                    <ItemsControl DataContext="{Binding}" ItemsSource="{Binding Path=Split}" 
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ItemsControl DataContext="{Binding}" ItemsSource="{Binding Path=Split}" 
                                   Margin="60,20,0,0">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock DataContext="{Binding}" Text="{Binding Path=Text}" 
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock DataContext="{Binding}" Text="{Binding Path=Text}" 
                                            Foreground="{Binding Path=Color}" FontSize="16" 
                                            TextWrapping="Wrap" FontFamily="Verdana"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl Grid.Column="1" ItemsSource="{Binding Path=Drops}" Margin="0,20,0,0">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <toolkit:WrapPanel ItemWidth="100" ItemHeight="75" MaxWidth="220" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <my:TiltGrid my:TiltEffect.IsTiltEnabled="True" Margin="3">
+                                        <Border BorderBrush="Black" BorderThickness="2">
+                                            <Image Width="100" Height="75" Source="{Binding Path=preview}" />
+                                        </Border>
+                                        <toolkit:GestureService.GestureListener>
+                                            <toolkit:GestureListener
+                                                Tap="InChatDropTap"/>
+                                        </toolkit:GestureService.GestureListener>
+                                    </my:TiltGrid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
                 </Grid>
             </DataTemplate>
             <DataTemplate x:Name="DropsTemplate">

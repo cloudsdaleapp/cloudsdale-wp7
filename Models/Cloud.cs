@@ -37,6 +37,7 @@ namespace Cloudsdale.Models {
                 OnPropertyChanged("description");
             }
         }
+
         [JsonProperty]
         public DateTime? created_at;
         [JsonProperty]
