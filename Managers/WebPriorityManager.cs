@@ -26,6 +26,9 @@ namespace Cloudsdale.Managers {
             var item = QueueL[0];
             QueueL.RemoveAt(0);
             var wc = new WebClient();
+            foreach (var header in item.headers) {
+                wc.Headers[header.Key] = header.Value;
+            }
             wc.DownloadStringCompleted += (sender, args) => item.callback(args);
             wc.DownloadStringAsync(item.uri);
         }
@@ -35,6 +38,9 @@ namespace Cloudsdale.Managers {
             var item = QueueM[0];
             QueueM.RemoveAt(0);
             var wc = new WebClient();
+            foreach (var header in item.headers) {
+                wc.Headers[header.Key] = header.Value;
+            }
             wc.DownloadStringCompleted += (sender, args) => item.callback(args);
             wc.DownloadStringAsync(item.uri);
         }
@@ -44,31 +50,38 @@ namespace Cloudsdale.Managers {
             var item = QueueH[0];
             QueueH.RemoveAt(0);
             var wc = new WebClient();
+            foreach (var header in item.headers) {
+                wc.Headers[header.Key] = header.Value;
+            }
             wc.DownloadStringCompleted += (sender, args) => item.callback(args);
             wc.DownloadStringAsync(item.uri);
         }
 
-        public static void BeginLowPriorityRequest(Uri uri, Action<DownloadStringCompletedEventArgs> callback) {
+        public static void BeginLowPriorityRequest(Uri uri, Action<DownloadStringCompletedEventArgs> callback,
+            params KeyValuePair<string, string>[] headers) {
             QueueL.Add(new Request {
-                uri = uri, callback = callback
+                uri = uri, callback = callback, headers = headers
             });
         }
 
-        public static void BeginMediumPriorityRequest(Uri uri, Action<DownloadStringCompletedEventArgs> callback) {
+        public static void BeginMediumPriorityRequest(Uri uri, Action<DownloadStringCompletedEventArgs> callback,
+            params KeyValuePair<string, string>[] headers) {
             QueueM.Add(new Request {
-                uri = uri, callback = callback
+                uri = uri, callback = callback, headers = headers
             });
         }
 
-        public static void BeginHighPriorityRequest(Uri uri, Action<DownloadStringCompletedEventArgs> callback) {
+        public static void BeginHighPriorityRequest(Uri uri, Action<DownloadStringCompletedEventArgs> callback,
+            params KeyValuePair<string, string>[] headers) {
             QueueH.Add(new Request {
-                uri = uri, callback = callback
+                uri = uri, callback = callback, headers = headers
             });
         }
 
         private class Request {
             internal Uri uri;
             internal Action<DownloadStringCompletedEventArgs> callback;
+            internal KeyValuePair<string, string>[] headers;
         }
     }
 }

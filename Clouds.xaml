@@ -86,14 +86,15 @@
                         <ItemsControl Grid.Column="1" ItemsSource="{Binding Path=Drops}" Margin="0,20,0,0">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <toolkit:WrapPanel ItemWidth="100" ItemHeight="75" MaxWidth="220" />
+                                    <toolkit:WrapPanel ItemWidth="110" ItemHeight="85" MaxWidth="220" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <my:TiltGrid my:TiltEffect.IsTiltEnabled="True" Margin="3">
                                         <Border BorderBrush="Black" BorderThickness="2">
-                                            <Image Width="100" Height="75" Source="{Binding Path=preview}" />
+                                            <Image Width="100" Height="75" Source="{Binding Path=preview}" 
+                                                   ImageFailed="DropImageFailed" Stretch="UniformToFill" />
                                         </Border>
                                         <toolkit:GestureService.GestureListener>
                                             <toolkit:GestureListener

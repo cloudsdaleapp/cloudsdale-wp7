@@ -56,22 +56,22 @@ namespace Cloudsdale.Controls
         /// <summary>
         /// Maximum amount of tilt, in radians
         /// </summary>
-        const double MaxAngle = 0.3;
+        const double MaxAngle = 0.5;
 
         /// <summary>
         /// Maximum amount of depression, in pixels
         /// </summary>
-        const double MaxDepression = 25;
+        const double MaxDepression = 35;
 
         /// <summary>
         /// Delay between releasing an element and the tilt release animation playing
         /// </summary>
-        static readonly TimeSpan TiltReturnAnimationDelay = TimeSpan.FromMilliseconds(200);
+        static readonly TimeSpan TiltReturnAnimationDelay = TimeSpan.FromMilliseconds(400);
 
         /// <summary>
         /// Duration of tilt release animation
         /// </summary>
-        static readonly TimeSpan TiltReturnAnimationDuration = TimeSpan.FromMilliseconds(100);
+        static readonly TimeSpan TiltReturnAnimationDuration = TimeSpan.FromMilliseconds(200);
 
         /// <summary>
         /// The control that is currently being tilted

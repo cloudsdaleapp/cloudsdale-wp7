@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO.IsolatedStorage;
 using System.Linq;
@@ -60,16 +61,30 @@ namespace Cloudsdale {
             get { return Connection.CurrentCloudsdaleUser; }
         }
 
+
+        private void ShowCloudResult(string result, bool append = false) {
+            var response = JObject.Parse(result);
+            var jclouds = (JArray)response["result"];
+            var clouds = from jcloud in jclouds select PonyvilleDirectory.RegisterCloud(jcloud.ToObject<Cloud>());
+            Dispatcher.BeginInvoke(() => {
+                if (append) {
+                    var old = (IEnumerable<Cloud>)searchResults.ItemsSource;
+                    searchResults.ItemsSource = old.Concat(clouds);
+                } else {
+                    searchResults.ItemsSource = clouds;
+                }
+            });
+        }
+
         private void PopularClick(object sender, RoutedEventArgs e) {
             searchResults.ItemsSource = new Cloud[0];
             WebPriorityManager.BeginHighPriorityRequest(new Uri(
                 Res.PopularCloudsEndpoint), result => {
-                    var response = JObject.Parse(result.Result);
-                    var jclouds = (JArray)response["result"];
-                    var clouds = from jcloud in jclouds select PonyvilleDirectory.RegisterCloud(jcloud.ToObject<Cloud>());
-                    Dispatcher.BeginInvoke(() => {
-                        searchResults.ItemsSource = clouds;
-                    });
+                    ShowCloudResult(result.Result);
+                    WebPriorityManager.BeginHighPriorityRequest(new Uri(
+                        Res.PopularCloudsEndpoint), result2 => {
+                            ShowCloudResult(result2.Result, true);
+                        }, new KeyValuePair<string, string>("X-Result-Page", "2"));
                 });
         }
 
@@ -77,12 +92,11 @@ namespace Cloudsdale {
             searchResults.ItemsSource = new Cloud[0];
             WebPriorityManager.BeginHighPriorityRequest(new Uri(
                 Res.RecentCloudsEndpoint), result => {
-                    var response = JObject.Parse(result.Result);
-                    var jclouds = (JArray)response["result"];
-                    var clouds = from jcloud in jclouds select PonyvilleDirectory.RegisterCloud(jcloud.ToObject<Cloud>());
-                    Dispatcher.BeginInvoke(() => {
-                        searchResults.ItemsSource = clouds;
-                    });
+                    ShowCloudResult(result.Result);
+                    WebPriorityManager.BeginHighPriorityRequest(new Uri(
+                        Res.RecentCloudsEndpoint), result2 => {
+                            ShowCloudResult(result2.Result, true);
+                        }, new KeyValuePair<string, string>("X-Result-Page", "2"));
                 });
         }
 
@@ -96,12 +110,11 @@ namespace Cloudsdale {
             searchResults.ItemsSource = new Cloud[0];
             WebPriorityManager.BeginHighPriorityRequest(new Uri(
                 Res.SearchCloudsEndpoint.Replace("{query}", SearchQuery.Text)), result => {
-                    var response = JObject.Parse(result.Result);
-                    var jclouds = (JArray)response["result"];
-                    var clouds = from jcloud in jclouds select PonyvilleDirectory.RegisterCloud(jcloud.ToObject<Cloud>());
-                    Dispatcher.BeginInvoke(() => {
-                        searchResults.ItemsSource = clouds;
-                    });
+                    ShowCloudResult(result.Result);
+                    WebPriorityManager.BeginHighPriorityRequest(new Uri(
+                        Res.SearchCloudsEndpoint.Replace("{query}", SearchQuery.Text)), result2 => {
+                            ShowCloudResult(result2.Result, true);
+                        }, new KeyValuePair<string, string>("X-Result-Page", "2"));
                 });
         }
 
