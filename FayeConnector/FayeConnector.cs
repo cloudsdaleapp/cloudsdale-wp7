@@ -273,6 +273,7 @@ namespace Cloudsdale.FayeConnector {
         /// </summary>
         /// <param name="channel"></param>
         public void Subscribe(string channel) {
+            if (socket == null) return;
             socket.Send(FayeResources.Subscribe.Replace("%CLIENTID%", clientId).Replace("%CHANNEL%", channel)
                 .Replace(":auth", Connection.CurrentCloudsdaleUser.auth_token));
         }
