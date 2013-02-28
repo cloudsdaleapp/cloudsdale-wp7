@@ -125,7 +125,7 @@ namespace Cloudsdale {
                 Connection.CurrentCloudsdaleUser = Connection.LoginResult.result.user;
                 Dispatcher.BeginInvoke(() => {
                     NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative));
-                    Connection.Connect((Page)((PhoneApplicationFrame)Application.Current.RootVisual).Content);
+                    Connection.Connect((Page)((PhoneApplicationFrame)Application.Current.RootVisual).Content, pulluserclouds: true);
                 });
             }, null);
         }

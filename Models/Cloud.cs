@@ -178,37 +178,45 @@ namespace Cloudsdale.Models {
         public void UpdateCloud(string fayedata) {
             var response = JObject.Parse(fayedata);
             var data = response["data"];
-            name = (string)data["name"];
+            if (data["name"] != null) name = (string)data["name"];
 
-            description = (string)data["description"];
+            if (data["description"] != null) description = (string)data["description"];
 
-            rules = (string)data["rules"];
+            if (data["rules"] != null) rules = (string)data["rules"];
 
-            var davatar = data["avatar"];
-            avatar = new Avatar {
-                Normal = new Uri((string)davatar["normal"]),
-                Mini = new Uri((string)davatar["mini"]),
-                Thumb = new Uri((string)davatar["thumb"]),
-                Preview = new Uri((string)davatar["preview"]),
-                Chat = new Uri((string)davatar["chat"]),
-            };
-
-            hidden = (bool)data["hidden"];
-            OnPropertyChanged("hidden");
-
-            Owner = (string)data["owner_id"];
-            OnPropertyChanged("FullOwner");
-            OnPropertyChanged("IsOwner");
-
-            var moderator_oids = (JArray)data["moderator_ids"];
-            var newmods = new string[moderator_oids.Count];
-            for (var i = 0; i < moderator_oids.Count; ++i) {
-                newmods[i] = (string)moderator_oids[i];
+            if (data["avatar"] != null) {
+                var davatar = data["avatar"];
+                avatar = new Avatar {
+                    Normal = new Uri((string)davatar["normal"]),
+                    Mini = new Uri((string)davatar["mini"]),
+                    Thumb = new Uri((string)davatar["thumb"]),
+                    Preview = new Uri((string)davatar["preview"]),
+                    Chat = new Uri((string)davatar["chat"]),
+                };
             }
-            Moderators = newmods;
-            OnPropertyChanged("IsModerator");
-            OnPropertyChanged("FullMods");
-            OnPropertyChanged("ShowMods");
+
+            if (data["hidden"] != null) {
+                hidden = (bool)data["hidden"];
+                OnPropertyChanged("hidden");
+            }
+
+            if (data["owner_id"] != null) {
+                Owner = (string)data["owner_id"];
+                OnPropertyChanged("FullOwner");
+                OnPropertyChanged("IsOwner");
+            }
+
+            if (data["moderator_ids"] != null) {
+                var moderator_oids = (JArray)data["moderator_ids"];
+                var newmods = new string[moderator_oids.Count];
+                for (var i = 0; i < moderator_oids.Count; ++i) {
+                    newmods[i] = (string)moderator_oids[i];
+                }
+                Moderators = newmods;
+                OnPropertyChanged("IsModerator");
+                OnPropertyChanged("FullMods");
+                OnPropertyChanged("ShowMods");
+            }
         }
 
         public void CopyFrom(Cloud cloud) {
@@ -247,9 +255,7 @@ namespace Cloudsdale.Models {
         }
 
         public DerpyHoovesMailCenter Controller {
-            get {
-                return DerpyHoovesMailCenter.GetCloud(this);
-            }
+            get { return DerpyHoovesMailCenter.GetCloud(this); }
         }
 
         public string TileDescription {

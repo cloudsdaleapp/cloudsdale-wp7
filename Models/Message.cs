@@ -25,7 +25,16 @@ namespace Cloudsdale.Models {
         public string device;
 
         public string DeviceStub {
-            get { return device == "mobile" ? " ☎" : ""; }
+            get {
+                switch (device) {
+                    case "mobile":
+                        return "📱";
+                    case "robot":
+                        return "⚙";
+                    default:
+                        return "";
+                }
+            }
         }
 
         public string CorrectedTimestamp {
@@ -92,7 +101,7 @@ namespace Cloudsdale.Models {
             get {
                 return subs.Select(sub => sub.drops)
                     .Aggregate((IEnumerable<Drop>) (drops ?? new Drop[0]), 
-                    (all, item) => all.Concat(item)).ToArray();
+                    (all, item) => all.Concat(item ?? new Drop[0])).ToArray();
             }
         }
 

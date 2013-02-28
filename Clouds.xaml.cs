@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -32,8 +33,9 @@ namespace Cloudsdale {
         public static bool Wasoncloud;
         public DerpyHoovesMailCenter Controller { get; set; }
         public bool Leaving;
+        private bool inUserPopup = false;
 
-        public static readonly Regex CloudsdaleUrl = new Regex("http\\:\\/\\/(www\\.)?cloudsdale\\.org\\/clouds\\/([a-zA-Z0-9]+)", 
+        public static readonly Regex CloudsdaleUrl = new Regex("http\\:\\/\\/(www\\.)?cloudsdale\\.org\\/clouds\\/([a-zA-Z0-9]+)",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static bool DoARemove;
@@ -60,7 +62,7 @@ namespace Cloudsdale {
                 Dispatcher.BeginInvoke(() => {
                     Chats.ItemsSource = Controller.Messages;
                     MediaList.ItemsSource = Controller.Drops;
-                    Ponies.ItemsSource = Controller.Users;
+                    Ponies.DataContext = Controller.Users;
                     ScrollDown(null, null);
                 });
             }).Start();
@@ -80,6 +82,7 @@ namespace Cloudsdale {
             if (inanim) return;
             if (userpopup.IsOpen) {
                 userpopup.IsOpen = false;
+                inUserPopup = false;
                 e.Cancel = true;
                 return;
             }
@@ -113,12 +116,17 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
+            if (inUserPopup) {
+                userpopup.IsOpen = true;
+                inUserPopup = true;
+            }
 
             if (Connection.CurrentCloud == null) {
                 NavigationService.GoBack();
                 return;
             }
-            DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id);
+            LoadingPopup.IsOpen = true;
+            DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id, () => LoadingPopup.IsOpen = false);
 
             cloudinfoback.Visibility = Visibility.Collapsed;
             Leaving = true;
@@ -127,29 +135,14 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e) {
+            Debug.WriteLine("Navigated away");
+
             if (Leaving && !Connection.IsMemberOfCloud(Connection.CurrentCloud.id)) {
                 DerpyHoovesMailCenter.Unsubscribe(Connection.CurrentCloud.id);
             }
             Controller.Messages.CollectionChanged -= ScrollDown;
             Controller.MarkAsRead();
             Wasoncloud = false;
-        }
-
-        private void SendBoxKeyDown(object sender, KeyEventArgs e) {
-            if (e.Key != Key.Enter) return;
-
-            var controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);
-            var cmessages = controller.messages;
-            cmessages.Add(new Message {
-                id = Guid.NewGuid().ToString(),
-                device = "mobile",
-                content = SendBox.Text,
-                timestamp = DateTime.Now + DerpyHoovesMailCenter.ServerDiff,
-                user = PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id)
-            });
-
-            Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text);
-            SendBox.Text = "";
         }
 
         private void DropItemClick(object sender, RoutedEventArgs e) {
@@ -365,6 +358,7 @@ namespace Cloudsdale {
 
             userpopup.DataContext = user;
             userpopup.IsOpen = true;
+            inUserPopup = true;
         }
 
         private void AvatarMouseUp(object sender, MouseButtonEventArgs e) {
@@ -379,6 +373,7 @@ namespace Cloudsdale {
 
             userpopup.DataContext = message.user;
             userpopup.IsOpen = true;
+            inUserPopup = true;
         }
 
         private void AvatarMouseDown(object sender, MouseButtonEventArgs e) {
@@ -401,10 +396,11 @@ namespace Cloudsdale {
         }
 
         private void BanBanBan(object sender, RoutedEventArgs e) {
-            var button = (Button)sender;
-            var user = (CensusUser)button.DataContext;
+            BanTime.Value = DateTime.Now;
+            BanDate.Value = DateTime.Now.Date;
 
-            MessageBox.Show("Sorry, banning does not work yet :<");
+            ModToolsButtons.Visibility = Visibility.Collapsed;
+            BanTools.Visibility = Visibility.Visible;
         }
 
         private void UserCloudClick(object sender, RoutedEventArgs e) {
@@ -418,10 +414,11 @@ namespace Cloudsdale {
                 Connection.CurrentCloud = cloud;
 
                 userpopup.IsOpen = false;
+                inUserPopup = false;
 
                 Chats.ItemsSource = new Message[0];
                 MediaList.ItemsSource = new Drop[0];
-                Ponies.ItemsSource = new CensusUser[0];
+                Ponies.DataContext = null;
                 cloudPivot.Title = "";
 
                 new Thread(() => {
@@ -438,14 +435,15 @@ namespace Cloudsdale {
 
                         cloudPivot.Title = Connection.CurrentCloud.name;
 
-                        DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id);
+                        LoadingPopup.IsOpen = true;
+                        DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id, () => LoadingPopup.IsOpen = false);
 
                         new Thread(() => {
                             Thread.Sleep(75);
                             Dispatcher.BeginInvoke(() => {
                                 Chats.ItemsSource = Controller.Messages;
                                 MediaList.ItemsSource = Controller.Drops;
-                                Ponies.ItemsSource = Controller.Users;
+                                Ponies.DataContext = Controller.Users;
                                 ScrollDown(null, null);
                             });
                         }).Start();
@@ -478,6 +476,61 @@ namespace Cloudsdale {
                 LastDropClicked = drop;
                 NavigationService.Navigate(new Uri("/DropViewer.xaml", UriKind.Relative));
             }
+        }
+
+        private void DontBanBanBan(object sender, RoutedEventArgs e) {
+            ModToolsButtons.Visibility = Visibility.Visible;
+            BanTools.Visibility = Visibility.Collapsed;
+        }
+
+        private void DoTheBanBanBan(object sender, RoutedEventArgs e) {
+            if (string.IsNullOrWhiteSpace(BanReason.Text)) {
+                MessageBox.Show("Please enter a ban reason");
+                return;
+            }
+
+            var button = (Button)sender;
+            var user = (CensusUser)button.DataContext;
+
+            if (BanTime.Value == null || BanDate.Value == null) {
+                MessageBox.Show("Please enter a ban date/time");
+                return;
+            }
+
+            var time = BanDate.Value.Value.Date + BanTime.Value.Value.TimeOfDay;
+
+            if (MessageBox.Show(user.name + " will be banned until " + time, "Ban " + user.name, 
+                    MessageBoxButton.OKCancel) != MessageBoxResult.OK) {
+                return;
+            }
+
+            user.Ban(BanReason.Text, time, Connection.CurrentCloud.id);
+            BanReason.Text = "";
+            DontBanBanBan(sender, e);
+        }
+
+        private void AvatarImageFailed(object sender, ExceptionRoutedEventArgs e) {
+            var image = (Image) sender;
+            image.Source = new BitmapImage(new Uri("http://assets.cloudsdale.org/assets/fallback/avatar_preview_user.png"));
+        }
+
+        private void SendTextClick(object sender, RoutedEventArgs e) {
+            var controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);
+            var cmessages = controller.messages;
+            cmessages.Add(new Message {
+                id = Guid.NewGuid().ToString(),
+                device = "mobile",
+                content = SendBox.Text,
+                timestamp = DateTime.Now + DerpyHoovesMailCenter.ServerDiff,
+                user = PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id)
+            });
+
+            Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text);
+            SendBox.Text = "";
+        }
+
+        private void SendBoxSizeChanged(object sender, SizeChangedEventArgs e) {
+            ScrollDown(null, null);
         }
     }
 }

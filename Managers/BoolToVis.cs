@@ -25,4 +25,19 @@ namespace Cloudsdale.Managers {
 
         #endregion
     }
+
+    public class ArrayHasAnyVis : IValueConverter {
+        #region Implementation of IValueConverter
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+            var array = (Array) value;
+            return array != null && array.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
 }

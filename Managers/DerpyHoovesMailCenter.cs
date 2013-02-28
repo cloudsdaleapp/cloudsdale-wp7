@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 #endif
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -50,13 +51,13 @@ namespace Cloudsdale.Managers {
             ValidPreloadedData.Clear();
 
             Connection.Faye.ChannelMessageRecieved += FayeMessageRecieved;
-            if (PresenceAnnouncer == null) PresenceAnnouncer = new Timer(o => {
-                Thread.CurrentThread.Name = "PresenceAnnouncement";
-                foreach (var cloud in Cache.Keys) {
-                    Connection.Faye.Publish("/clouds/" + cloud + "/users/" +
-                        Connection.CurrentCloudsdaleUser.id, new object());
-                }
-            }, null, 5000, 30000);
+            //if (PresenceAnnouncer == null) PresenceAnnouncer = new Timer(o => {
+            //    Thread.CurrentThread.Name = "PresenceAnnouncement";
+            //    foreach (var cloud in Cache.Keys) {
+            //        Connection.Faye.Publish("/clouds/" + cloud + "/users/" +
+            //            Connection.CurrentCloudsdaleUser.id, new object());
+            //    }
+            //}, null, 5000, 30000);
 
             Connection.Faye.Subscribe("/users/" + Connection.CurrentCloudsdaleUser.id + "/private");
         }
@@ -69,7 +70,7 @@ namespace Cloudsdale.Managers {
                 var chansplit = args.Channel.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                 if (chansplit.Length < 2) return;
                 if (!Cache.ContainsKey(chansplit[1])) return;
-                if (chansplit.Length == 2) {
+                if (chansplit.Length == 2 || (chansplit.Length == 3 && chansplit[2] == "private")) {
                     if (chansplit[0] == "clouds") {
                         Deployment.Current.Dispatcher.BeginInvoke(
                             () => PonyvilleDirectory.GetCloud(chansplit[1]).UpdateCloud(args.Data));
@@ -93,17 +94,13 @@ namespace Cloudsdale.Managers {
                             break;
                         case "users":
                             if (chansplit.Length < 4) break;
-                            var user = JsonConvert.DeserializeObject<FayeResult<ListUser>>(args.Data);
-                            UserReference uref;
-                            if (user.data.id == null) {
-                                uref = new UserReference {
-                                    id = chansplit[3]
-                                };
-                            } else {
-                                uref = user.data;
+                            var data = JObject.Parse(args.Data)["data"];
+
+                            if (data["status"] != null) {
+                                if (data["id"] == null)
+                                    data["id"] = chansplit[3];
+                                Cache[chansplit[1]].users.Heartbeat(data);
                             }
-                            Deployment.Current.Dispatcher.BeginInvoke(
-                                () => Cache[chansplit[1]].users.Heartbeat(uref));
                             break;
                         case "chat":
                             var message =
@@ -115,15 +112,29 @@ namespace Cloudsdale.Managers {
 
                             ServerDiff = message.timestamp - DateTime.Now;
 
-                            if (message.client_id == Connection.Faye.ClientId) {
-#if DEBUG
-                                Debug.WriteLine("Message comes from this client. Skipping...");
-#endif
-                                break;
-                            }
                             var cache = Cache[chansplit[1]];
-                            lock (cache.Lock)
+                            lock (cache.Lock) {
+                                if (message.client_id == Connection.Faye.ClientId) {
+                                    var messages = cache.Messages;
+                                    for (var i = 0; i < messages.Count; ++i) {
+                                        if (messages[i].content == message.content) {
+                                            messages[i].drops = message.drops;
+                                            cache.messages.cache.Trigger(i);
+                                            break;
+                                        }
+                                        var foundone = false;
+                                        foreach (var sub in messages[i].subs.Where(sub => sub.content == message.content)) {
+                                            sub.drops = message.drops;
+                                            cache.messages.cache.Trigger(i);
+                                            foundone = true;
+                                            break;
+                                        }
+                                        if (foundone) break;
+                                    }
+                                    break;
+                                }
                                 cache.messages.Add(message);
+                            }
                             cache.Unread++;
                             break;
 
@@ -165,8 +176,8 @@ namespace Cloudsdale.Managers {
         public PinkiePieEntertainmentDojo DropController {
             get { return drops; }
         }
-        public ObservableCollection<CensusUser> Users {
-            get { return users.Users; }
+        public PonyTracker Users {
+            get { return users; }
         }
 
         public static DerpyHoovesMailCenter Subscribe(Cloud cloud) {
@@ -196,8 +207,9 @@ namespace Cloudsdale.Managers {
             return Cache[cloud.id];
         }
 
-        public static void VerifyCloud(string id) {
+        public static void VerifyCloud(string id, Action onComplete = null) {
             if (ValidPreloadedData.ContainsKey(id) && ValidPreloadedData[id]) {
+                if (onComplete != null) Deployment.Current.Dispatcher.BeginInvoke(onComplete);
                 return;
             }
             ValidPreloadedData[id] = true;
@@ -208,14 +220,18 @@ namespace Cloudsdale.Managers {
                 try {
                     var result = JsonConvert.DeserializeObject<WebMessageResponse>(e.Result);
                     if (!Cache.ContainsKey(id)) return;
+                    Cache[id].Users.Init();
                     lock (Cache[id].Lock) {
-                        foreach (var m in result.result) {
-                            if (m == null || m.user == null || m.id == null || m.content == null) {
-                                continue;
-                            }
+                        var oldmsgs = Cache[id].Messages.Where(msg => msg.timestamp > result.result.Last().timestamp).ToArray();
+                        Cache[id].messages.Clear();
+                        foreach (var m in result.result.Where(m => m != null && m.user != null && m.id != null && m.content != null)) {
+                            Cache[id].messages.Add(m);
+                        }
+                        foreach (var m in oldmsgs) {
                             Cache[id].messages.Add(m);
                         }
                     }
+                    if (onComplete != null) Deployment.Current.Dispatcher.BeginInvoke(onComplete);
                 } catch (WebException) {
                 }
             });
@@ -224,7 +240,7 @@ namespace Cloudsdale.Managers {
         public static void Unsubscribe(string cloud) {
             Connection.Faye.Unsubscribe("/clouds/" + cloud + "/chat/messages");
             Connection.Faye.Unsubscribe("/clouds/" + cloud + "/drops");
-            Connection.Faye.Unsubscribe("/clouds/" + cloud + "/users");
+            Connection.Faye.Unsubscribe("/clouds/" + cloud + "/users/**");
             if (Cache.ContainsKey(cloud)) Cache.Remove(cloud);
         }
 

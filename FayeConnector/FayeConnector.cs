@@ -261,9 +261,7 @@ namespace Cloudsdale.FayeConnector {
                 // It's something else. If it's one of the subbed channels, CALL IT IN!
                 default:
                     if (ChannelMessageRecieved == null) break;
-                    if (IsSubscribed(channel)) {
-                        ChannelMessageRecieved(this, new DataReceivedEventArgs(this, data, channel));
-                    }
+                    ChannelMessageRecieved(this, new DataReceivedEventArgs(this, data, channel));
                     break;
             }
         }
@@ -291,7 +289,9 @@ namespace Cloudsdale.FayeConnector {
             try {
                 var request = new PublishRequest<T> { channel = channel, data = data, clientId = clientId };
                 socket.Send(JsonConvert.SerializeObject(request));
+#pragma warning disable 168
             } catch (Exception ex) {
+#pragma warning restore 168
 #if DEBUG
                 Debugger.Break();
 #else

@@ -110,7 +110,7 @@ namespace Cloudsdale.Managers {
         // ReSharper restore RedundantCheckBeforeAssignment
     }
 
-    public sealed class CensusUser : User, INotifyPropertyChanged {
+    public sealed class CensusUser : User {
 
         [JsonConstructor]
         public CensusUser() {
@@ -146,21 +146,11 @@ namespace Cloudsdale.Managers {
                     if (avatar == null) {
                         avatar = user.avatar;
                     } else {
-                        if (avatar.Normal == null) {
-                            avatar.Normal = user.avatar.Normal;
-                        }
-                        if (avatar.Mini == null) {
-                            avatar.Mini = user.avatar.Mini;
-                        }
-                        if (avatar.Chat == null) {
-                            avatar.Chat = user.avatar.Chat;
-                        }
-                        if (avatar.Preview == null) {
-                            avatar.Preview = user.avatar.Preview;
-                        }
-                        if (avatar.Thumb == null) {
-                            avatar.Thumb = user.avatar.Thumb;
-                        }
+                        avatar.Normal = user.avatar.Normal;
+                        avatar.Mini = user.avatar.Mini;
+                        avatar.Chat = user.avatar.Chat;
+                        avatar.Preview = user.avatar.Preview;
+                        avatar.Thumb = user.avatar.Thumb;
                     }
 
 
@@ -203,6 +193,11 @@ namespace Cloudsdale.Managers {
             PonyvilleCensus.SaveUser(this, storage);
         }
 
+        [JsonIgnore]
+        public Status Status {
+            get { return Connection.CurrentCloud.Controller.Users.GetStatus(id); }
+        }
+
         public override string name {
             get {
                 return base.name;
@@ -221,27 +216,43 @@ namespace Cloudsdale.Managers {
             }
         }
 
-        public new event PropertyChangedEventHandler PropertyChanged;
-
-        internal override void OnPropertyChanged(string propertyName) {
-            if (Deployment.Current.CheckAccess()) {
-                var handler = PropertyChanged;
-                if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-            } else {
-                Deployment.Current.Dispatcher.BeginInvoke(() => {
-                    var handler = PropertyChanged;
-                    if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-                });
-            }
-        }
-
         private IEnumerable<Cloud> _extClouds = new Cloud[0];
         [JsonIgnore]
         public IEnumerable<Cloud> ExtClouds {
             get { return from cloud in _extClouds where !(cloud.hidden ?? false) select cloud; }
         }
-    }
 
+        public void Ban(string reason, DateTime due, string cloudid) {
+            var data = new JObject();
+            data["offender_id"] = id;
+            data["ban"] = new JObject();
+            data["ban"]["reason"] = reason;
+            data["ban"]["due"] = due;
+
+            var bytes = Encoding.UTF8.GetBytes(data.ToString());
+
+            var request = WebRequest.CreateHttp("http://www.cloudsdale.org/v1/clouds/" + cloudid + "/bans");
+            request.Accept = "application/json";
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Headers["X-Auth-Token"] = Connection.CurrentCloudsdaleUser.auth_token;
+
+            request.BeginGetRequestStream(requestCallback => {
+                using (var requestStream = request.EndGetRequestStream(requestCallback)) {
+                    requestStream.Write(bytes, 0, bytes.Length);
+                    requestStream.Flush();
+                    requestStream.Close();
+                }
+
+                request.BeginGetResponse(responseCallback => {
+                    using (var response = request.EndGetResponse(responseCallback))
+                    using (var responseStream = response.GetResponseStream()) {
+                        responseStream.Close();
+                    }
+                }, null);
+            }, null);
+        }
+    }
 
     public sealed class CensusAvatar : Avatar, INotifyPropertyChanged {
         private const string DefaultAvatarUrlChat = "http://assets.cloudsdale.org/assets/fallback/avatar_chat_user.png";

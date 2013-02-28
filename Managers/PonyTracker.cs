@@ -1,59 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading;
+using System.Windows.Threading;
 using Cloudsdale.Models;
 using System.Windows;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace Cloudsdale.Managers {
-    public class PonyTracker {
-        private readonly Dictionary<string, UserObject> users = new Dictionary<string, UserObject>();
-        private readonly ObservableCollection<CensusUser> userlist = new ObservableCollection<CensusUser>();
+    public class PonyTracker : INotifyPropertyChanged {
+        private readonly Dictionary<string, Status> userStatus = new Dictionary<string, Status>();
         private readonly Cloud cloud;
 
         internal PonyTracker(Cloud cloud) {
             this.cloud = cloud;
         }
 
-        public void Heartbeat(UserReference use) {
-            var user = PonyvilleCensus.Heartbeat(use);
-            if (users.ContainsKey(user.id)) {
-                Reset(user.id);
-            } else {
-                var comp = new UserListSorter(cloud);
-                var i = 0;
-                while (i < userlist.Count && comp.Compare(user, userlist[i]) > -1) ++i;
+        internal void Init() {
+            WebPriorityManager.BeginHighPriorityRequest(new Uri("http://www.cloudsdale.org/v1/clouds/:id/users.json"
+                .Replace(":id", cloud.id)), response => {
+                    var result = JObject.Parse(response.Result);
+                    foreach (var user in result["result"].Where(token => (string)token["status"] != "offline")) {
+                        PonyvilleCensus.Heartbeat(user.ToObject<SimpleUser>());
+                        Heartbeat(user, false);
+                    }
 
-                userlist.Insert(i, (users[user.id] = new UserObject {
-                    id = user,
-                    update = new Timer(o => {
-                        users[user.id].Destroy();
-                        users.Remove(user.id);
-                        Deployment.Current.Dispatcher.BeginInvoke(() => userlist.Remove(user));
-                    }, null, 45000, Timeout.Infinite)
-                }).id);
+                    Deployment.Current.Dispatcher.BeginInvoke(() => OnPropertyChanged("Users"));
+                });
+        }
+
+        public void Heartbeat(JToken user, bool update = true) {
+            var uid = (string)user["id"];
+            var status = user["status"].ToObject<Status>();
+
+            if (uid == Connection.CurrentCloudsdaleUser.id) {
+                Connection.CurrentCloudsdaleUser.status = (string) user["status"];
+                Connection.CurrentCloudsdaleUser.OnPropertyChanged("status");
+            }
+
+            if (userStatus.ContainsKey(uid) && status == userStatus[uid]) {
+                return;
+            }
+
+            userStatus[uid] = status;
+            Deployment.Current.Dispatcher.BeginInvoke(() => PonyvilleCensus.GetUser(uid).OnPropertyChanged("Status"));
+            if (update) {
+                Deployment.Current.Dispatcher.BeginInvoke(() => OnPropertyChanged("Users"));
             }
         }
 
-        private void Reset(string name) {
-            users[name].update.Change(45000, Timeout.Infinite);
-        }
-
-        private struct UserObject {
-            internal CensusUser id;
-            internal Timer update;
-            internal void Destroy() {
-                update.Change(Timeout.Infinite, Timeout.Infinite);
+        public IEnumerable<CensusUser> Users {
+            get {
+                var users =
+                    userStatus.Where(kvp => kvp.Value != Status.Offline).Select(kvp => PonyvilleCensus.GetUser(kvp.Key)).ToArray();
+                Array.Sort(users, new UserListSorter(cloud));
+                return users;
             }
         }
 
-        public ObservableCollection<CensusUser> Users {
-            get { return userlist; }
+        public Status GetStatus(string id) {
+            return userStatus.ContainsKey(id) ? userStatus[id] : Status.Offline;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName) {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
-    public class UserListSorter : IComparer<ListUser> {
+    public class UserListSorter : IComparer<CensusUser> {
         private readonly Cloud cloud;
 
         public UserListSorter(Cloud cloud) {
@@ -62,7 +81,9 @@ namespace Cloudsdale.Managers {
 
         #region Implementation of IComparer<ListUser>
 
-        public int Compare(ListUser x, ListUser y) {
+        public int Compare(CensusUser x, CensusUser y) {
+            if (x.id == y.id) return 0;
+
             var xisowner = x.id == cloud.Owner;
             var yisowner = y.id == cloud.Owner;
             if (xisowner) return -1;

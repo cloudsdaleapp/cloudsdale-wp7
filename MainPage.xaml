@@ -12,7 +12,8 @@
     Foreground="#FF404040"
     SupportedOrientations="Portrait" Orientation="Portrait"
     shell:SystemTray.IsVisible="True"
-    shell:SystemTray.Opacity="0" >
+    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="White" 
+    shell:SystemTray.BackgroundColor="Black">
 
     <Grid x:Name="LayoutRoot">
         <Grid.Background>
@@ -41,7 +42,7 @@
                     Width="234" Foreground="#FF555555" BorderBrush="#FF555555" />
             <Button x:Name="twitterbtn" IsEnabled="False" VerticalAlignment="Bottom" 
                     Margin="220,0,2,120" Height="75" Content="Twitter" Click="TwitterClick"
-                     Foreground="#FF555555" BorderBrush="#FF555555"/>
+                    Foreground="#FF555555" BorderBrush="#FF555555"/>
         </Grid>
     </Grid>
 

@@ -15,7 +15,7 @@
     Foreground="Black"
     SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True" OrientationChanged="PhoneApplicationPageOrientationChanged"
-    shell:SystemTray.Opacity="0">
+    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="White" shell:SystemTray.BackgroundColor="Black">
 
     <phone:PhoneApplicationPage.Resources>
         <ResourceDictionary>
@@ -44,30 +44,33 @@
             </DataTemplate>
             <DataTemplate x:Name="ChatsTemplate">
                 <Grid Margin="0,3,0,5" DataContext="{Binding}">
-                    <Border BorderBrush="#FF444444" Width="50" Height="50"
-                            HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="5"
-                            BorderThickness="1">
-                        <Image DataContext="{Binding}" Source="{Binding Path=user.avatar.Normal}"
+                    <StackPanel Width="50" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Border BorderBrush="#FF444444" Height="50" BorderThickness="1" Margin="0,0,0,2">
+                            <Image Source="{Binding Path=user.avatar.Preview}"
                                HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48"
                                MouseLeftButtonUp="AvatarMouseUp" MouseLeftButtonDown="AvatarMouseDown"
-                               MouseLeave="AvatarMouseLeave" Stretch="UniformToFill">
-                            <Image.Clip>
-                                <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,48,48" />
-                            </Image.Clip>
-                        </Image>
-                    </Border>
+                               MouseLeave="AvatarMouseLeave" Stretch="UniformToFill" ImageFailed="AvatarImageFailed" />
+                        </Border>
+                        <Border DataContext="{Binding Path=user}" Width="50" Height="15" 
+                                BorderBrush="Gray" BorderThickness="1" Background="{Binding Path=RoleBrush}"
+                                Visibility="{Binding Path=ShowTag}" CornerRadius="1">
+                            <TextBlock Text="{Binding Path=RoleTag}" HorizontalAlignment="Center"
+                                       Foreground="White" FontSize="10" />
+                        </Border>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="60,0,0,0">
-                        <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=name}" 
-                                   FontSize="18" Foreground="{Binding Path=CloudColor}"/>
-                        <TextBlock DataContext="{Binding}" Text="{Binding Path=DeviceStub}"
-                                   FontSize="16" Foreground="CornflowerBlue" />
-                        <TextBlock DataContext="{Binding Path=user}" Text="{Binding Path=RoleTag}"
-                                   Foreground="{Binding Path=RoleBrush}" FontSize="12" Margin="5,3"/>
+                        <TextBlock DataContext="{Binding Path=user}"
+                                   FontSize="18" Foreground="{Binding Path=CloudColor}">
+                            <Run Text="●" Foreground="{Binding Path=Status, Converter={StaticResource SCC}}" />
+                            <Run Text="{Binding Path=name}" />
+                        </TextBlock>
                     </StackPanel>
                     <TextBlock DataContext="{Binding}"
-                               Text="{Binding Path=CorrectedTimestamp}" 
-                               HorizontalAlignment="Right" 
-                               VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f"/>
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f">
+                        <Run Text="{Binding Path=CorrectedTimestamp}" />
+                        <Run Text="{Binding Path=DeviceStub}" FontSize="16" />
+                    </TextBlock>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -134,14 +137,29 @@
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem x:Name="chatTab" Header="Chat">
                 <Grid Margin="0,-26,0,0">
-                    <Grid VerticalAlignment="Bottom" Height="100" Margin="-12,0">
-                        <TextBox VerticalAlignment="Bottom" x:Name="SendBox" InputScope="Chat"
-                                 KeyDown="SendBoxKeyDown" DoubleTap="SendBoxDoubleTap" Tap="SendBoxTap" BorderBrush="#888888"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <ScrollViewer x:Name="ChatScroller" Tap="ChatScrollerTap">
+                            <ItemsControl x:Name="Chats" ItemTemplate="{StaticResource ChatsTemplate}" />
+                        </ScrollViewer>
+                        <Grid VerticalAlignment="Bottom" Margin="-12,0" Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox VerticalAlignment="Bottom" x:Name="SendBox" InputScope="Chat"
+                                     DoubleTap="SendBoxDoubleTap" Tap="SendBoxTap" BorderBrush="#888888"
+                                     TextWrapping="Wrap" AcceptsReturn="True" SizeChanged="SendBoxSizeChanged"/>
+                            <Button Style="{StaticResource XTiltButtonStyle}" Grid.Column="1"
+                                    Padding="-10" BorderBrush="Transparent" VerticalAlignment="Bottom"
+                                    Click="SendTextClick" Margin="-5,0,10,10">
+                                <Image Source="Images/Icons/send.png" />
+                            </Button>
+                        </Grid>
                     </Grid>
-                    <ScrollViewer x:Name="ChatScroller" 
-                                   Margin="0,0,0,64" Tap="ChatScrollerTap">
-                        <ItemsControl x:Name="Chats" ItemTemplate="{StaticResource ChatsTemplate}" />
-                    </ScrollViewer>
                 </Grid>
             </controls:PivotItem>
             <controls:PivotItem x:Name="mediaTab" Header="Drops">
@@ -169,7 +187,7 @@
             <controls:PivotItem x:Name="peopleTab" Header="Ponies">
                 <Grid Margin="0,-26,0,0">
                     <ScrollViewer>
-                        <ItemsControl x:Name="Ponies" ItemTemplate="{StaticResource UserlistTemplate}" />
+                        <ItemsControl x:Name="Ponies" ItemTemplate="{StaticResource UserlistTemplate}" ItemsSource="{Binding Path=Users}" />
                     </ScrollViewer>
                 </Grid>
             </controls:PivotItem>
@@ -200,11 +218,7 @@
                                     <StackPanel Orientation="Horizontal">
                                         <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100"
                                        HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,10,10"
-                                       Stretch="Fill">
-                                            <Image.Clip>
-                                                <RectangleGeometry Rect="0,0,100,100" RadiusX="10" RadiusY="10" />
-                                            </Image.Clip>
-                                        </Image>
+                                       Stretch="Fill"/>
                                         <StackPanel>
                                             <TextBlock Text="{Binding Path=name}" TextWrapping="Wrap" Width="320" />
                                             <TextBlock Text="{Binding Path=RoleTag}" Foreground="{Binding Path=RoleBrush}"
@@ -217,11 +231,28 @@
                                         <TextBlock Text="{Binding Path=SuspendedReason}" FontSize="18" 
                                                    Width="430" TextWrapping="Wrap" />
                                     </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Name="ModTools" 
+                                    <StackPanel Name="ModTools" 
                                                 Visibility="{Binding Path=CurrentUser.ModOfCurrent,
                                                                      Converter={StaticResource BoolToVis}}">
-                                        <Button Foreground="#FF444444" BorderBrush="#FF444444"
-                                                DataContext="{Binding}" Click="BanBanBan">Ban</Button>
+                                        <StackPanel Orientation="Horizontal" Name="ModToolsButtons">
+                                            <Button Foreground="#FF444444" BorderBrush="#FF444444"
+                                                    Click="BanBanBan">Ban</Button>
+                                        </StackPanel>
+                                        <StackPanel Name="BanTools" Visibility="Collapsed">
+                                            <Button Foreground="#FF444444" BorderBrush="#FF444444"
+                                                DataContext="{Binding}" Click="DontBanBanBan">Cancel</Button>
+                                            <TextBlock>Reason</TextBlock>
+                                            <TextBox Name="BanReason" />
+                                            <TextBlock>Ban Until</TextBlock>
+                                            <toolkit:TimePicker Name="BanTime" />
+                                            <toolkit:DatePicker Name="BanDate" />
+                                            <Button Foreground="#FF444444" BorderBrush="#FF444444"
+                                                    Click="DoTheBanBanBan">Ban</Button>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Visibility="{Binding Path=AKA, Converter={StaticResource AHAV}}">
+                                        <TextBlock FontSize="32" Foreground="#FF888888">Also Known As</TextBlock>
+                                        <ItemsControl ItemsSource="{Binding Path=AKA}" FontSize="16" />
                                     </StackPanel>
                                     <TextBlock FontSize="32" Foreground="#FF888888">Clouds</TextBlock>
                                     <ItemsControl ItemsSource="{Binding Path=ExtClouds}" Margin="5">
@@ -310,11 +341,7 @@
                                     </Border>
                                     <TextBlock FontSize="20">Owner</TextBlock>
                                     <StackPanel Orientation="Horizontal" Margin="5,0">
-                                        <Image Source="{Binding Path=FullOwner.avatar.Normal}" Width="50">
-                                            <Image.Clip>
-                                                <RectangleGeometry Rect="0,0,50,50" RadiusX="10" RadiusY="10" />
-                                            </Image.Clip>
-                                        </Image>
+                                        <Image Source="{Binding Path=FullOwner.avatar.Normal}" Width="50" />
                                         <TextBlock Text="{Binding Path=FullOwner.name}" VerticalAlignment="Center" Margin="5" />
                                     </StackPanel>
                                     <TextBlock FontSize="20" Visibility="{Binding Path=ShowMods}">Moderators</TextBlock>
@@ -322,11 +349,7 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" Margin="5,5">
-                                                    <Image Source="{Binding Path=avatar.Normal}" Width="50">
-                                                        <Image.Clip>
-                                                            <RectangleGeometry Rect="0,0,50,50" RadiusX="10" RadiusY="10" />
-                                                        </Image.Clip>
-                                                    </Image>
+                                                    <Image Source="{Binding Path=avatar.Normal}" Width="50" />
                                                     <TextBlock Text="{Binding Path=name}" VerticalAlignment="Center" Margin="5" />
                                                 </StackPanel>
                                             </DataTemplate>
@@ -340,6 +363,16 @@
             </Popup>
             <Grid Width="800" Height="800" Name="cloudinfoback" Visibility="Collapsed" Background="Black" />
         </Canvas>
+        <Popup Width="800" Height="800" Name="LoadingPopup" 
+               HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border Width="800" Height="800" Background="#33000000" 
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid Width="480" Height="480"
+                      HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <toolkit:PerformanceProgressBar Foreground="CornflowerBlue" IsIndeterminate="True" />
+                </Grid>
+            </Border>
+        </Popup>
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using Cloudsdale.Models;
 
@@ -23,6 +24,7 @@ namespace Cloudsdale.Managers {
             var count = cache.Count;
             for (var i = 0; i < count; ++i) {
                 if (cache[i].id == item.id) return;
+                if (cache[i].subs.Any(msg => msg.id == item.id)) return;
             }
 
             var greatest = 0;

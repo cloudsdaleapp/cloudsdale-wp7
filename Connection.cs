@@ -26,6 +26,7 @@ namespace Cloudsdale {
         public static LoginResponse LoginResult;
         public static string CloudsdaleClientId;
         public static LoggedInUser CurrentCloudsdaleUser;
+        public static bool TransProxWorkaround;
 
         public static FayeConnector.FayeConnector Faye;
 
@@ -48,17 +49,25 @@ namespace Cloudsdale {
                     return;
             }
 
-            if ((CurrentCloudsdaleUser.suspended_until ?? new DateTime(0)) > DateTime.Now) {
-                Deployment.Current.Dispatcher.BeginInvoke(() => {
-                    MessageBox.Show("You are banned until" + CurrentCloudsdaleUser.suspended_until +
-                        "\n" + CurrentCloudsdaleUser.reason_for_suspension);
-                    throw new ApplicationTerminationException();
-                });
-                return;
-            }
-
             if (pulluserclouds) {
-                PullUserClouds(() => FinishConnecting(page, dispatcher));
+                PullUserClouds(() => {
+                    if ((CurrentCloudsdaleUser.suspended_until ?? new DateTime(0)) > DateTime.Now) {
+                        Deployment.Current.Dispatcher.BeginInvoke(() => {
+                            MessageBox.Show("You are banned until" + CurrentCloudsdaleUser.suspended_until +
+                                "\n" + CurrentCloudsdaleUser.reason_for_suspension);
+                            Deployment.Current.Dispatcher.BeginInvoke(() => {
+                                var settings = IsolatedStorageSettings.ApplicationSettings;
+                                settings.Remove("lastuser");
+                                settings.Save();
+                                MainPage.reconstruction = true;
+                                ((PhoneApplicationFrame)Application.Current.RootVisual)
+                                    .Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                            });
+                        });
+                        return;
+                    }
+                    FinishConnecting(page, dispatcher);
+                });
             } else {
                 SaveUser();
                 FinishConnecting(page, dispatcher);
@@ -103,18 +112,62 @@ namespace Cloudsdale {
         }
 
         public static void PullUserClouds(Action complete) {
-            var wc = new WebClient();
-            wc.DownloadStringCompleted += (sender, args) => {
-                var settings = new JsonSerializerSettings {
-                    DefaultValueHandling = DefaultValueHandling.Populate,
-                };
-                var result = JsonConvert.DeserializeObject<CloudGetResponse>(args.Result, settings);
-                CurrentCloudsdaleUser.clouds = (from cloud in result.result
-                                                select PonyvilleDirectory.RegisterCloud(cloud)).ToArray();
-                SaveUser();
-                complete();
-            };
-            wc.DownloadStringAsync(new Uri(Resources.UserCloudsEndpoint.Replace("{userid}", CurrentCloudsdaleUser.id)));
+            var token = BCrypt.Net.BCrypt.HashPassword(CurrentCloudsdaleUser.id + "cloudsdale", Resources.InternalToken);
+            var oauth = string.Format(Resources.OAuthFormat, "cloudsdale", token, CurrentCloudsdaleUser.id);
+            var data = Encoding.UTF8.GetBytes(oauth);
+            var request = WebRequest.CreateHttp(Resources.loginUrl);
+            request.Accept = "application/json";
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Headers["Content-Length"] = data.Length.ToString();
+            request.BeginGetRequestStream(ar => {
+                using (var stream = request.EndGetRequestStream(ar)) {
+                    stream.Write(data, 0, data.Length);
+                    stream.Close();
+                }
+                request.BeginGetResponse(ac => {
+                    try {
+                        string json;
+                        using (var response = request.EndGetResponse(ac))
+                        using (var responseStream = response.GetResponseStream())
+                        using (var responseReader = new StreamReader(responseStream)) {
+                            json = responseReader.ReadToEnd();
+                        }
+                        LoginType = 0;
+                        var settings = new JsonSerializerSettings {
+                            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                            Error = (sender, args) => Deployment.Current.Dispatcher.BeginInvoke(() => {
+                                MessageBox.Show("Error receiving data from the server");
+                                var isettings = IsolatedStorageSettings.ApplicationSettings;
+                                isettings.Remove("lastuser");
+                                isettings.Save();
+                                MainPage.reconstruction = true;
+                                ((PhoneApplicationFrame)Application.Current.RootVisual)
+                                    .Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                            })
+                        };
+                        LoginResult = JsonConvert.DeserializeObject<LoginResponse>(json, settings);
+                        CloudsdaleClientId = LoginResult.result.client_id;
+                        CurrentCloudsdaleUser = LoginResult.result.user;
+                        SaveUser();
+                        complete();
+                    } catch {
+                        Deployment.Current.Dispatcher.BeginInvoke(() => {
+                            if (MessageBox.Show("An error occured logging in. Retry?", "",
+                                MessageBoxButton.OKCancel) == MessageBoxResult.OK) {
+                                PullUserClouds(complete);
+                                return;
+                            }
+                            var settings = IsolatedStorageSettings.ApplicationSettings;
+                            settings.Remove("lastuser");
+                            settings.Save();
+                            MainPage.reconstruction = true;
+                            ((PhoneApplicationFrame)Application.Current.RootVisual)
+                                .Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                        });
+                    }
+                }, null);
+            }, null);
         }
 
         public static void SendMessage(string cloud, string message) {
@@ -227,6 +280,35 @@ namespace Cloudsdale {
                 if (c.id == cloud) return true;
             }
             return false;
+        }
+
+        public static void ModifyUserProperty(string property, JToken value) {
+            var properties = new JObject();
+            properties[property] = value;
+            ModifyUserProperty(properties);
+        }
+
+        public static void ModifyUserProperty(JToken properties) {
+            var requestData = new JObject();
+            requestData["user"] = properties;
+            var bytes = Encoding.UTF8.GetBytes(requestData.ToString());
+
+            var request = WebRequest.CreateHttp("http://www.cloudsdale.org/v1/users/" + CurrentCloudsdaleUser.id);
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Accept = "application/json";
+            request.Headers["Content-Length"] = bytes.Length.ToString();
+            request.Headers["X-Auth-Token"] = CurrentCloudsdaleUser.auth_token;
+
+            request.BeginGetRequestStream(a => {
+                using (var requestStream = request.EndGetRequestStream(a)) {
+                    requestStream.Write(bytes, 0, bytes.Length);
+                    requestStream.Close();
+                }
+                request.BeginGetResponse(ai => {
+                    using (request.EndGetResponse(ai)) ;
+                }, null);
+            }, null);
         }
     }
 

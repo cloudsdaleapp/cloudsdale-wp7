@@ -48,6 +48,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="bouncywp71">
+      <HintPath>Lib\bouncywp71.dll</HintPath>
+    </Reference>
     <Reference Include="BugSense">
       <HintPath>Lib\BugSense.dll</HintPath>
     </Reference>
@@ -60,6 +63,12 @@
     <Reference Include="Microsoft.Phone.Interop" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>Lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="socketex.sslsocket">
+      <HintPath>Lib\socketex.sslsocket.dll</HintPath>
+    </Reference>
+    <Reference Include="socketex.tcpclient">
+      <HintPath>Lib\socketex.tcpclient.dll</HintPath>
     </Reference>
     <Reference Include="SuperSocket.ClientEngine.Common, Version=0.2.0.0, Culture=neutral, PublicKeyToken=ee9af13f57f00acc, processorArchitecture=MSIL">
       <HintPath>Lib\SuperSocket.ClientEngine.Common.dll</HintPath>
@@ -109,6 +118,7 @@
     <Compile Include="Controls\CountDisplay.xaml.cs">
       <DependentUpon>CountDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\StatusColorConverter.cs" />
     <Compile Include="Controls\TiltEffect.cs" />
     <Compile Include="Controls\TiltGrid.cs" />
     <Compile Include="DropViewer.xaml.cs">
@@ -148,12 +158,14 @@
     <Compile Include="Managers\BoolToVis.cs" />
     <Compile Include="Managers\GenericBinding.cs" />
     <Compile Include="Managers\DerpyHoovesMailCenter.cs" />
+    <Compile Include="Managers\Helpers.cs" />
     <Compile Include="Managers\PinkiePieEntertainmentDojo.cs" />
     <Compile Include="Managers\PonyvilleCensus.cs" />
     <Compile Include="Managers\PonyvilleDirectory.cs" />
     <Compile Include="Managers\SweetAppleAcres.cs" />
     <Compile Include="Managers\WebPriorityManager.cs" />
     <Compile Include="Models\Avatar.cs" />
+    <Compile Include="Models\Ban.cs" />
     <Compile Include="Models\Cloud.cs" />
     <Compile Include="Models\CloudsdaleItem.cs" />
     <Compile Include="Managers\PonyTracker.cs" />
@@ -247,7 +259,10 @@
     <Content Include="Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\Icons\send.png" />
     <Content Include="Images\Icons\back.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Resource Include="Images\Icons\i.png" />
     <Content Include="Images\Icons\back_white.png" />
     <Content Include="Images\Icons\edit.png" />

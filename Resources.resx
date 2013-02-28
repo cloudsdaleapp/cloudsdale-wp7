@@ -118,14 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="facebookAppId" xml:space="preserve">
-    <value>213007855430354</value>
+    <value>255258867845902</value>
     <comment>dev 213007855430354 production 255258867845902</comment>
   </data>
   <data name="InternalToken" xml:space="preserve">
     <value>$2a$10$7Pfcv89Q9c/9WMAk6ySfhu</value>
   </data>
   <data name="OAuthFormat" xml:space="preserve">
-    <value>{{"oauth":{{"client_type":"android","provider":"{0}","token":"{1}","uid":"{2}"}}}}</value>
+    <value>{{"oauth":{{"client_type":"wp7","provider":"{0}","token":"{1}","uid":"{2}"}}}}</value>
   </data>
   <data name="pushUrl" xml:space="preserve">
     <value>ws://push01.cloudsdale.org:80/push</value>

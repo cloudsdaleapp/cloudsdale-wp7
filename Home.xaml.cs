@@ -3,18 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO.IsolatedStorage;
 using System.Linq;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Cloudsdale.Controls;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
-using Microsoft.Phone.Controls;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
@@ -42,9 +36,22 @@ namespace Cloudsdale {
             }
             recursivealtcodes.IsChecked =
                 IsolatedStorageSettings.ApplicationSettings.Contains("ux.recursivealtcodeentry");
+
+            StatusBox.SelectedIndex = StatusIndex(Connection.CurrentCloudsdaleUser.status);
+            Connection.CurrentCloudsdaleUser.PropertyChanged += (sender, args) => {
+                if (args.PropertyName == "status") {
+                    Dispatcher.BeginInvoke( () => {
+                        StatusBox.SelectionChanged -= StatusSelectionChanged;
+                        StatusBox.SelectedIndex = StatusIndex(Connection.CurrentCloudsdaleUser.status);
+                        StatusBox.SelectionChanged += StatusSelectionChanged;
+                    });
+                }
+            };
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
+            StatusBox.SelectedIndex = StatusIndex(Connection.CurrentCloudsdaleUser.status);
+
             CloudList.ItemSource = Connection.CurrentCloudsdaleUser.Clouds;
             if (comingfromlogin) {
                 comingfromlogin = false;
@@ -121,6 +128,7 @@ namespace Cloudsdale {
         private void LogoutClick(object sender, RoutedEventArgs e) {
             var settings = IsolatedStorageSettings.ApplicationSettings;
             settings.Remove("lastuser");
+            settings.Save();
             NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
         }
 
@@ -156,12 +164,6 @@ namespace Cloudsdale {
             NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
         }
 
-        private void CloudTap(object sender, GestureEventArgs e) {
-            var cloud = (Cloud)((FrameworkElement)sender).DataContext;
-            Connection.CurrentCloud = cloud;
-            NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
-        }
-
         private void CloudListLoaded(object sender, RoutedEventArgs e) {
             CloudList.Pivot = pivotView;
         }
@@ -169,6 +171,37 @@ namespace Cloudsdale {
         private void CloudClicked(object sender, CloudTileManager.CloudEventArgs args) {
             Connection.CurrentCloud = args.Cloud;
             NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
+        }
+
+        private static int StatusIndex(string status) {
+            switch ((status ?? "online").ToLower()) {
+                case "online":
+                    return 0;
+                case "away":
+                    return 1;
+                case "busy":
+                    return 2;
+                default:
+                    return 3;
+            }
+        }
+
+        private static string StatusString(int index) {
+            switch (index) {
+                case 0:
+                    return "online";
+                case 1:
+                    return "away";
+                case 2:
+                    return "busy";
+                default:
+                    return "offline";
+            }
+        }
+
+        private void StatusSelectionChanged(object sender, SelectionChangedEventArgs e) {
+            if (StatusBox != null)
+                Connection.ModifyUserProperty("preferred_status", StatusString(StatusBox.SelectedIndex));
         }
     }
 }

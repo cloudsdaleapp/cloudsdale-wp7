@@ -80,7 +80,11 @@ namespace Cloudsdale.Controls {
 
             isDragging = !Scroller.IsHitTestVisible;
 
-            if (!isDragging) return;
+            if (!isDragging) {
+                Scroller.IsHitTestVisible = true;
+                Pivot.IsHitTestVisible = true;
+                return;
+            }
 
             var tile = (HubTile)sender;
             var grid = (TiltGrid)tile.Parent;
@@ -95,7 +99,11 @@ namespace Cloudsdale.Controls {
         }
 
         private void GestureListenerDragDelta(object sender, DragDeltaGestureEventArgs e) {
-            if (!isDragging) return;
+            if (!isDragging) {
+                Scroller.IsHitTestVisible = true;
+                Pivot.IsHitTestVisible = true;
+                return;
+            }
 
             var tile = (HubTile) sender;
             var grid = (TiltGrid) tile.Parent;
@@ -112,7 +120,11 @@ namespace Cloudsdale.Controls {
         }
 
         private void GestureListenerDragCompleted(object sender, DragCompletedGestureEventArgs e) {
-            if (!isDragging) return;
+            if (!isDragging) {
+                Scroller.IsHitTestVisible = true;
+                Pivot.IsHitTestVisible = true;
+                return;
+            }
 
             var tile = (HubTile)sender;
             var grid = (TiltGrid)tile.Parent;

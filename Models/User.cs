@@ -35,10 +35,47 @@ namespace Cloudsdale.Models {
                 switch (role) {
                     case "founder":
                     case "donor":
+                    case "verified":
+                    case "associate":
+                    case "legacy":
+                        return role.ToLower();
                     case "developer":
-                        return "[ " + role.ToLower() + " ]";
+                        return "dev";
                 }
                 return "";
+            }
+        }
+
+        [JsonIgnore]
+        public Visibility ShowTag {
+            get { return string.IsNullOrWhiteSpace(RoleTag) ? Visibility.Collapsed : Visibility.Visible; }
+        }
+
+        [JsonIgnore]
+        public Brush RoleBrush {
+            get {
+                var color = Colors.Transparent;
+                switch (role) {
+                    case "founder":
+                        color = Color.FromArgb(0xFF, 0xFF, 0x33, 0x99);
+                        break;
+                    case "donor":
+                        color = Color.FromArgb(0xFF, 0xFF, 0xCC, 0x00);
+                        break;
+                    case "verified":
+                        color = Color.FromArgb(0xFF, 0x00, 0xFF, 0xFF);
+                        break;
+                    case "associate":
+                        color = Color.FromArgb(0xFF, 0x33, 0x66, 0x99);
+                        break;
+                    case "legacy":
+                        color = Color.FromArgb(0xFF, 0xAA, 0xAA, 0xAA);
+                        break;
+                    case "developer":
+                        color = Color.FromArgb(0xFF, 0x5C, 0x33, 0x99);
+                        break;
+                }
+                return new SolidColorBrush(color);
             }
         }
     }
@@ -71,18 +108,6 @@ namespace Cloudsdale.Models {
             }
         }
 
-        [JsonIgnore]
-        public Brush RoleBrush {
-            get {
-                switch (role) {
-                    case "founder":
-                    case "developer":
-                        return CloudColor;
-                }
-                return new SolidColorBrush(Color.FromArgb(0xFF, 0x99, 0x99, 0x99));
-            }
-        }
-
         [JsonProperty]
         public string time_zone;
 
@@ -106,6 +131,17 @@ namespace Cloudsdale.Models {
         public bool? has_read_tnc;
         [JsonProperty]
         public Prosecution[] prosecutions;
+
+        private string[] _aka;
+        [JsonProperty("also_known_as")]
+        public string[] AKA {
+            get { return _aka; }
+            set {
+                _aka = value;
+                if (Deployment.Current.Dispatcher.CheckAccess()) OnPropertyChanged("AKA");
+                else Deployment.Current.Dispatcher.BeginInvoke(() => OnPropertyChanged("AKA"));
+            }
+        }
 
         public void CopyTo(User user) {
             if (id != null)
@@ -148,6 +184,8 @@ namespace Cloudsdale.Models {
                 user.has_read_tnc = has_read_tnc;
             if (prosecutions != null)
                 user.prosecutions = prosecutions;
+            if (_aka != null)
+                user.AKA = _aka;
         }
 
         [JsonIgnore]
@@ -174,8 +212,15 @@ namespace Cloudsdale.Models {
         public event PropertyChangedEventHandler PropertyChanged;
 
         internal virtual void OnPropertyChanged(string propertyName) {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            if (Deployment.Current.CheckAccess()) {
+                var handler = PropertyChanged;
+                if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            } else {
+                Deployment.Current.Dispatcher.BeginInvoke(() => {
+                    var handler = PropertyChanged;
+                    if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+                });
+            }
         }
     }
 
@@ -191,6 +236,10 @@ namespace Cloudsdale.Models {
         public bool? needs_password_change;
         [JsonProperty]
         public bool? needs_name_change;
+        [JsonProperty("preferred_status")]
+        public string status;
+        [JsonProperty]
+        public Ban[] bans;
 
         [JsonIgnore]
         private readonly ObservableCollection<Cloud> _cloudCol = new ObservableCollection<Cloud>();
@@ -237,6 +286,15 @@ namespace Cloudsdale.Models {
                 user.needs_name_change = needs_name_change;
             if (clouds != null)
                 user.clouds = clouds;
+            if (status != null)
+                user.status = status;
         }
+    }
+
+    public enum Status {
+        Online,
+        Away,
+        Busy,
+        Offline
     }
 }

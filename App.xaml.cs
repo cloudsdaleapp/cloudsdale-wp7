@@ -66,7 +66,14 @@ namespace Cloudsdale {
         private void ApplicationActivated(object sender, ActivatedEventArgs e) {
 
             if (Connection.CurrentCloud != null) {
-                DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id);
+                if (RootFrame.Content is Clouds) {
+                    var cloudPage = RootFrame.Content as Clouds;
+                    cloudPage.LoadingPopup.IsOpen = true;
+                    DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id,
+                                                      () => cloudPage.LoadingPopup.IsOpen = false);
+                } else {
+                    DerpyHoovesMailCenter.VerifyCloud(Connection.CurrentCloud.id);
+                }
             }
 
             try {

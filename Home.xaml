@@ -15,7 +15,7 @@
     Foreground="Black"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True"
-    shell:SystemTray.Opacity="0">
+    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="White" shell:SystemTray.BackgroundColor="Black">
 
     <phone:PhoneApplicationPage.Resources>
         <ResourceDictionary>
@@ -97,8 +97,6 @@
                 <Grid>
                     <ScrollViewer>
                         <StackPanel>
-                            <Button Foreground="Black" BorderBrush="Black" Content="All Users Seen"
-                                    Visibility="Collapsed"/>
                             <CheckBox x:Name="allowaltcodes" Content="Enable alt code entry" 
                                       Foreground="Black" Checked="AllowaltcodesChecked"
                                       Unchecked="AllowaltcodesUnchecked"/>
@@ -106,6 +104,13 @@
                                       Foreground="Black" Margin="50,-20,0,0" Visibility="Collapsed"
                                       Checked="RecursivealtcodesChecked"
                                       Unchecked="RecursivealtcodesUnchecked"/>
+                            <TextBlock Foreground="Black">Status</TextBlock>
+                            <toolkit:ListPicker Name="StatusBox" SelectionChanged="StatusSelectionChanged">
+                                <toolkit:ListPickerItem>Online</toolkit:ListPickerItem>
+                                <toolkit:ListPickerItem>Away</toolkit:ListPickerItem>
+                                <toolkit:ListPickerItem>Busy</toolkit:ListPickerItem>
+                                <toolkit:ListPickerItem>Appear Offline</toolkit:ListPickerItem>
+                            </toolkit:ListPicker>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>

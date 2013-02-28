@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Windows;
 using Cloudsdale.Models;
 
@@ -7,7 +8,7 @@ namespace Cloudsdale.Managers {
 
     public class AppleFarm<T> where T : CloudsdaleItem {
         protected int capacity;
-        protected readonly CollectionThatLetsMeForceAnUpdateForTheLastItem cache;
+        protected internal readonly CollectionThatLetsMeForceAnUpdateForTheLastItem cache;
         protected readonly bool reverse;
 
         public AppleFarm() {
@@ -54,8 +55,8 @@ namespace Cloudsdale.Managers {
         }
 
         public virtual void Add(T item) {
-            foreach (var ai in cache) {
-                if (ai.id == item.id) return;
+            if (cache.Any(ai => ai.id == item.id)) {
+                return;
             }
             if (Deployment.Current.Dispatcher.CheckAccess()) {
                 if (reverse) {
@@ -86,7 +87,7 @@ namespace Cloudsdale.Managers {
             }
         }
 
-        protected class CollectionThatLetsMeForceAnUpdateForTheLastItem : ObservableCollection<T> {
+        protected internal class CollectionThatLetsMeForceAnUpdateForTheLastItem : ObservableCollection<T> {
             internal void Trigger(int index) {
                 if (Deployment.Current.Dispatcher.CheckAccess()) {
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(

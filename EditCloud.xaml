@@ -11,7 +11,8 @@
     Foreground="Black"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
-    shell:SystemTray.IsVisible="True" shell:SystemTray.Opacity="0">
+    shell:SystemTray.IsVisible="True" shell:SystemTray.Opacity="0" 
+    shell:SystemTray.ForegroundColor="White" shell:SystemTray.BackgroundColor="Black">
 
     <phone:PhoneApplicationPage.Resources>
         <ResourceDictionary>
@@ -39,24 +40,24 @@
                     <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100" />
                     <Button BorderBrush="#404040" Foreground="#404040">Change Avatar</Button>
                 </StackPanel>
-                <TextBlock FontSize="32">Title</TextBlock>
+                <TextBlock FontSize="32" DoubleTap="NameTap">Title</TextBlock>
                 <Grid Margin="0,5,0,10">
                     <TextBlock Text="{Binding Path=name}" Name="CloudNameText" DoubleTap="NameTap" />
                     <TextBox Text="{Binding Path=name}" Name="CloudNameBox" Visibility="Collapsed" Width="460"
                              DoubleTap="StackPanelTap" KeyDown="CloudNameBoxKeyDown" />
                 </Grid>
-                <TextBlock FontSize="32">Description</TextBlock>
+                <TextBlock FontSize="32" DoubleTap="DescriptionTextDoubleTap">Description</TextBlock>
                 <Grid Margin="0,5,0,10">
                     <TextBlock Text="{Binding Path=description}" Name="DescriptionText" DoubleTap="DescriptionTextDoubleTap" 
                                Width="460" TextWrapping="Wrap" />
-                    <TextBox Text="{Binding Path=description}" AcceptsReturn="True" Height="240" Width="460" Name="DescriptionBox"
+                    <TextBox Text="{Binding Path=description}" AcceptsReturn="True" MinHeight="240" Width="460" Name="DescriptionBox"
                              Visibility="Collapsed" TextWrapping="Wrap" DoubleTap="StackPanelTap"/>
                 </Grid>
-                <TextBlock FontSize="32">Rules</TextBlock>
+                <TextBlock FontSize="32" DoubleTap="StackPanelTap">Rules</TextBlock>
                 <Grid Margin="0,5,0,10">
                     <TextBlock Text="{Binding Path=rules}" Name="RulesText" DoubleTap="RulesTextDoubleTap" 
                                Width="460" TextWrapping="Wrap" />
-                    <TextBox Text="{Binding Path=rules}" AcceptsReturn="True" Height="240" Width="460" Name="RulesBox"
+                    <TextBox Text="{Binding Path=rules}" AcceptsReturn="True" MinHeight="240" Width="460" Name="RulesBox"
                              Visibility="Collapsed" TextWrapping="Wrap" DoubleTap="StackPanelTap"/>
                 </Grid>
                 <CheckBox Name="IsHidden" IsChecked="{Binding Path=hidden}"
