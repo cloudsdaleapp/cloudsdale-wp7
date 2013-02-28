@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Cloudsdale.Managers;
@@ -136,6 +137,9 @@ namespace Cloudsdale {
 
         protected override void OnNavigatedFrom(NavigationEventArgs e) {
             Debug.WriteLine("Navigated away");
+
+            mediaPlayer.Stop();
+            mediaPlayer.Source = null;
 
             if (Leaving && !Connection.IsMemberOfCloud(Connection.CurrentCloud.id)) {
                 DerpyHoovesMailCenter.Unsubscribe(Connection.CurrentCloud.id);
@@ -499,7 +503,7 @@ namespace Cloudsdale {
 
             var time = BanDate.Value.Value.Date + BanTime.Value.Value.TimeOfDay;
 
-            if (MessageBox.Show(user.name + " will be banned until " + time, "Ban " + user.name, 
+            if (MessageBox.Show(user.name + " will be banned until " + time, "Ban " + user.name,
                     MessageBoxButton.OKCancel) != MessageBoxResult.OK) {
                 return;
             }
@@ -510,11 +514,20 @@ namespace Cloudsdale {
         }
 
         private void AvatarImageFailed(object sender, ExceptionRoutedEventArgs e) {
-            var image = (Image) sender;
+            var image = (Image)sender;
             image.Source = new BitmapImage(new Uri("http://assets.cloudsdale.org/assets/fallback/avatar_preview_user.png"));
         }
 
         private void SendTextClick(object sender, RoutedEventArgs e) {
+            if (string.IsNullOrWhiteSpace(SendBox.Text)) {
+                return;
+            }
+            if (SendBox.Text.StartsWith("#shakeit")) {
+                SendBox.Text = "";
+                DoTheHarlemShake();
+                return;
+            }
+
             var controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);
             var cmessages = controller.messages;
             cmessages.Add(new Message {
@@ -531,6 +544,148 @@ namespace Cloudsdale {
 
         private void SendBoxSizeChanged(object sender, SizeChangedEventArgs e) {
             ScrollDown(null, null);
+        }
+
+        private readonly Random harlemRandom = new Random();
+        private bool harlemShaking;
+        private void DoTheHarlemShake() {
+            if (harlemShaking) return;
+            harlemShaking = true;
+            mediaPlayer.Source = new Uri("/Sound/harlem-shake.mp3", UriKind.Relative);
+            mediaPlayer.Play();
+
+            var titletext =
+                LayoutRoot.AllChildrenMatching(
+                    child => child is TextBlock && (child as TextBlock).Text == (string)cloudPivot.Title).OfType<TextBlock>().First();
+
+            ShakeText(titletext);
+
+            new Thread(() => {
+                Thread.Sleep(35);
+                harlemShaking = false;
+            }).Start();
+            new Thread(() => {
+                Thread.Sleep((int)(15.8 * 1000));
+                Dispatcher.BeginInvoke(() => {
+                    var images = LayoutRoot.AllChildrenMatching<Image>().OfType<Image>();
+                    var usernames = LayoutRoot.AllChildrenMatching(child => child is FrameworkElement &&
+                                        (child as FrameworkElement).Name == "Username").OfType<TextBlock>();
+                    foreach (var image in images) {
+                        HarlemImage(image);
+                    }
+                });
+            }).Start();
+        }
+        private void HarlemImage(UIElement image) {
+            if (image.Projection == null) image.Projection = new PlaneProjection();
+            Timeline animation1 = null;
+            Timeline animation2 = null;
+            Timeline animation3 = null;
+            PropertyPath property1 = null;
+            PropertyPath property2 = null;
+            PropertyPath property3 = null;
+            if (harlemRandom.NextDouble() < .2) {
+                animation1 = new DoubleAnimation {
+                    From = 0,
+                    To = 360,
+                    Duration = new Duration(TimeSpan.FromSeconds(1)),
+                    RepeatBehavior = new RepeatBehavior(14.2),
+                };
+                animation1.Completed += (sender, args) => {
+                    ((PlaneProjection)image.Projection).RotationZ = 0;
+                };
+                property1 = new PropertyPath("(PlaneProjection.RotationZ)");
+            }
+            if (harlemRandom.NextDouble() < .4) {
+                animation2 = new DoubleAnimation {
+                    From = 0,
+                    To = -1000,
+                    Duration = new Duration(TimeSpan.FromSeconds(0.1)),
+                    RepeatBehavior = new RepeatBehavior(14.2 * 5),
+                    AutoReverse = true,
+                };
+                animation2.Completed += (sender, args) => {
+                    ((PlaneProjection)image.Projection).LocalOffsetZ = 0;
+                };
+                property2 = new PropertyPath("(PlaneProjection.LocalOffsetZ)");
+            }
+            if (harlemRandom.NextDouble() < .4) {
+                animation3 = new DoubleAnimation {
+                    From = -10,
+                    To = 10,
+                    Duration = new Duration(TimeSpan.FromSeconds(0.1)),
+                    RepeatBehavior = new RepeatBehavior(TimeSpan.FromSeconds(14.2 * 5)),
+                    AutoReverse = true,
+                };
+                animation3.Completed += (sender, args) => {
+                    ((PlaneProjection)image.Projection).LocalOffsetX = 0;
+                };
+                property3 = new PropertyPath("(PlaneProjection.LocalOffsetX)");
+            }
+            if (animation1 == null && animation2 == null && animation3 == null) return;
+
+            var storyboard = new Storyboard();
+            if (animation1 != null) {
+                storyboard.Children.Add(animation1);
+                Storyboard.SetTarget(animation1, image.Projection);
+                Storyboard.SetTargetProperty(animation1, property1);
+            }
+            if (animation2 != null) {
+                storyboard.Children.Add(animation2);
+                Storyboard.SetTarget(animation2, image.Projection);
+                Storyboard.SetTargetProperty(animation2, property2);
+            }
+            if (animation3 != null) {
+                storyboard.Children.Add(animation3);
+                Storyboard.SetTarget(animation3, image.Projection);
+                Storyboard.SetTargetProperty(animation3, property3);
+            }
+
+            LayoutRoot.Resources.Add(Guid.NewGuid().ToString(), storyboard);
+
+            storyboard.Begin();
+        }
+        private void ShakeText(FrameworkElement text) {
+            if (text.Projection == null) text.Projection = new PlaneProjection {
+                CenterOfRotationY = -(text.ActualHeight / 2)
+            };
+
+
+            var sidetoside = new DoubleAnimation {
+                From = -10,
+                To = 10,
+                Duration = new Duration(TimeSpan.FromSeconds(0.3)),
+                RepeatBehavior = new RepeatBehavior(30 * 3.3333 / 2.0),
+                AutoReverse = true,
+            };
+            sidetoside.Completed += (sender, args) => {
+                ((PlaneProjection)text.Projection).LocalOffsetX = 0;
+            };
+
+            var slightrotation = new DoubleAnimation {
+                From = -10,
+                To = 10,
+                Duration = new Duration(TimeSpan.FromSeconds(.3)),
+                RepeatBehavior = new RepeatBehavior(30 * 3.3333 / 2.0),
+                AutoReverse = true,
+            };
+            slightrotation.Completed += (sender, args) => {
+                ((PlaneProjection)text.Projection).RotationZ = 0;
+            };
+
+            var storyboard = new Storyboard();
+            storyboard.Children.Add(sidetoside);
+            storyboard.Children.Add(slightrotation);
+
+            Storyboard.SetTarget(sidetoside, text.Projection);
+            Storyboard.SetTargetProperty(sidetoside, new PropertyPath("(PlaneProjection.LocalOffsetX)"));
+
+            Storyboard.SetTarget(slightrotation, text.Projection);
+            Storyboard.SetTargetProperty(slightrotation, new PropertyPath("(PlaneProjection.RotationZ)"));
+
+            LayoutRoot.Resources.Add(Guid.NewGuid().ToString(), storyboard);
+
+            storyboard.Begin();
         }
     }
 }

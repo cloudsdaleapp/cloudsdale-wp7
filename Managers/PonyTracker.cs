@@ -19,7 +19,7 @@ namespace Cloudsdale.Managers {
         }
 
         internal void Init() {
-            WebPriorityManager.BeginHighPriorityRequest(new Uri("http://www.cloudsdale.org/v1/clouds/:id/users.json"
+            WebPriorityManager.BeginHighPriorityRequest(new Uri("http://www.cloudsdale.org/v1/clouds/:id/users/online.json"
                 .Replace(":id", cloud.id)), response => {
                     var result = JObject.Parse(response.Result);
                     foreach (var user in result["result"].Where(token => (string)token["status"] != "offline")) {

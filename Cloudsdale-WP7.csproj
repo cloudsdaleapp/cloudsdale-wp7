@@ -261,6 +261,7 @@
     </Content>
     <Content Include="Images\Icons\send.png" />
     <Content Include="Images\Icons\back.png" />
+    <Content Include="Sound\harlem-shake.mp3" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Resource Include="Images\Icons\i.png" />
