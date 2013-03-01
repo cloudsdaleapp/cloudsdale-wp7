@@ -27,6 +27,10 @@ namespace Cloudsdale.Managers {
                         Heartbeat(user, false);
                     }
 
+                    userStatus[Connection.CurrentCloudsdaleUser.id] =
+                        (Status)StatusIndex(Connection.CurrentCloudsdaleUser.status);
+                    Deployment.Current.Dispatcher.BeginInvoke(() => PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id).OnPropertyChanged("Status"));
+
                     Deployment.Current.Dispatcher.BeginInvoke(() => OnPropertyChanged("Users"));
                 });
         }
@@ -36,8 +40,9 @@ namespace Cloudsdale.Managers {
             var status = user["status"].ToObject<Status>();
 
             if (uid == Connection.CurrentCloudsdaleUser.id) {
-                Connection.CurrentCloudsdaleUser.status = (string) user["status"];
+                Connection.CurrentCloudsdaleUser.status = (string)user["status"];
                 Connection.CurrentCloudsdaleUser.OnPropertyChanged("status");
+                return;
             }
 
             if (userStatus.ContainsKey(uid) && status == userStatus[uid]) {
@@ -69,6 +74,19 @@ namespace Cloudsdale.Managers {
         protected virtual void OnPropertyChanged(string propertyName) {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private static int StatusIndex(string status) {
+            switch ((status ?? "online").ToLower()) {
+                case "online":
+                    return 0;
+                case "away":
+                    return 1;
+                case "busy":
+                    return 2;
+                default:
+                    return 3;
+            }
         }
     }
 

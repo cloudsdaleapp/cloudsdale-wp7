@@ -235,6 +235,9 @@ namespace Cloudsdale.Managers {
                 } catch (WebException) {
                 }
             });
+
+            if (!Cache.ContainsKey(id)) return;
+            Cache[id].Users.Init();
         }
 
         public static void Unsubscribe(string cloud) {

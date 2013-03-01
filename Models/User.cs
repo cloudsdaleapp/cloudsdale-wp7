@@ -292,9 +292,9 @@ namespace Cloudsdale.Models {
     }
 
     public enum Status {
-        Online,
-        Away,
-        Busy,
-        Offline
+        Online = 0,
+        Away = 1,
+        Busy = 2,
+        Offline = 3
     }
 }

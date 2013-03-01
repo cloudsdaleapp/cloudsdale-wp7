@@ -106,7 +106,7 @@ namespace Cloudsdale {
 
         private void PhoneApplicationPageOrientationChanged(object sender, OrientationChangedEventArgs e) {
             if (e.Orientation == PageOrientation.PortraitUp) {
-                LayoutRoot.Background = (Brush)Resources["PortraitBackground"];
+                LayoutRoot.Background = (Brush)Resources["PortraitBackgroundChat"];
                 SystemTray.IsVisible = true;
                 ScrollDown(null, null);
             } else {
@@ -518,7 +518,7 @@ namespace Cloudsdale {
             image.Source = new BitmapImage(new Uri("http://assets.cloudsdale.org/assets/fallback/avatar_preview_user.png"));
         }
 
-        private void SendTextClick(object sender, RoutedEventArgs e) {
+        private void SendTextClick(object sender, EventArgs e) {
             if (string.IsNullOrWhiteSpace(SendBox.Text)) {
                 return;
             }
@@ -533,13 +533,14 @@ namespace Cloudsdale {
             cmessages.Add(new Message {
                 id = Guid.NewGuid().ToString(),
                 device = "mobile",
-                content = SendBox.Text,
+                content = SendBox.Text.Replace("\n", "\\n"),
                 timestamp = DateTime.Now + DerpyHoovesMailCenter.ServerDiff,
                 user = PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id)
             });
 
-            Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text);
+            Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text.Replace("\n", "\\n"));
             SendBox.Text = "";
+            SendBox.Focus();
         }
 
         private void SendBoxSizeChanged(object sender, SizeChangedEventArgs e) {
@@ -687,5 +688,6 @@ namespace Cloudsdale {
 
             storyboard.Begin();
         }
+
     }
 }

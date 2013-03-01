@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:my="clr-namespace:Cloudsdale.Controls"
-    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
+    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="696"
     FontFamily="Segoe WP Bold"
     FontSize="28"
     Foreground="Black"
@@ -128,7 +128,7 @@
         </ResourceDictionary>
     </phone:PhoneApplicationPage.Resources>
 
-    <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackground}" Margin="0,0,0,0">
+    <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackgroundChat}" Margin="0,0,0,0">
         <MediaElement Name="mediaPlayer" />
         <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot" Margin="0,10,0,0">
             <controls:Pivot.HeaderTemplate>
@@ -153,12 +153,12 @@
                             </Grid.ColumnDefinitions>
                             <TextBox VerticalAlignment="Bottom" x:Name="SendBox" InputScope="Chat"
                                      DoubleTap="SendBoxDoubleTap" Tap="SendBoxTap" BorderBrush="#888888"
-                                     TextWrapping="Wrap" AcceptsReturn="True" SizeChanged="SendBoxSizeChanged"/>
-                            <Button Style="{StaticResource XTiltButtonStyle}" Grid.Column="1"
-                                    Padding="-10" BorderBrush="Transparent" VerticalAlignment="Bottom"
-                                    Click="SendTextClick" Margin="-5,0,10,10">
-                                <Image Source="Images/Icons/send.png" />
-                            </Button>
+                                     TextWrapping="Wrap" AcceptsReturn="True" SizeChanged="SendBoxSizeChanged"
+                                     MaxHeight="200"/>
+                            <!--<Button Grid.Column="1" Click="SendTextClick" Margin="-5,0,10,10"
+                                    Padding="-10" BorderBrush="Transparent" VerticalAlignment="Bottom">
+                                <Image Source="/Images/Icons/send.png" />
+                            </Button>-->
                         </Grid>
                     </Grid>
                 </Grid>
@@ -223,7 +223,7 @@
                                         <StackPanel>
                                             <TextBlock Text="{Binding Path=name}" TextWrapping="Wrap" Width="320" />
                                             <TextBlock Text="{Binding Path=RoleTag}" Foreground="{Binding Path=RoleBrush}"
-                                               TextWrapping="Wrap" />
+                                                       TextWrapping="Wrap" />
                                         </StackPanel>
                                     </StackPanel>
                                     <StackPanel Visibility="{Binding Path=ShowSuspended}">
@@ -231,6 +231,10 @@
                                                    FontSize="18"/>
                                         <TextBlock Text="{Binding Path=SuspendedReason}" FontSize="18" 
                                                    Width="430" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <StackPanel Visibility="{Binding Path=AKA, Converter={StaticResource AHAV}}">
+                                        <TextBlock FontSize="32" Foreground="#FF888888">Also Known As</TextBlock>
+                                        <ItemsControl ItemsSource="{Binding Path=AKA}" FontSize="16" />
                                     </StackPanel>
                                     <StackPanel Name="ModTools" 
                                                 Visibility="{Binding Path=CurrentUser.ModOfCurrent,
@@ -251,31 +255,6 @@
                                                     Click="DoTheBanBanBan">Ban</Button>
                                         </StackPanel>
                                     </StackPanel>
-                                    <StackPanel Visibility="{Binding Path=AKA, Converter={StaticResource AHAV}}">
-                                        <TextBlock FontSize="32" Foreground="#FF888888">Also Known As</TextBlock>
-                                        <ItemsControl ItemsSource="{Binding Path=AKA}" FontSize="16" />
-                                    </StackPanel>
-                                    <TextBlock FontSize="32" Foreground="#FF888888">Clouds</TextBlock>
-                                    <ItemsControl ItemsSource="{Binding Path=ExtClouds}" Margin="5">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Button DataContext="{Binding}" Style="{StaticResource XTiltButtonStyle}"
-                                                        HorizontalAlignment="Left" BorderBrush="Transparent" Padding="-10"
-                                                        Click="UserCloudClick">
-                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                                        <Image Source="{Binding Path=avatar.Preview}" Width="50" Height="50" 
-                                                               Margin="0,0,5,0" VerticalAlignment="Top"/>
-                                                        <StackPanel Width="350">
-                                                            <TextBlock Text="{Binding name}" Foreground="Black" FontSize="30" 
-                                                                       FontFamily="Segoe WP" />
-                                                            <TextBlock Text="{Binding description}" Foreground="#f777" FontSize="26" 
-                                                                       FontFamily="Segoe WP" TextWrapping="Wrap"/>
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </Button>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
                                 </StackPanel>
                             </ScrollViewer>
                         </Grid>
@@ -370,14 +349,16 @@
                     HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Grid Width="480" Height="480"
                       HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <toolkit:PerformanceProgressBar Foreground="CornflowerBlue" IsIndeterminate="True" />
+                    <toolkit:PerformanceProgressBar Foreground="#FF1A91DB" IsIndeterminate="True" />
                 </Grid>
             </Border>
         </Popup>
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="False" IsMenuEnabled="False"/>
+        <shell:ApplicationBar IsVisible="True" BackgroundColor="#FF1A91DB" ForegroundColor="White">
+            <shell:ApplicationBarIconButton Text="Send" IconUri="/Images/appbar.send.text.rest.png" Click="SendTextClick" />
+        </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
 
 </phone:PhoneApplicationPage>

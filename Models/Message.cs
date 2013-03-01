@@ -76,7 +76,7 @@ namespace Cloudsdale.Models {
                         }
                     }
                     message = Settings.StringParser.ParseLiteral(message);
-                    var split = message.Split('\n');
+                    var split = message.Split(new[]{'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries);
                     var lines = new ChatLine[split.Length];
                     for (var i = 0; i < split.Length; ++i) {
                         if (string.IsNullOrWhiteSpace(split[i])) split[i] = " ";

@@ -176,13 +176,6 @@ namespace Cloudsdale.Managers {
                     var data = JsonConvert.DeserializeObject<GetUserResult>(args.Result);
                     data.result.CopyTo(this);
                 });
-            WebPriorityManager.BeginLowPriorityRequest(
-                new Uri(Resources.UserCloudsEndpoint.Replace("{userid}", id)),
-                args => {
-                    _extClouds = from cloud in JsonConvert.DeserializeObject<WebResponse<Cloud[]>>(args.Result).result
-                                 select PonyvilleDirectory.RegisterCloud(cloud);
-                    OnPropertyChanged("ExtClouds");
-                });
         }
 
         ~CensusUser() {
