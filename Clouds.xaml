@@ -13,15 +13,13 @@
     FontFamily="Segoe WP Bold"
     FontSize="28"
     Foreground="Black"
+    Background="#FFF0F0F0"
     SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True" OrientationChanged="PhoneApplicationPageOrientationChanged"
     shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="White" shell:SystemTray.BackgroundColor="Black">
 
     <phone:PhoneApplicationPage.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="XamlResources.xaml" />
-            </ResourceDictionary.MergedDictionaries>
             <DataTemplate x:Name="UserlistTemplate">
                 <Button BorderBrush="Transparent" Padding="-12"
                                             Style="{StaticResource XTiltButtonStyle}"
@@ -32,9 +30,9 @@
                                                Stretch="Fill"
                                                HorizontalAlignment="Left"
                                                Width="50" Height="50">
-                            <Image.Clip>
+                            <!--<Image.Clip>
                                 <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,50,50" />
-                            </Image.Clip>
+                            </Image.Clip>-->
                         </Image>
                         <TextBlock Text="{Binding Path=name}"
                                                    FontSize="34" Foreground="{Binding Path=CloudColor}"
@@ -193,21 +191,6 @@
                 </Grid>
             </controls:PivotItem>
         </controls:Pivot>
-        <Button  HorizontalAlignment="Right" VerticalAlignment="Top" 
-                 Padding="-10" BorderBrush="Transparent" Margin="0,16,0,0"
-                 Style="{StaticResource XTiltButtonStyle}"
-                 Click="CloudInfoClick">
-            <Button.Content>
-                <Image Source="/Images/Icons/iwhite.png" Width="40" />
-            </Button.Content>
-        </Button>
-        <Button  HorizontalAlignment="Right" VerticalAlignment="Top" 
-                 Padding="-10" BorderBrush="Transparent" Margin="0,16,50,0"
-                 Style="{StaticResource XTiltButtonStyle}" Click="RemoveThisCloud">
-            <Button.Content>
-                <Image Source="/Images/Icons/minus.png" Width="40" />
-            </Button.Content>
-        </Button>
         <Popup Name="userpopup" HorizontalAlignment="Center" VerticalAlignment="Center" Width="800" Height="800">
             <Border Background="#A0000000">
                 <Grid Width="800" Height="800">
@@ -221,9 +204,16 @@
                                        HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,10,10"
                                        Stretch="Fill"/>
                                         <StackPanel>
-                                            <TextBlock Text="{Binding Path=name}" TextWrapping="Wrap" Width="320" />
-                                            <TextBlock Text="{Binding Path=RoleTag}" Foreground="{Binding Path=RoleBrush}"
-                                                       TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding Path=name}" TextWrapping="Wrap" 
+                                                       Width="320" Foreground="{Binding Path=CloudColor}" />
+                                            <Border Width="100" Height="30" BorderBrush="Gray" 
+                                                    BorderThickness="2" Margin="0,10,0,0"
+                                                    Background="{Binding Path=RoleBrush}"
+                                                    Visibility="{Binding Path=ShowTag}" CornerRadius="4"
+                                                    HorizontalAlignment="Left">
+                                                <TextBlock Text="{Binding Path=RoleTag}" HorizontalAlignment="Center"
+                                                           Foreground="White" FontSize="20" Name="Username" />
+                                            </Border>
                                         </StackPanel>
                                     </StackPanel>
                                     <StackPanel Visibility="{Binding Path=ShowSuspended}">
@@ -232,6 +222,9 @@
                                         <TextBlock Text="{Binding Path=SuspendedReason}" FontSize="18" 
                                                    Width="430" TextWrapping="Wrap" />
                                     </StackPanel>
+                                    <TextBlock Foreground="#FF444444">
+                                        Skype: <Run Text="{Binding Path=skype_name}" />
+                                    </TextBlock>
                                     <StackPanel Visibility="{Binding Path=AKA, Converter={StaticResource AHAV}}">
                                         <TextBlock FontSize="32" Foreground="#FF888888">Also Known As</TextBlock>
                                         <ItemsControl ItemsSource="{Binding Path=AKA}" FontSize="16" />
@@ -353,11 +346,18 @@
                 </Grid>
             </Border>
         </Popup>
+        <Popup Height="800" Width="800" Name="YourCloudList" >
+            
+        </Popup>
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True" BackgroundColor="#FF1A91DB" ForegroundColor="White">
             <shell:ApplicationBarIconButton Text="Send" IconUri="/Images/appbar.send.text.rest.png" Click="SendTextClick" />
+            <shell:ApplicationBarIconButton Text="Info" IconUri="/Images/appbar.info.rest.png" Click="CloudInfoClick" />
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="Leave cloud" Click="RemoveThisCloud" />
+            </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
 

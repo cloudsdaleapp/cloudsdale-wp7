@@ -54,11 +54,7 @@
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100" 
-                               HorizontalAlignment="Left" VerticalAlignment="Top">
-                            <Image.Clip>
-                                <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,100,100" />
-                            </Image.Clip>
-                        </Image>
+                               HorizontalAlignment="Left" VerticalAlignment="Top"/>
                         <StackPanel>
                             <TextBlock Margin="10,0,0,0" Foreground="#FF202020">
                                 <Run Text="{Binding Path=name}" />
@@ -95,22 +91,67 @@
             </controls:PivotItem>
             <controls:PivotItem Header="Settings">
                 <Grid>
-                    <ScrollViewer>
-                        <StackPanel>
-                            <CheckBox x:Name="allowaltcodes" Content="Enable alt code entry" 
-                                      Foreground="Black" Checked="AllowaltcodesChecked"
-                                      Unchecked="AllowaltcodesUnchecked"/>
-                            <CheckBox x:Name="recursivealtcodes" Content="Enter codes repeatedly"
-                                      Foreground="Black" Margin="50,-20,0,0" Visibility="Collapsed"
-                                      Checked="RecursivealtcodesChecked"
-                                      Unchecked="RecursivealtcodesUnchecked"/>
-                            <TextBlock Foreground="Black">Status</TextBlock>
+                    <ScrollViewer Foreground="#3a3a3a">
+                        <StackPanel Name="SettingsPanel">
+                            <TextBlock>Status</TextBlock>
                             <toolkit:ListPicker Name="StatusBox" SelectionChanged="StatusSelectionChanged">
                                 <toolkit:ListPickerItem>Online</toolkit:ListPickerItem>
                                 <toolkit:ListPickerItem>Away</toolkit:ListPickerItem>
                                 <toolkit:ListPickerItem>Busy</toolkit:ListPickerItem>
                                 <toolkit:ListPickerItem>Appear Offline</toolkit:ListPickerItem>
                             </toolkit:ListPicker>
+                            <Button Foreground="#3a3a3a" BorderBrush="#3a3a3a"
+                                    Click="ChangeAvatarClick">Change Avatar</Button>
+                            <TextBlock>Name</TextBlock>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Name="Username" Text="{Binding Path=name, Mode=OneWay}"
+                                         InputScope="PersonalFullName"/>
+                                <Button Click="ChangeNameClick" Grid.Column="1" Foreground="#3a3a3a"
+                                        BorderBrush="#3a3a3a" Name="UsernameBtn">Change</Button>
+                            </Grid>
+                            <TextBlock>Email</TextBlock>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Name="Email" Text="{Binding Path=email, Mode=OneWay}"
+                                         InputScope="EmailNameOrAddress"/>
+                                <Button Click="ChangeEmailClick" Grid.Column="1" Foreground="#3a3a3a"
+                                        BorderBrush="#3a3a3a" Name="EmailBtn">Change</Button>
+                            </Grid>
+                            <TextBlock>Skype Name</TextBlock>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Name="Skype" Text="{Binding Path=skype_name, Mode=OneWay}"
+                                         InputScope="EmailNameOrAddress"/>
+                                <Button Click="ChangeSkypeClick" Grid.Column="1" Foreground="#3a3a3a"
+                                        BorderBrush="#3a3a3a" Name="SkypeBtn">Change</Button>
+                            </Grid>
+                            <TextBlock>Password</TextBlock>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <PasswordBox Name="NewPassword"/>
+                                <Button Click="ChangePasswordClick" Grid.Column="1" Foreground="#3a3a3a"
+                                        BorderBrush="#3a3a3a" Name="NewPasswordBtn">Change</Button>
+                            </Grid>
+                            <CheckBox x:Name="allowaltcodes" Content="Enable alt code entry" 
+                                      Checked="AllowaltcodesChecked" Foreground="#3a3a3a"
+                                      Unchecked="AllowaltcodesUnchecked" Visibility="Collapsed"/>
+                            <CheckBox x:Name="recursivealtcodes" Content="Enter codes repeatedly"
+                                      Margin="50,-20,0,0" Visibility="Collapsed"
+                                      Checked="RecursivealtcodesChecked" Foreground="#3a3a3a"
+                                      Unchecked="RecursivealtcodesUnchecked"/>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>

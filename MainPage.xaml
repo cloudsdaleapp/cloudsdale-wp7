@@ -26,7 +26,7 @@
             <Image Source="/Images/cloudsdale-thin-bright-logo.png" />
         </Grid>
 
-        <Grid x:Name="ContentPanel" Margin="12,150,12,0" Visibility="Collapsed">
+        <Grid x:Name="ContentPanel" Margin="12,150,12,0" Visibility="Visible">
             <TextBox InputScope="EmailNameOrAddress" Name="UserBox" VerticalAlignment="Top" 
                      Margin="40,145,0,0" />
             <PasswordBox Name="PassBox" VerticalAlignment="Top" Margin="40,235,0,0" />
@@ -43,6 +43,9 @@
             <Button x:Name="twitterbtn" IsEnabled="False" VerticalAlignment="Bottom" 
                     Margin="220,0,2,120" Height="75" Content="Twitter" Click="TwitterClick"
                     Foreground="#FF555555" BorderBrush="#FF555555"/>
+            <Button x:Name="createbtn" VerticalAlignment="Bottom" Margin="55,0,55,50"
+                    Height="75" Foreground="#FF555555" BorderBrush="#FF555555"
+                    Content="Create Account" Click="CreateClick"/>
         </Grid>
     </Grid>
 

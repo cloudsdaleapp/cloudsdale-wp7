@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Net;
+using System.Text;
 using System.Windows.Media;
 using Cloudsdale.Managers;
+using Microsoft.Phone.Tasks;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace Cloudsdale.Models {
 
@@ -82,6 +87,9 @@ namespace Cloudsdale.Models {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class User : SimpleUser, INotifyPropertyChanged {
+
+        [JsonProperty]
+        public virtual string skype_name { get; set; }
 
         public User CurrentUser {
             get { return PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id); }
@@ -186,6 +194,8 @@ namespace Cloudsdale.Models {
                 user.prosecutions = prosecutions;
             if (_aka != null)
                 user.AKA = _aka;
+            if (skype_name != null)
+                user.skype_name = skype_name;
         }
 
         [JsonIgnore]
@@ -229,7 +239,7 @@ namespace Cloudsdale.Models {
         [JsonProperty]
         public string auth_token;
         [JsonProperty]
-        public string email;
+        public string email { get; set; }
         [JsonProperty]
         public bool? needs_to_confirm_registration;
         [JsonProperty]
@@ -251,6 +261,7 @@ namespace Cloudsdale.Models {
                 return _clouds;
             }
             set {
+                if (value == null) return;
                 var mylist = new List<Cloud>(value);
                 mylist.Sort(PonyvilleDirectory.GetUserCloudListComparer());
                 _clouds = mylist.ToArray();
@@ -288,6 +299,45 @@ namespace Cloudsdale.Models {
                 user.clouds = clouds;
             if (status != null)
                 user.status = status;
+        }
+
+        public void UploadAvatar(PhotoResult picture) {
+            var boundary = Guid.NewGuid().ToString();
+            byte[] data;
+            using (var photo = picture.ChosenPhoto)
+            using (var ms = new MemoryStream()) {
+                ms.WriteLine("--" + boundary);
+                ms.WriteLine("Content-Disposition: form-data; name=\"user[avatar]\"; filename=\"GenericImage.png\"");
+                ms.WriteLine("Content-Type: image/png");
+                ms.WriteLine();
+                photo.CopyTo(ms);
+                ms.WriteLine();
+                ms.WriteLine("--" + boundary + "--");
+                data = ms.ToArray();
+            }
+            var request = WebRequest.CreateHttp(new Uri("http://www.cloudsdale.org/v1/users/" + id));
+            request.Accept = "application/json";
+            request.ContentType = "multipart/form-data; boundary=" + boundary;
+            request.Method = "POST";
+            request.Headers["Content-Length"] = data.Length.ToString();
+            request.Headers["X-Auth-Token"] = Connection.CurrentCloudsdaleUser.auth_token;
+            request.BeginGetRequestStream(ar => {
+                using (var requestStream = request.EndGetRequestStream(ar)) {
+                    requestStream.Write(data, 0, data.Length);
+                    requestStream.Close();
+                }
+
+                request.BeginGetResponse(arr => {
+                    JObject responseData;
+                    using (var response = request.EndGetResponse(arr))
+                    using (var responseStream = response.GetResponseStream())
+                    using (var responseReader = new StreamReader(responseStream)) {
+                        responseData = JObject.Parse(responseReader.ReadToEnd());
+                    }
+                    responseData["result"].ToObject<User>().CopyTo(this);
+                    PonyvilleCensus.Heartbeat(this);
+                }, null);
+            }, null);
         }
     }
 

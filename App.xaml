@@ -8,8 +8,13 @@
 
     <!--Application Resources-->
     <Application.Resources>
-        <Controls:StatusColorConverter x:Key="SCC" />
-        <Managers:ArrayHasAnyVis x:Key="AHAV" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="XamlResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Controls:StatusColorConverter x:Key="SCC" />
+            <Managers:ArrayHasAnyVis x:Key="AHAV" />
+        </ResourceDictionary>
     </Application.Resources>
 
     <Application.ApplicationLifetimeObjects>

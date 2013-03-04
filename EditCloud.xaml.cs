@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.Phone.Tasks;
 
 namespace Cloudsdale {
     public partial class EditCloud {
@@ -137,6 +138,14 @@ namespace Cloudsdale {
                 Pullover.IsOpen = false;
                 UploadBar.IsEnabled = false;
             });
+        }
+
+        private void ChangeAvatarClick(object sender, RoutedEventArgs e) {
+            MessageBox.Show("Unfortunately, this app doesn't support changing avatars yes. " +
+                            "You can change the avatar on the website.");
+            //var picChooser = new PhotoChooserTask();
+            //picChooser.Completed += (o, result) => Connection.CurrentCloud.UploadAvatar(result);
+            //picChooser.Show();
         }
     }
 }

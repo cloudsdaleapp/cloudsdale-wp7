@@ -209,6 +209,16 @@ namespace Cloudsdale.Managers {
             }
         }
 
+        public override string skype_name {
+            get {
+                return base.skype_name;
+            }
+            set {
+                base.skype_name = value;
+                OnPropertyChanged("skype_name");
+            }
+        }
+
         private IEnumerable<Cloud> _extClouds = new Cloud[0];
         [JsonIgnore]
         public IEnumerable<Cloud> ExtClouds {

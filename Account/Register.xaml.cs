@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
+using BugSense;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
@@ -19,27 +13,38 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Cloudsdale.Account {
-    public partial class SetName : PhoneApplicationPage {
-        public SetName() {
+    public partial class Register {
+        public Register() {
             InitializeComponent();
         }
 
-        private void DoneClick(object sender, RoutedEventArgs e) {
+        private void CreateAccountClick(object sender, RoutedEventArgs e) {
+            if (String.IsNullOrWhiteSpace(Username.Text)) {
+                MessageBox.Show("Please enter a username");
+                return;
+            }
+
+            Email.IsEnabled = false;
+            Password.IsEnabled = false;
             Username.IsEnabled = false;
-            PostData(Username.Text);
+            CreateButton.IsEnabled = false;
+
+            CreateAccount(Email.Text, Password.Password, Username.Text);
         }
 
-        private void PostData(string name) {
+        private void CreateAccount(string email, string password, string name) {
             var data = Encoding.UTF8.GetBytes(JObject.FromObject(new {
-                user = new { name }
+                user = new {
+                    email,
+                    password,
+                    name,
+                }
             }).ToString());
 
-            var request = WebRequest.CreateHttp("http://www.cloudsdale.org/v1/users/" +
-                                                Connection.CurrentCloudsdaleUser.id);
+            var request = WebRequest.CreateHttp("http://www.cloudsdale.org/v1/users");
             request.Accept = "application/json";
             request.ContentType = "application/json";
-            request.Headers["X-Auth-Token"] = Connection.CurrentCloudsdaleUser.auth_token;
-            request.Method = "PUT";
+            request.Method = "POST";
 
             request.BeginGetRequestStream(ar => {
                 using (var stream = request.EndGetRequestStream(ar)) {
@@ -88,11 +93,20 @@ namespace Cloudsdale.Account {
                 });
             } catch (WebException ex) {
                 ProcessError(ex);
+            } catch (Exception ex) {
+                LoginError(ex);
+            }
+        }
+
+        protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e) {
+            if (!Email.IsEnabled) {
+                e.Cancel = true;
             }
         }
 
         private void ProcessError(WebException exception) {
             if (exception.Response == null) {
+                LoginError(exception);
                 return;
             }
 
@@ -113,18 +127,33 @@ namespace Cloudsdale.Account {
                 } else {
                     MessageBox.Show("An unknown error occurred trying to register.");
                 }
-                Username.IsEnabled = true;
+                Reenable();
             });
         }
 
-        protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e) {
-            e.Cancel = true;
-            var settings = IsolatedStorageSettings.ApplicationSettings;
-            settings.Remove("lastuser");
-            settings.Save();
-            MainPage.reconstruction = true;
-            ((PhoneApplicationFrame)Application.Current.RootVisual)
-                .Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+        private void Reenable() {
+            Dispatcher.BeginInvoke(() => {
+                Email.IsEnabled = true;
+                Password.IsEnabled = true;
+                Username.IsEnabled = true;
+                CreateButton.IsEnabled = true;
+            });
+        }
+
+        private void LoginError(Exception ex, string data = null) {
+            Dispatcher.BeginInvoke(() => {
+                BugSenseHandler.Instance.LogError(ex, data, new NotificationOptions {
+                    Type = enNotificationType.MessageBox,
+                    Text = "An unknown error occurred trying to create your account! " +
+                           "We have logged the error and should have a fix for the next version.",
+                    Title = "That's odd...",
+                });
+
+                Email.IsEnabled = true;
+                Password.IsEnabled = true;
+                Username.IsEnabled = true;
+                CreateButton.IsEnabled = true;
+            });
         }
     }
 }

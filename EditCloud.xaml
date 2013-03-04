@@ -38,7 +38,7 @@
             <StackPanel Margin="10,0">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100" />
-                    <Button BorderBrush="#404040" Foreground="#404040">Change Avatar</Button>
+                    <Button BorderBrush="#404040" Foreground="#404040" Click="ChangeAvatarClick">Change Avatar</Button>
                 </StackPanel>
                 <TextBlock FontSize="32" DoubleTap="NameTap">Title</TextBlock>
                 <Grid Margin="0,5,0,10">
@@ -60,7 +60,7 @@
                     <TextBox Text="{Binding Path=rules}" AcceptsReturn="True" MinHeight="240" Width="460" Name="RulesBox"
                              Visibility="Collapsed" TextWrapping="Wrap" DoubleTap="StackPanelTap"/>
                 </Grid>
-                <CheckBox Name="IsHidden" IsChecked="{Binding Path=hidden}"
+                <CheckBox Name="IsHidden" IsChecked="{Binding Path=hidden}" Visibility="Collapsed"
                           Unchecked="IsHiddenUnchecked" Foreground="Black">Hidden</CheckBox>
             </StackPanel>
         </ScrollViewer>

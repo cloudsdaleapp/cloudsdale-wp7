@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -32,6 +34,19 @@ namespace Cloudsdale.Managers {
         public static IEnumerable<DependencyObject> AllChildren(
             this DependencyObject root) {
             return root.AllChildrenMatching(child => true);
-        } 
+        }
+
+        public static string UppercaseFirst(this string str) {
+            if (string.IsNullOrWhiteSpace(str)) {
+                return "";
+            }
+
+            return char.ToUpper(str[0]) + str.Substring(1);
+        }
+
+        public static void WriteLine(this MemoryStream memory, string line = "") {
+            var data = Encoding.UTF8.GetBytes(line + "\r\n");
+            memory.Write(data, 0, data.Length);
+        }
     }
 }

@@ -125,7 +125,7 @@ namespace Cloudsdale {
         // Code to execute on Unhandled Exceptions
         private static void ApplicationUnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e) {
             if (e.ExceptionObject is ApplicationTerminationException) {
-                Managers.PonyvilleCensus.Save();
+                PonyvilleCensus.Save();
                 throw e.ExceptionObject;
             }
 #if DEBUG

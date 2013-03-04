@@ -50,6 +50,7 @@ namespace Cloudsdale {
             Home.comingfromhome = false;
             fbbtn.IsEnabled = false;
             emailbtn.IsEnabled = false;
+            createbtn.IsEnabled = false;
             EmailLogin();
             var settings = IsolatedStorageSettings.ApplicationSettings;
             settings["email"] = UserBox.Text;
@@ -66,6 +67,12 @@ namespace Cloudsdale {
             reconstruction = true;
             Home.comingfromhome = false;
             TwitterLogin();
+        }
+
+        private void CreateClick(object sender, RoutedEventArgs e) {
+            reconstruction = true;
+            Home.comingfromhome = false;
+            NavigationService.Navigate(new Uri("/Account/Register.xaml", UriKind.Relative));
         }
 
         private void EmailLogin() {
@@ -104,12 +111,14 @@ namespace Cloudsdale {
                     }
                     Dispatcher.BeginInvoke(() => fbbtn.IsEnabled = true);
                     Dispatcher.BeginInvoke(() => emailbtn.IsEnabled = true);
+                    Dispatcher.BeginInvoke(() => createbtn.IsEnabled = true);
                     return;
                 } catch (Exception ex) {
                     Debug.WriteLine(ex);
                     Dispatcher.BeginInvoke(() => MessageBox.Show("Unkown error connecting to the server"));
                     Dispatcher.BeginInvoke(() => fbbtn.IsEnabled = true);
                     Dispatcher.BeginInvoke(() => emailbtn.IsEnabled = true);
+                    Dispatcher.BeginInvoke(() => createbtn.IsEnabled = true);
                     return;
                 }
                 Connection.LoginType = 0;

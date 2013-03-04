@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using Cloudsdale.Managers;
+using Microsoft.Phone.Tasks;
 using Newtonsoft.Json;
 using System.Linq;
 using Newtonsoft.Json.Linq;
@@ -260,6 +261,43 @@ namespace Cloudsdale.Models {
 
         public string TileDescription {
             get { return string.IsNullOrWhiteSpace(description) ? "This cloud has no description" : description; }
+        }
+
+        public void UploadAvatar(PhotoResult picture) {
+            byte[] data;
+            using (var photo = picture.ChosenPhoto)
+            using (var ms = new MemoryStream()) {
+                photo.CopyTo(ms);
+                data = ms.ToArray();
+            }
+            var boundary = Guid.NewGuid().ToString();
+            var request = WebRequest.CreateHttp(new Uri("http://www.cloudsdale.org/v1/clouds/" + id));
+            request.Accept = "application/json";
+            request.ContentType = "multipart/form-data; boundary=" + boundary;
+            request.Method = "POST";
+            request.Headers["X-Auth-Token"] = Connection.CurrentCloudsdaleUser.auth_token;
+            request.BeginGetRequestStream(ar => {
+                using (var requestStream = request.EndGetRequestStream(ar))
+                using (var requestWriter = new StreamWriter(requestStream, Encoding.UTF8)) {
+                    requestWriter.WriteLine("--{0}", boundary);
+                    requestWriter.WriteLine("Content-Disposition: form-data; name=\"cloud[avatar]\"; filename=\""
+                                            + picture.OriginalFileName.Split('\\').Last() + "\"");
+                    requestWriter.WriteLine("Content-Type: image/jpeg");
+                    requestWriter.WriteLine();
+                    requestStream.Write(data, 0, data.Length);
+                    requestWriter.WriteLine();
+                    requestWriter.WriteLine("--{0}--", boundary);
+                }
+
+                request.BeginGetResponse(arr => {
+                    using (var response = request.EndGetResponse(arr))
+                    using (var responseStream = response.GetResponseStream())
+                    using (var responseReader = new StreamReader(responseStream)) {
+                        var result = JObject.Parse(responseReader.ReadToEnd());
+                        CopyFrom(result["result"].ToObject<Cloud>());
+                    }
+                }, null);
+            }, null);
         }
     }
 

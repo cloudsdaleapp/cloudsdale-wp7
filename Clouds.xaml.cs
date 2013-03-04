@@ -75,6 +75,8 @@ namespace Cloudsdale {
             new Thread(() => {
                 Thread.Sleep(100);
                 Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(double.PositiveInfinity));
+                Thread.Sleep(100);
+                Dispatcher.BeginInvoke(() => ChatScroller.ScrollToVerticalOffset(double.PositiveInfinity));
             }).Start();
         }
 
@@ -106,11 +108,11 @@ namespace Cloudsdale {
 
         private void PhoneApplicationPageOrientationChanged(object sender, OrientationChangedEventArgs e) {
             if (e.Orientation == PageOrientation.PortraitUp) {
-                LayoutRoot.Background = (Brush)Resources["PortraitBackgroundChat"];
+                LayoutRoot.Background = (Brush)Application.Current.Resources["PortraitBackgroundChat"];
                 SystemTray.IsVisible = true;
                 ScrollDown(null, null);
             } else {
-                LayoutRoot.Background = (Brush)Resources["LandscapeBackground"];
+                LayoutRoot.Background = (Brush)Application.Current.Resources["LandscapeBackground"];
                 SystemTray.IsVisible = false;
                 ScrollDown(null, null);
             }
@@ -341,7 +343,7 @@ namespace Cloudsdale {
             }
         }
 
-        private void RemoveThisCloud(object sender, RoutedEventArgs e) {
+        private void RemoveThisCloud(object sender, EventArgs eventArgs) {
             if (MessageBox.Show("Are you sure you want to leave this cloud?",
                 "", MessageBoxButton.OKCancel) != MessageBoxResult.OK) {
                 return;
@@ -388,7 +390,7 @@ namespace Cloudsdale {
             ((FrameworkElement)sender).Opacity = 1.0;
         }
 
-        private void CloudInfoClick(object sender, RoutedEventArgs e) {
+        private void CloudInfoClick(object sender, EventArgs eventArgs) {
             CloudInfoPopup.DataContext = Connection.CurrentCloud;
             CloudInfoPopup.IsOpen = true;
             cloudinfoback.Visibility = Visibility.Visible;

@@ -51,6 +51,29 @@ namespace Cloudsdale {
 
             if (pulluserclouds) {
                 PullUserClouds(() => {
+                    if ((CurrentCloudsdaleUser.needs_name_change ?? false)
+                        || string.IsNullOrWhiteSpace(CurrentCloudsdaleUser.name)) {
+                        Deployment.Current.Dispatcher.BeginInvoke(() => {
+                            var settings = IsolatedStorageSettings.ApplicationSettings;
+                            settings.Remove("lastuser");
+                            settings.Save();
+                            MainPage.reconstruction = true;
+                            ((PhoneApplicationFrame)Application.Current.RootVisual)
+                                .Navigate(new Uri("/Account/SetName.xaml", UriKind.Relative));
+                        });
+                        return;
+                    }
+                    if (!(CurrentCloudsdaleUser.has_read_tnc ?? false)) {
+                        Deployment.Current.Dispatcher.BeginInvoke(() => {
+                            var settings = IsolatedStorageSettings.ApplicationSettings;
+                            settings.Remove("lastuser");
+                            settings.Save();
+                            MainPage.reconstruction = true;
+                            ((PhoneApplicationFrame)Application.Current.RootVisual)
+                                .Navigate(new Uri("/Account/TermsAndConditions.xaml", UriKind.Relative));
+                        });
+                        return;
+                    }
                     if ((CurrentCloudsdaleUser.suspended_until ?? new DateTime(0)) > DateTime.Now) {
                         Deployment.Current.Dispatcher.BeginInvoke(() => {
                             MessageBox.Show("You are banned until" + CurrentCloudsdaleUser.suspended_until +
@@ -81,11 +104,6 @@ namespace Cloudsdale {
 
                 CurrentCloudsdaleUser.clouds = (from cloud in CurrentCloudsdaleUser.clouds
                                                 select PonyvilleDirectory.RegisterCloud(cloud)).ToArray();
-
-                if (!(CurrentCloudsdaleUser.is_member_of_a_cloud ?? false)) {
-                    JoinCloud(Resources.HammockID);
-                    CurrentCloudsdaleUser.is_member_of_a_cloud = true;
-                }
 
                 if (dispatcher == null)
                     foreach (var cloud in CurrentCloudsdaleUser.clouds) {
@@ -282,13 +300,13 @@ namespace Cloudsdale {
             return false;
         }
 
-        public static void ModifyUserProperty(string property, JToken value) {
+        public static void ModifyUserProperty(string property, JToken value, Action success = null, Action<WebException> onError = null) {
             var properties = new JObject();
             properties[property] = value;
-            ModifyUserProperty(properties);
+            ModifyUserProperty(properties, success, onError);
         }
 
-        public static void ModifyUserProperty(JToken properties) {
+        public static void ModifyUserProperty(JToken properties, Action success, Action<WebException> onError) {
             var requestData = new JObject();
             requestData["user"] = properties;
             var bytes = Encoding.UTF8.GetBytes(requestData.ToString());
@@ -306,7 +324,13 @@ namespace Cloudsdale {
                     requestStream.Close();
                 }
                 request.BeginGetResponse(ai => {
-                    using (request.EndGetResponse(ai)) ;
+                    try {
+                        using (request.EndGetResponse(ai)) {
+                            if (success != null) Deployment.Current.Dispatcher.BeginInvoke(success);
+                        }
+                    } catch (WebException ex) {
+                        if (onError != null) onError(ex); 
+                    }
                 }, null);
             }, null);
         }
