@@ -235,6 +235,11 @@
                                         <StackPanel Orientation="Horizontal" Name="ModToolsButtons">
                                             <Button Foreground="#FF444444" BorderBrush="#FF444444"
                                                     Click="BanBanBan">Ban</Button>
+                                            <Button Visibility="{Binding Path=CurrentUser.OwnerOfCurrent, 
+                                                                         Converter={StaticResource BoolToVis}}"
+                                                    Name="PromoteDemote" Click="PromoteDemoteClick"
+                                                    Foreground="#FF444444" BorderBrush="#FF444444"
+                                                    Content="{Binding Path=ModOfCurrent, Converter={StaticResource POD}}"/>
                                         </StackPanel>
                                         <StackPanel Name="BanTools" Visibility="Collapsed">
                                             <Button Foreground="#FF444444" BorderBrush="#FF444444"

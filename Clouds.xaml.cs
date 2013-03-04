@@ -161,13 +161,18 @@ namespace Cloudsdale {
 
             if (CloudsdaleUrl.IsMatch(drop.url.ToString())) {
                 LayoutRoot.IsHitTestVisible = false;
-                WebPriorityManager.BeginHighPriorityRequest(new Uri("http://www.cloudsdale.org/v1/clouds/" + drop.url.ToString()
-                    .Split('/').Last()), args => {
+                var apiend = new Uri("http://www.cloudsdale.org/v1/clouds/" + drop.url.ToString().Split('/').Last());
+                WebPriorityManager.BeginHighPriorityRequest(apiend, args => Dispatcher.BeginInvoke(() => {
+                    try {
                         var response = JObject.Parse(args.Result);
                         var cloud = PonyvilleDirectory.RegisterCloud(response["result"].ToObject<Cloud>());
                         LayoutRoot.IsHitTestVisible = true;
                         NavigateCloud(cloud);
-                    });
+                    } catch {
+                        MessageBox.Show("We're sorry, the cloud you clicked on couldn't be loaded :< Maybe it has been deleted?");
+                        LayoutRoot.IsHitTestVisible = true;
+                    }
+                }));
             } else {
                 LastDropClicked = drop;
                 NavigationService.Navigate(new Uri("/DropViewer.xaml", UriKind.Relative));
@@ -689,6 +694,22 @@ namespace Cloudsdale {
             LayoutRoot.Resources.Add(Guid.NewGuid().ToString(), storyboard);
 
             storyboard.Begin();
+        }
+
+        private void PromoteDemoteClick(object sender, RoutedEventArgs e) {
+            var button = (Button) sender;
+            var user = (User) button.DataContext;
+
+            if (user.id == Connection.CurrentCloudsdaleUser.id) {
+                MessageBox.Show("You can't demod yourself silly!");
+                return;
+            }
+
+            if (user.ModOfCurrent) {
+                Connection.CurrentCloud.RemoveModerator(user.id);
+            } else {
+                Connection.CurrentCloud.AddModerator(user.id);
+            }
         }
 
     }

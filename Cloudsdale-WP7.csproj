@@ -269,6 +269,7 @@
     <Content Include="Images\appbar.send.text.rest.png" />
     <Content Include="Images\basecircle.png" />
     <Content Include="Images\appbar.info.rest.png" />
+    <Content Include="Images\Icons\delete.png" />
     <Content Include="Images\Icons\send.png" />
     <Content Include="Images\Icons\back.png" />
     <Content Include="Images\appbar.minus.rest.png" />

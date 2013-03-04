@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Cloudsdale.Models;
 using Microsoft.Phone.Tasks;
 
 namespace Cloudsdale {
@@ -141,11 +142,16 @@ namespace Cloudsdale {
         }
 
         private void ChangeAvatarClick(object sender, RoutedEventArgs e) {
-            MessageBox.Show("Unfortunately, this app doesn't support changing avatars yes. " +
-                            "You can change the avatar on the website.");
-            //var picChooser = new PhotoChooserTask();
-            //picChooser.Completed += (o, result) => Connection.CurrentCloud.UploadAvatar(result);
-            //picChooser.Show();
+            var picChooser = new PhotoChooserTask();
+            picChooser.Completed += (o, result) => Connection.CurrentCloud.UploadAvatar(result);
+            picChooser.Show();
+        }
+
+        private void RemoveModeratorClick(object sender, RoutedEventArgs e) {
+            var btn = (Button) sender;
+            var user = (User) btn.DataContext;
+
+            Connection.CurrentCloud.RemoveModerator(user.id);
         }
     }
 }

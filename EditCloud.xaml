@@ -14,14 +14,6 @@
     shell:SystemTray.IsVisible="True" shell:SystemTray.Opacity="0" 
     shell:SystemTray.ForegroundColor="White" shell:SystemTray.BackgroundColor="Black">
 
-    <phone:PhoneApplicationPage.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="XamlResources.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </phone:PhoneApplicationPage.Resources>
-
     <Grid x:Name="LayoutRoot">
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" >
@@ -62,6 +54,25 @@
                 </Grid>
                 <CheckBox Name="IsHidden" IsChecked="{Binding Path=hidden}" Visibility="Collapsed"
                           Unchecked="IsHiddenUnchecked" Foreground="Black">Hidden</CheckBox>
+                <ItemsControl ItemsSource="{Binding Path=FullMods}" Visibility="{Binding Path=ShowMods}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="5,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Image Source="{Binding Path=avatar.Normal}" Width="50" />
+                                <TextBlock Grid.Column="1" Text="{Binding Path=name}" VerticalAlignment="Center" Margin="5" />
+                                <Button Style="{StaticResource XTiltButtonStyle}" Grid.Column="2"
+                                        Click="RemoveModeratorClick" BorderBrush="Transparent">
+                                    <Image Source="/Images/Icons/delete.png" Width="30" />
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
         </ScrollViewer>
         <Popup Name="Pullover">

@@ -106,6 +106,11 @@ namespace Cloudsdale.Models {
             var list = new List<string>(Moderators) { mid };
             Moderators = list.Distinct().ToArray();
             PostMods();
+            OnPropertyChanged("IsModerator");
+            OnPropertyChanged("FullMods");
+            OnPropertyChanged("ShowMods");
+            PonyvilleCensus.GetUser(mid).OnPropertyChanged("CloudColor");
+            PonyvilleCensus.GetUser(mid).OnPropertyChanged("ModOfCurrent");
         }
 
         public void RemoveModerator(string mid) {
@@ -114,23 +119,26 @@ namespace Cloudsdale.Models {
             list.Remove(mid);
             Moderators = list.Distinct().ToArray();
             PostMods();
+            OnPropertyChanged("IsModerator");
+            OnPropertyChanged("FullMods");
+            OnPropertyChanged("ShowMods");
+            PonyvilleCensus.GetUser(mid).OnPropertyChanged("CloudColor");
+            PonyvilleCensus.GetUser(mid).OnPropertyChanged("ModOfCurrent");
         }
 
-        public void ChangeProperty(string property, object value, Action<string> callback = null) {
+        public void ChangeProperty(string property, JToken value, Action<string> callback = null) {
             UpdateCloudValue(id, property, value, callback);
         }
 
         public void PostMods() {
-            UpdateCloudValue(id, "x_moderator_ids", Moderators);
+            UpdateCloudValue(id, "x_moderator_ids", JArray.FromObject(Moderators));
         }
 
-        private static void UpdateCloudValue(string id, string property, object value, Action<string> callback = null) {
-            var dataXDocument = new XDocument();
-            var root = new XElement("cloud");
-            var mods = new XElement(property, value);
-            root.AddFirst(mods);
-            dataXDocument.AddFirst(root);
-            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeXNode(dataXDocument));
+        private static void UpdateCloudValue(string id, string property, JToken value, Action<string> callback = null) {
+            var root = new JObject();
+            root["cloud"] = new JObject();
+            root["cloud"][property] = value;
+            var data = Encoding.UTF8.GetBytes(root.ToString());
             var request = WebRequest.CreateHttp("http://www.cloudsdale.org/v1/clouds/" + id);
             request.Method = "POST";
             request.ContentType = "application/json";
