@@ -298,7 +298,7 @@ namespace Cloudsdale {
                     MessageBox.Show(message, data["flash"]["title"].ToString(),
                                     MessageBoxButton.OK);
                 } else {
-                    MessageBox.Show("An unknown error occurred trying to register.");
+                    MessageBox.Show("An unknown error occurred trying to update your profile.");
                 }
                 resetFields(true);
             });

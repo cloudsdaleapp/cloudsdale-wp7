@@ -30,6 +30,8 @@
             <PasswordBox Name="Password" />
             <TextBlock FontSize="42">Username</TextBlock>
             <TextBox Name="Username" />
+            <CheckBox Foreground="#3a3a3a" Name="Over13"
+                      >I am over the age of 13</CheckBox>
             <Button Foreground="#3a3a3a" Click="CreateAccountClick" 
                     BorderBrush="#3a3a3a" Name="CreateButton">Create Account</Button>
         </StackPanel>

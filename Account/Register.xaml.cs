@@ -24,6 +24,12 @@ namespace Cloudsdale.Account {
                 return;
             }
 
+            if (!(Over13.IsChecked ?? false)) {
+                MessageBox.Show("You must be over the age of 13 to register " +
+                                "from the mobile application.");
+                return;
+            }
+
             Email.IsEnabled = false;
             Password.IsEnabled = false;
             Username.IsEnabled = false;
@@ -120,8 +126,9 @@ namespace Cloudsdale.Account {
                 if (data["flash"] != null) {
                     var message = data["flash"]["message"].ToString();
                     message = data["errors"].Aggregate(message, (current, error) => current +
-                        ("\n - " + error["ref_node"].ToString().UppercaseFirst() + " \"" +
-                        data["result"][error["ref_node"].ToString()] + "\" " + error["message"]));
+                        ("\n - " + error["ref_node"].ToString().UppercaseFirst()
+                        + (string.IsNullOrWhiteSpace("" + data["result"][error["ref_node"].ToString()]) ? ": "
+                        : " \"" + data["result"][error["ref_node"].ToString()] + "\" ") + error["message"]));
                     MessageBox.Show(message, data["flash"]["title"].ToString(),
                                     MessageBoxButton.OK);
                 } else {
