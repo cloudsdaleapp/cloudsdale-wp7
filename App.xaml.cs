@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Navigation;
 using BugSense;
 using Cloudsdale.Managers;
+using Cloudsdale.Settings;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Res = Cloudsdale.Resources;
@@ -23,7 +24,6 @@ namespace Cloudsdale {
         /// Constructor for the Application object.
         /// </summary>
         public App() {
-
             BugSenseHandler.Instance.Init(this, Res.BugsenseApiKey);
             BugSenseHandler.Instance.UnhandledException += ApplicationUnhandledException;
             //UnhandledException += ApplicationUnhandledException;
@@ -33,6 +33,8 @@ namespace Cloudsdale {
 
             // Phone-specific initialization
             InitializePhoneApplication();
+
+            this.ForceDarkTheme();
 
             // Show graphics profiling information while debugging.
 #if DEBUG

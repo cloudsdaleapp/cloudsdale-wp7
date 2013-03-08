@@ -185,6 +185,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Settings\ForceTheme.cs" />
     <Compile Include="Settings\StringParser.cs" />
     <Page Include="Account\Register.xaml">
       <SubType>Designer</SubType>
