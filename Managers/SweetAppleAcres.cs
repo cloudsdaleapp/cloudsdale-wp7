@@ -18,6 +18,14 @@ namespace Cloudsdale.Managers {
             }
         }
 
+        public void AddToEnd(Message item) {
+            if (Deployment.Current.Dispatcher.CheckAccess()) {
+                InternalAddToEnd(item);
+            } else {
+                Deployment.Current.Dispatcher.BeginInvoke(() => InternalAddToEnd(item));
+            }
+        }
+
         private void InternalAdd(Message item) {
             item.user = PonyvilleCensus.Heartbeat(item.user);
 
@@ -50,6 +58,26 @@ namespace Cloudsdale.Managers {
                 if (cache.Count > Capacity) {
                     cache.RemoveAt(0);
                 }
+            }
+
+            OnPropertyChanged("LastMessage");
+        }
+
+        private void InternalAddToEnd(Message item) {
+            item.user = PonyvilleCensus.Heartbeat(item.user);
+
+            var count = cache.Count;
+            for (var i = 0; i < count; ++i) {
+                if (cache[i].id == item.id) return;
+                if (cache[i].subs.Any(msg => msg.id == item.id)) return;
+            }
+
+            var last = cache[cache.Count - 1];
+            if (last.user.id == item.user.id) {
+                last.AddSub(item);
+                cache.Trigger(cache.Count - 1);
+            } else {
+                cache.Add(item);
             }
 
             OnPropertyChanged("LastMessage");

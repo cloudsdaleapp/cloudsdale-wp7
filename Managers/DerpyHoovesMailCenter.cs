@@ -117,7 +117,7 @@ namespace Cloudsdale.Managers {
                                 if (message.client_id == Connection.Faye.ClientId) {
                                     break;
                                 }
-                                cache.messages.Add(message);
+                                cache.messages.AddToEnd(message);
                             }
                             cache.Unread++;
                             break;
@@ -239,7 +239,7 @@ namespace Cloudsdale.Managers {
         }
 
         public string LastMessage {
-            get { return ""; }
+            get { return messages.LastMessage; }
         }
     }
 
