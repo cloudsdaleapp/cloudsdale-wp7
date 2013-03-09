@@ -188,7 +188,7 @@ namespace Cloudsdale {
             }, null);
         }
 
-        public static void SendMessage(string cloud, string message) {
+        public static void SendMessage(string cloud, string message, Action<JObject> callback) {
             var dataObject = new JObject();
             dataObject["content"] = message;
             dataObject["client_id"] = Faye.ClientId;
@@ -204,7 +204,16 @@ namespace Cloudsdale {
                 var reqs = request.EndGetRequestStream(ar);
                 reqs.Write(data, 0, data.Length);
                 reqs.Close();
-                request.BeginGetResponse(a => request.EndGetResponse(a).Close(), null);
+                request.BeginGetResponse(a => {
+                    string responseData;
+                    using (var response = request.EndGetResponse(a))
+                    using (var responseStream = response.GetResponseStream())
+                    using (var responseReader = new StreamReader(responseStream, Encoding.UTF8)) {
+                        responseData = responseReader.ReadToEnd();
+                    }
+
+                    if (callback != null) callback(JObject.Parse(responseData));
+                }, null);
             }, null);
         }
 

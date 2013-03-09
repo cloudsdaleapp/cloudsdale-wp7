@@ -115,22 +115,6 @@ namespace Cloudsdale.Managers {
                             var cache = Cache[chansplit[1]];
                             lock (cache.Lock) {
                                 if (message.client_id == Connection.Faye.ClientId) {
-                                    var messages = cache.Messages;
-                                    for (var i = 0; i < messages.Count; ++i) {
-                                        if (messages[i].content == message.content) {
-                                            messages[i].drops = message.drops;
-                                            cache.messages.cache.Trigger(i);
-                                            break;
-                                        }
-                                        var foundone = false;
-                                        foreach (var sub in messages[i].subs.Where(sub => sub.content == message.content)) {
-                                            sub.drops = message.drops;
-                                            cache.messages.cache.Trigger(i);
-                                            foundone = true;
-                                            break;
-                                        }
-                                        if (foundone) break;
-                                    }
                                     break;
                                 }
                                 cache.messages.Add(message);

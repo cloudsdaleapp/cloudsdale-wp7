@@ -3,7 +3,6 @@ using System.Collections.Generic;
 #if DEBUG
 using System.Diagnostics;
 #endif
-using System.Text.RegularExpressions;
 using System.Windows.Media;
 using Newtonsoft.Json;
 using System.Linq;
@@ -40,7 +39,7 @@ namespace Cloudsdale.Models {
         public string CorrectedTimestamp {
             get {
                 var datestring = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern;
-                return timestamp > DateTime.Now.AddDays(-1) ? timestamp.ToString("HH:mm:ss") : 
+                return timestamp > DateTime.Now.AddDays(-1) ? timestamp.ToString("HH:mm:ss") :
                     timestamp.ToString(datestring + " HH:mm:ss");
             }
         }
@@ -76,7 +75,7 @@ namespace Cloudsdale.Models {
                         }
                     }
                     message = Settings.StringParser.ParseLiteral(message);
-                    var split = message.Split(new[]{'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries);
+                    var split = message.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
                     var lines = new ChatLine[split.Length];
                     for (var i = 0; i < split.Length; ++i) {
                         if (string.IsNullOrWhiteSpace(split[i])) split[i] = " ";
@@ -100,7 +99,7 @@ namespace Cloudsdale.Models {
         public Drop[] Drops {
             get {
                 return subs.Select(sub => sub.drops)
-                    .Aggregate((IEnumerable<Drop>) (drops ?? new Drop[0]), 
+                    .Aggregate((IEnumerable<Drop>)(drops ?? new Drop[0]),
                     (all, item) => all.Concat(item ?? new Drop[0])).ToArray();
             }
         }

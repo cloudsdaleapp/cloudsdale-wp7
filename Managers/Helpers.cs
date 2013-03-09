@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows;
@@ -11,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using Cloudsdale.Models;
 
 namespace Cloudsdale.Managers {
     public static class Helpers {
@@ -47,6 +49,20 @@ namespace Cloudsdale.Managers {
         public static void WriteLine(this MemoryStream memory, string line = "") {
             var data = Encoding.UTF8.GetBytes(line + "\r\n");
             memory.Write(data, 0, data.Length);
+        }
+
+        public static int IndexOf(this DerpyHoovesMailCenter controller, Message message) {
+            lock (controller) {
+                for (var i = 0; i < controller.messages.cache.Count; ++i) {
+                    var pmessage = controller.messages.cache[i];
+                    if (pmessage.id == message.id) return i;
+                    if (pmessage.subs.Any(sub => sub.id == message.id)) {
+                        return i;
+                    }
+                }
+            }
+
+            return controller.messages.cache.Count -1;
         }
     }
 }

@@ -537,15 +537,23 @@ namespace Cloudsdale {
 
             var controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);
             var cmessages = controller.messages;
-            cmessages.Add(new Message {
+            var message = new Message {
                 id = Guid.NewGuid().ToString(),
                 device = "mobile",
                 content = SendBox.Text.Replace("\n", "\\n"),
                 timestamp = DateTime.Now + DerpyHoovesMailCenter.ServerDiff,
                 user = PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id)
-            });
+            };
+            cmessages.Add(message);
 
-            Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text.Replace("\n", "\\n"));
+            Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text.Replace("\n", "\\n"), response => {
+                var result = response["result"];
+                message.id = (string)result["id"];
+                message.drops = result["drops"].Select(jdrop => jdrop.ToObject<Drop>()).ToArray();
+                message.content = (string)result["content"];
+
+                cmessages.cache.Trigger(controller.IndexOf(message));
+            });
             SendBox.Text = "";
             SendBox.Focus();
         }
@@ -697,8 +705,8 @@ namespace Cloudsdale {
         }
 
         private void PromoteDemoteClick(object sender, RoutedEventArgs e) {
-            var button = (Button) sender;
-            var user = (User) button.DataContext;
+            var button = (Button)sender;
+            var user = (User)button.DataContext;
 
             if (user.id == Connection.CurrentCloudsdaleUser.id) {
                 MessageBox.Show("You can't demod yourself silly!");
