@@ -72,10 +72,15 @@ namespace Cloudsdale.Managers {
                 if (cache[i].subs.Any(msg => msg.id == item.id)) return;
             }
 
-            var last = cache[cache.Count - 1];
-            if (last.user.id == item.user.id) {
-                last.AddSub(item);
-                cache.Trigger(cache.Count - 1);
+            if (cache.Count > 0) {
+
+                var last = cache[cache.Count - 1];
+                if (last.user.id == item.user.id) {
+                    last.AddSub(item);
+                    cache.Trigger(cache.Count - 1);
+                } else {
+                    cache.Add(item);
+                }
             } else {
                 cache.Add(item);
             }
