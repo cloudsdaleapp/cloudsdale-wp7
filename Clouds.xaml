@@ -69,7 +69,7 @@
                         <Run Text="{Binding Path=CorrectedTimestamp}" />
                         <Run Text="{Binding Path=DeviceStub}" FontSize="16" />
                     </TextBlock>
-                    <Grid Margin="60,20,0,0">
+                    <Grid Margin="50,20,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -77,16 +77,16 @@
                         <ItemsControl Grid.Row="1" DataContext="{Binding}" ItemsSource="{Binding Path=Split}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock DataContext="{Binding}" Text="{Binding Path=Text}" 
+                                    <my:LinkDetectingTextBlock DataContext="{Binding}" LinkedText="{Binding Path=Text}" 
                                            Foreground="{Binding Path=Color}" FontSize="16" 
-                                           TextWrapping="Wrap" FontFamily="Verdana"/>
+                                           FontFamily="Verdana" LinkClicked="ChatLinkClicked"/>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                         <ItemsControl Grid.Row="0" ItemsSource="{Binding Path=Drops}" HorizontalAlignment="Left">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <toolkit:WrapPanel ItemWidth="110" ItemHeight="85" MaxWidth="220" />
+                                    <toolkit:WrapPanel ItemWidth="110" ItemHeight="85" MaxWidth="330" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
@@ -351,7 +351,7 @@
             </Border>
         </Popup>
         <Popup Height="800" Width="800" Name="YourCloudList" >
-            
+
         </Popup>
     </Grid>
 

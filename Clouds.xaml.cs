@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using Cloudsdale.Controls;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
@@ -720,5 +721,32 @@ namespace Cloudsdale {
             }
         }
 
+        private void ChatLinkClicked(LinkClickedEventArgs eargs) {
+            var drop = new Drop {
+                id = Guid.NewGuid().ToString(),
+                preview = new Uri("http://assets.cloudsdale.org/assets/fallback/preview_thumb_drop.png"),
+                title = eargs.LinkValue,
+                url = new Uri(eargs.LinkValue),
+            };
+
+            if (CloudsdaleUrl.IsMatch(drop.url.ToString())) {
+                LayoutRoot.IsHitTestVisible = false;
+                var apiend = new Uri("http://www.cloudsdale.org/v1/clouds/" + drop.url.ToString().Split('/').Last());
+                WebPriorityManager.BeginHighPriorityRequest(apiend, args => Dispatcher.BeginInvoke(() => {
+                    try {
+                        var response = JObject.Parse(args.Result);
+                        var cloud = PonyvilleDirectory.RegisterCloud(response["result"].ToObject<Cloud>());
+                        LayoutRoot.IsHitTestVisible = true;
+                        NavigateCloud(cloud);
+                    } catch {
+                        MessageBox.Show("We're sorry, the cloud you clicked on couldn't be loaded :< Maybe it has been deleted?");
+                        LayoutRoot.IsHitTestVisible = true;
+                    }
+                }));
+            } else {
+                LastDropClicked = drop;
+                NavigationService.Navigate(new Uri("/DropViewer.xaml", UriKind.Relative));
+            }
+        }
     }
 }
