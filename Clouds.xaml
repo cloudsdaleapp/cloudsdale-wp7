@@ -69,12 +69,12 @@
                         <Run Text="{Binding Path=CorrectedTimestamp}" />
                         <Run Text="{Binding Path=DeviceStub}" FontSize="16" />
                     </TextBlock>
-                    <Grid Margin="50,20,0,0">
+                    <Grid Margin="60,20,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <ItemsControl Grid.Row="1" DataContext="{Binding}" ItemsSource="{Binding Path=Split}">
+                        <ItemsControl Grid.Row="1" DataContext="{Binding}" ItemsSource="{Binding Path=Split}" Margin="-10,0,-10,0">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <my:LinkDetectingTextBlock DataContext="{Binding}" LinkedText="{Binding Path=Text}" 
