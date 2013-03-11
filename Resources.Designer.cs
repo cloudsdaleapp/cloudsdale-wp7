@@ -259,7 +259,7 @@ namespace Cloudsdale {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ws://push01.cloudsdale.org:80/push.
+        ///   Looks up a localized string similar to ws://push.cloudsdale.org/push.
         /// </summary>
         internal static string pushUrl {
             get {

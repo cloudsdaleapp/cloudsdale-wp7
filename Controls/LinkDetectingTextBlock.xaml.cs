@@ -13,8 +13,8 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 
 namespace Cloudsdale.Controls {
-    public delegate void TextChangedEventHandler(TextChangedEventArgs args);
-    public delegate void LinkClickedEventHandler(LinkClickedEventArgs args);
+    public delegate void TextChangedEventHandler(object sender, TextChangedEventArgs args);
+    public delegate void LinkClickedEventHandler(object sender, LinkClickedEventArgs args);
     public class TextChangedEventArgs : EventArgs {
         public string NewText { get; set; }
         public string OldText { get; set; }
@@ -50,7 +50,7 @@ namespace Cloudsdale.Controls {
         }
 
         protected virtual void OnLinkedTextChange(TextChangedEventArgs args) {
-            if (LinkedTextChanged != null) LinkedTextChanged(args);
+            if (LinkedTextChanged != null) LinkedTextChanged(this, args);
 
             var matches = Helpers.LinkRegex.Matches(args.NewText);
             var lastIndex = 0;
@@ -65,7 +65,7 @@ namespace Cloudsdale.Controls {
                     MouseOverForeground = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x66, 0x99)),
                 };
                 hyperlink.Click += (sender, eventArgs) => {
-                    if (LinkClicked != null) LinkClicked(new LinkClickedEventArgs { LinkValue = link });
+                    if (LinkClicked != null) LinkClicked(this, new LinkClickedEventArgs { LinkValue = link });
                 };
                 block.Inlines.Add(hyperlink);
                 lastIndex = match.Index + match.Length;

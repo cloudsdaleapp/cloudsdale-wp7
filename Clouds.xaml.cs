@@ -721,7 +721,7 @@ namespace Cloudsdale {
             }
         }
 
-        private void ChatLinkClicked(LinkClickedEventArgs eargs) {
+        private void ChatLinkClicked(object sender, LinkClickedEventArgs eargs) {
             var drop = new Drop {
                 id = Guid.NewGuid().ToString(),
                 preview = new Uri("http://assets.cloudsdale.org/assets/fallback/preview_thumb_drop.png"),

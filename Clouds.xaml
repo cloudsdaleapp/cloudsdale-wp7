@@ -79,7 +79,7 @@
                                 <DataTemplate>
                                     <my:LinkDetectingTextBlock DataContext="{Binding}" LinkedText="{Binding Path=Text}" 
                                            Foreground="{Binding Path=Color}" FontSize="16" 
-                                           FontFamily="Verdana" LinkClicked="ChatLinkClicked"/>
+                                           FontFamily="Verdana" LinkClicked="ChatLinkClicked" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>

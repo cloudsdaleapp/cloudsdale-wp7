@@ -175,6 +175,7 @@ namespace Cloudsdale.FayeConnector {
             if (MessageBox.Show("Can't connect to cloudsdale\r\nRetry?", "", MessageBoxButton.OKCancel) == MessageBoxResult.OK) {
                 Connection.Connect();
             } else {
+                MainPage.reconstruction = true;
                 // ReSharper disable PossibleNullReferenceException
                 (Application.Current.RootVisual as PhoneApplicationFrame).
                     Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
