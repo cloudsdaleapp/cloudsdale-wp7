@@ -14,6 +14,7 @@ using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Wp7Faye;
 
 namespace Cloudsdale {
     /// <summary>
@@ -28,7 +29,7 @@ namespace Cloudsdale {
         public static LoggedInUser CurrentCloudsdaleUser;
         public static bool TransProxWorkaround;
 
-        public static FayeConnector.FayeConnector Faye;
+        public static MessageHandler Faye;
 
         public static void Connect(Page page = null, Dispatcher dispatcher = null, bool pulluserclouds = false) {
             switch (LoginType) {
@@ -98,9 +99,12 @@ namespace Cloudsdale {
         }
 
         public static void FinishConnecting(Page page = null, Dispatcher dispatcher = null) {
-            Faye = new FayeConnector.FayeConnector(Resources.pushUrl);
+            Faye = Wp7Faye.Faye.Connect(Resources.pushUrl);
+            Faye.ConnectTimeout += () => FinishConnectingLongPoll(page, dispatcher);
 
-            Faye.HandshakeComplete += (sender, args) => {
+            Faye.Timeout = 10000;
+            Faye.MessageExt = JObject.FromObject(new { CurrentCloudsdaleUser.auth_token });
+            Faye.HandshakeResponse += response => {
 
                 CurrentCloudsdaleUser.clouds = (from cloud in CurrentCloudsdaleUser.clouds
                                                 select PonyvilleDirectory.RegisterCloud(cloud)).ToArray();
@@ -126,7 +130,41 @@ namespace Cloudsdale {
                 }
             };
 
-            Faye.Handshake();
+            Faye.Connect();
+        }
+
+        public static void FinishConnectingLongPoll(Page page, Dispatcher dispatcher) {
+            Faye = Wp7Faye.Faye.Connect(Resources.longPollingUrl);
+
+            Faye.Timeout = 10000;
+            Faye.MessageExt = JObject.FromObject(new { CurrentCloudsdaleUser.auth_token });
+            Faye.HandshakeResponse += response => {
+
+                CurrentCloudsdaleUser.clouds = (from cloud in CurrentCloudsdaleUser.clouds
+                                                select PonyvilleDirectory.RegisterCloud(cloud)).ToArray();
+
+                if (dispatcher == null)
+                    foreach (var cloud in CurrentCloudsdaleUser.clouds) {
+                        DerpyHoovesMailCenter.Subscribe(cloud);
+                    }
+
+                DerpyHoovesMailCenter.Init();
+
+                if (page == null) {
+                    if (dispatcher != null) {
+                        dispatcher.BeginInvoke(() => {
+                            var phoneApplicationFrame = Application.Current.RootVisual as PhoneApplicationFrame;
+                            if (phoneApplicationFrame != null)
+                                phoneApplicationFrame.Navigate(new Uri("/Home.xaml", UriKind.Relative));
+                        });
+                    }
+                } else {
+                    page.Dispatcher.BeginInvoke(
+                        () => page.NavigationService.Navigate(new Uri("/Home.xaml", UriKind.Relative)));
+                }
+            };
+
+            Faye.Connect();
         }
 
         public static void PullUserClouds(Action complete) {
@@ -191,7 +229,7 @@ namespace Cloudsdale {
         public static void SendMessage(string cloud, string message, Action<JObject> callback) {
             var dataObject = new JObject();
             dataObject["content"] = message;
-            dataObject["client_id"] = Faye.ClientId;
+            dataObject["client_id"] = Faye.ClientID;
             dataObject["device"] = "mobile";
             var data = Encoding.UTF8.GetBytes(dataObject.ToString());
             var request = WebRequest.CreateHttp(Resources.SendEndpoint.Replace("{cloudid}", cloud));

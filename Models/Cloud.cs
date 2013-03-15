@@ -184,8 +184,7 @@ namespace Cloudsdale.Models {
             }
         }
 
-        public void UpdateCloud(string fayedata) {
-            var response = JObject.Parse(fayedata);
+        public void UpdateCloud(JObject response) {
             var data = response["data"];
             if (data["name"] != null) name = (string)data["name"];
 

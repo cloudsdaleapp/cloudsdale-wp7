@@ -50,33 +50,25 @@ namespace Cloudsdale.Managers {
 
             ValidPreloadedData.Clear();
 
-            Connection.Faye.ChannelMessageRecieved += FayeMessageRecieved;
-            //if (PresenceAnnouncer == null) PresenceAnnouncer = new Timer(o => {
-            //    Thread.CurrentThread.Name = "PresenceAnnouncement";
-            //    foreach (var cloud in Cache.Keys) {
-            //        Connection.Faye.Publish("/clouds/" + cloud + "/users/" +
-            //            Connection.CurrentCloudsdaleUser.id, new object());
-            //    }
-            //}, null, 5000, 30000);
+            Connection.Faye.MessageRecieved += FayeMessageRecieved;
 
             Connection.Faye.Subscribe("/users/" + Connection.CurrentCloudsdaleUser.id + "/private");
         }
 
-        static void FayeMessageRecieved(object sender, FayeConnector.FayeConnector.DataReceivedEventArgs args) {
+        static void FayeMessageRecieved(JObject jobj) {
             try {
-                var jobj = JObject.Parse(args.Data);
-                if (jobj.Root["successful"] != null) return;
+                if (jobj["successful"] != null) return;
 
-                var chansplit = args.Channel.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                var chansplit = jobj["channel"].ToString().ToLower().Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                 if (chansplit.Length < 2) return;
                 if (!Cache.ContainsKey(chansplit[1])) return;
                 if (chansplit.Length == 2 || (chansplit.Length == 3 && chansplit[2] == "private")) {
                     if (chansplit[0] == "clouds") {
                         Deployment.Current.Dispatcher.BeginInvoke(
-                            () => PonyvilleDirectory.GetCloud(chansplit[1]).UpdateCloud(args.Data));
+                            () => PonyvilleDirectory.GetCloud(chansplit[1]).UpdateCloud(jobj));
                     } else if (chansplit[0] == "users") {
-                        var user = JsonConvert.DeserializeObject<FayeResult<User>>(args.Data);
-                        user.data.CopyTo(Connection.CurrentCloudsdaleUser);
+                        var user = jobj["data"].ToObject<User>();
+                        user.CopyTo(Connection.CurrentCloudsdaleUser);
                         if ((Connection.CurrentCloudsdaleUser.suspended_until ?? new DateTime(0)) > DateTime.Now) {
                             Deployment.Current.Dispatcher.BeginInvoke(() => {
                                 MessageBox.Show("You are banned until" + Connection.CurrentCloudsdaleUser.suspended_until +
@@ -89,12 +81,12 @@ namespace Cloudsdale.Managers {
                     if (chansplit[0] != "clouds") return;
                     switch (chansplit[2]) {
                         case "drops":
-                            var drop = JsonConvert.DeserializeObject<FayeDropResponse>(args.Data).data;
+                            var drop = jobj["data"].ToObject<Drop>();
                             Cache[chansplit[1]].drops.AddDrop(drop);
                             break;
                         case "users":
                             if (chansplit.Length < 4) break;
-                            var data = JObject.Parse(args.Data)["data"];
+                            var data = jobj["data"];
 
                             if (data["status"] != null) {
                                 if (data["id"] == null)
@@ -103,18 +95,14 @@ namespace Cloudsdale.Managers {
                             }
                             break;
                         case "chat":
-                            var message =
-                                JsonConvert.DeserializeObject<FayeMessageResponse>
-                                (args.Data, new JsonSerializerSettings {
-                                    ObjectCreationHandling = ObjectCreationHandling.Replace
-                                }).data;
+                            var message = jobj["data"].ToObject<Message>();
                             if (message == null || message.user == null || message.content == null) break;
 
                             ServerDiff = message.timestamp - DateTime.Now;
 
                             var cache = Cache[chansplit[1]];
                             lock (cache.Lock) {
-                                if (message.client_id == Connection.Faye.ClientId) {
+                                if (message.client_id == Connection.Faye.ClientID) {
                                     break;
                                 }
                                 cache.messages.AddToEnd(message);
@@ -198,7 +186,7 @@ namespace Cloudsdale.Managers {
             }
             ValidPreloadedData[id] = true;
 
-            Connection.Faye.Subscribe("/clouds/" + id + "/users/**");
+            Connection.Faye.Subscribe("/clouds/" + id + "/users/*");
 
             WebPriorityManager.BeginHighPriorityRequest(new Uri(Resources.PreviousMessagesEndpoint.Replace("{cloudid}", id)), e => {
                 try {

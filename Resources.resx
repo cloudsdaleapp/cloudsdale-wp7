@@ -199,4 +199,7 @@
   <data name="DropsSearchEndpoint" xml:space="preserve">
     <value>http://www.cloudsdale.org/v1/clouds/{cloudid}/drops/search.json?q={query}</value>
   </data>
+  <data name="longPollingUrl" xml:space="preserve">
+    <value>https://push.cloudsdale.org/push</value>
+  </data>
 </root>

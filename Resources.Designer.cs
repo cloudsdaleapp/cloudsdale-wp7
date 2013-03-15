@@ -223,6 +223,15 @@ namespace Cloudsdale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://push.cloudsdale.org/push.
+        /// </summary>
+        internal static string longPollingUrl {
+            get {
+                return ResourceManager.GetString("longPollingUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {{&quot;oauth&quot;:{{&quot;client_type&quot;:&quot;wp7&quot;,&quot;provider&quot;:&quot;{0}&quot;,&quot;token&quot;:&quot;{1}&quot;,&quot;uid&quot;:&quot;{2}&quot;}}}}.
         /// </summary>
         internal static string OAuthFormat {

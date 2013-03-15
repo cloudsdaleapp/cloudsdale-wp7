@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cloudsdale-WP7", "Cloudsdale-WP7.csproj", "{7173D7CE-B469-4D53-B377-4FFA489F004B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wp7Faye", "Wp7Faye\Wp7Faye.csproj", "{E2EE9735-BC0C-4DF8-A1F5-62DFB0A06E9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7173D7CE-B469-4D53-B377-4FFA489F004B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7173D7CE-B469-4D53-B377-4FFA489F004B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7173D7CE-B469-4D53-B377-4FFA489F004B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{E2EE9735-BC0C-4DF8-A1F5-62DFB0A06E9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2EE9735-BC0C-4DF8-A1F5-62DFB0A06E9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2EE9735-BC0C-4DF8-A1F5-62DFB0A06E9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2EE9735-BC0C-4DF8-A1F5-62DFB0A06E9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

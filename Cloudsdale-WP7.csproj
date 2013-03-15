@@ -61,7 +61,7 @@
     <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Controls.Toolkit, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b772ad94eb9ca604, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Interop" />
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json">
       <HintPath>Lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="socketex.sslsocket">
@@ -137,17 +137,6 @@
     <Compile Include="FacebookAuth\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FayeConnector\FayeConnector.cs" />
-    <Compile Include="FayeConnector\FayeResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>FayeResources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="FayeConnector\ResponseTypes\EventResponse.cs" />
-    <Compile Include="FayeConnector\ResponseTypes\HandshakeResponse.cs" />
-    <Compile Include="FayeConnector\ResponseTypes\PublishRequest.cs" />
-    <Compile Include="FayeConnector\ResponseTypes\Response.cs" />
-    <Compile Include="FayeConnector\ResponseTypes\SubscribeResponse.cs" />
     <Compile Include="Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
@@ -176,7 +165,6 @@
     <Compile Include="Models\CloudsdaleItem.cs" />
     <Compile Include="Managers\PonyTracker.cs" />
     <Compile Include="Models\Drop.cs" />
-    <Compile Include="Models\FayeMessageResponse.cs" />
     <Compile Include="Models\LoginResponse.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Prosecution.cs" />
@@ -301,15 +289,17 @@
     <Content Include="SplashScreenImage.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="FayeConnector\FayeResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>FayeResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Wp7Faye\Wp7Faye.csproj">
+      <Project>{E2EE9735-BC0C-4DF8-A1F5-62DFB0A06E9D}</Project>
+      <Name>Wp7Faye</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />

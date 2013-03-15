@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using Cloudsdale.FayeConnector.ResponseTypes;
 using Microsoft.Phone.Tasks;
 using Newtonsoft.Json;
 
@@ -32,9 +31,5 @@ namespace Cloudsdale.Models {
 
     public class WebDropResponse {
         public Drop[] result;
-    }
-
-    public class FayeDropResponse : Response {
-        public Drop data;
     }
 }
