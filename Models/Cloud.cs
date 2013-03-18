@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using System.Xml.Linq;
+using Cloudsdale.Avatars;
 using Cloudsdale.Managers;
 using Microsoft.Phone.Tasks;
 using Newtonsoft.Json;
@@ -16,7 +17,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Cloudsdale.Models {
     [JsonObject(MemberSerialization.OptIn)]
-    public class Cloud : CloudsdaleItem, INotifyPropertyChanged {
+    public class Cloud : CloudsdaleItem, INotifyPropertyChanged, IAvatarUploadable {
 
         private string _name;
         private string _description;
@@ -270,42 +271,47 @@ namespace Cloudsdale.Models {
             get { return string.IsNullOrWhiteSpace(description) ? "This cloud has no description" : description; }
         }
 
-        public void UploadAvatar(PhotoResult picture) {
+        public void UploadAvatar(Stream pictureStream, Action<Uri> callback) {
+            var boundary = Guid.NewGuid().ToString();
             byte[] data;
-            using (var photo = picture.ChosenPhoto)
+            using (pictureStream)
             using (var ms = new MemoryStream()) {
-                photo.CopyTo(ms);
+                ms.WriteLine("--" + boundary);
+                ms.WriteLine("Content-Disposition: form-data; name=\"cloud[avatar]\"; filename=\"GenericImage.png\"");
+                ms.WriteLine("Content-Type: image/png");
+                ms.WriteLine();
+                pictureStream.CopyTo(ms);
+                ms.WriteLine();
+                ms.WriteLine("--" + boundary + "--");
                 data = ms.ToArray();
             }
-            var boundary = Guid.NewGuid().ToString();
             var request = WebRequest.CreateHttp(new Uri("http://www.cloudsdale.org/v1/clouds/" + id));
             request.Accept = "application/json";
             request.ContentType = "multipart/form-data; boundary=" + boundary;
             request.Method = "POST";
+            request.Headers["Content-Length"] = data.Length.ToString();
             request.Headers["X-Auth-Token"] = Connection.CurrentCloudsdaleUser.auth_token;
             request.BeginGetRequestStream(ar => {
-                using (var requestStream = request.EndGetRequestStream(ar))
-                using (var requestWriter = new StreamWriter(requestStream, Encoding.UTF8)) {
-                    requestWriter.WriteLine("--{0}", boundary);
-                    requestWriter.WriteLine("Content-Disposition: form-data; name=\"cloud[avatar]\"; filename=\""
-                                            + picture.OriginalFileName.Split('\\').Last() + "\"");
-                    requestWriter.WriteLine("Content-Type: image/jpeg");
-                    requestWriter.WriteLine();
+                using (var requestStream = request.EndGetRequestStream(ar)) {
                     requestStream.Write(data, 0, data.Length);
-                    requestWriter.WriteLine();
-                    requestWriter.WriteLine("--{0}--", boundary);
+                    requestStream.Close();
                 }
 
                 request.BeginGetResponse(arr => {
+                    JObject responseData;
                     using (var response = request.EndGetResponse(arr))
                     using (var responseStream = response.GetResponseStream())
                     using (var responseReader = new StreamReader(responseStream)) {
-                        var result = JObject.Parse(responseReader.ReadToEnd());
-                        CopyFrom(result["result"].ToObject<Cloud>());
+                        responseData = JObject.Parse(responseReader.ReadToEnd());
                     }
+                    CopyFrom(responseData["result"].ToObject<Cloud>());
+                    Deployment.Current.Dispatcher.BeginInvoke(() => callback(avatar.Normal));
                 }, null);
             }, null);
         }
+
+        public Uri CurrentAvatar { get { return avatar.Normal; } }
+        public Uri DefaultAvatar { get { return new Uri("https://c776950.ssl.cf2.rackcdn.com/assets/fallback/avatar_cloud.png"); } }
     }
 
     [JsonObject(MemberSerialization.OptIn)]

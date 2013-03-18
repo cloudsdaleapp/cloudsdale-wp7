@@ -1,6 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Cloudsdale.Avatars;
 using Cloudsdale.Models;
 using Microsoft.Phone.Tasks;
 
@@ -142,9 +144,8 @@ namespace Cloudsdale {
         }
 
         private void ChangeAvatarClick(object sender, RoutedEventArgs e) {
-            var picChooser = new PhotoChooserTask();
-            picChooser.Completed += (o, result) => Connection.CurrentCloud.UploadAvatar(result);
-            picChooser.Show();
+            ChangeAvatar.target = Connection.CurrentCloud;
+            NavigationService.Navigate(new Uri("/Avatars/ChangeAvatar.xaml", UriKind.Relative));
         }
 
         private void RemoveModeratorClick(object sender, RoutedEventArgs e) {

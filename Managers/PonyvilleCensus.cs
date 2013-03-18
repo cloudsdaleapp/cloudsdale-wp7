@@ -7,6 +7,7 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Windows;
+using Cloudsdale.Avatars;
 using Cloudsdale.Models;
 using Newtonsoft.Json;
 using System.Linq;

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
+using Cloudsdale.Avatars;
 using Cloudsdale.Controls;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
@@ -270,11 +271,8 @@ namespace Cloudsdale {
         }
 
         private void ChangeAvatarClick(object sender, RoutedEventArgs e) {
-            //MessageBox.Show("We're sorry, you can't change your avatar yet in this version of the app. " +
-            //                "You need to go to the website to change it.");
-            var picChooser = new PhotoChooserTask();
-            picChooser.Completed += (o, result) => Connection.CurrentCloudsdaleUser.UploadAvatar(result);
-            picChooser.Show();
+            ChangeAvatar.target = CurrentUser;
+            NavigationService.Navigate(new Uri("/Avatars/ChangeAvatar.xaml", UriKind.Relative));
         }
 
         private void ProcessError(WebException exception, Action<bool> resetFields) {

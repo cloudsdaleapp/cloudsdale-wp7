@@ -106,6 +106,18 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppServiceProvider.cs" />
+    <Compile Include="Avatars\ChangeAvatar.xaml.cs">
+      <DependentUpon>ChangeAvatar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Avatars\IAvatarUploadable.cs" />
+    <Compile Include="Avatars\MLFW.xaml.cs">
+      <DependentUpon>MLFW.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Avatars\MLFWConfirm.xaml.cs">
+      <DependentUpon>MLFWConfirm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Avatars\Mlfw\FaceQuery.cs" />
+    <Compile Include="Avatars\Mlfw\MlfwImage.cs" />
     <Compile Include="BCrypt.Net\BCrypt.cs.cs" />
     <Compile Include="BCrypt.Net\SaltParseException.cs" />
     <Compile Include="Clouds.xaml.cs">
@@ -187,6 +199,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Account\TermsAndConditions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Avatars\ChangeAvatar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Avatars\MLFW.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Avatars\MLFWConfirm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

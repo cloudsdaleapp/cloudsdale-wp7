@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Windows.Media;
+using Cloudsdale.Avatars;
 using Cloudsdale.Managers;
 using Microsoft.Phone.Tasks;
 using Newtonsoft.Json;
@@ -167,6 +168,7 @@ namespace Cloudsdale.Models {
                     user.avatar.Preview = avatar.Preview;
                 if (avatar.Thumb != null)
                     user.avatar.Thumb = avatar.Thumb;
+                user.OnPropertyChanged("avatar");
             }
             if (role != null)
                 user.role = role;
@@ -196,6 +198,8 @@ namespace Cloudsdale.Models {
                 user.AKA = _aka;
             if (skype_name != null)
                 user.skype_name = skype_name;
+
+            OnPropertyChanged("CurrentAvatar");
         }
 
         [JsonIgnore]
@@ -235,7 +239,7 @@ namespace Cloudsdale.Models {
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class LoggedInUser : User {
+    public class LoggedInUser : User, IAvatarUploadable {
         [JsonProperty]
         public string auth_token;
         [JsonProperty]
@@ -301,16 +305,16 @@ namespace Cloudsdale.Models {
                 user.status = status;
         }
 
-        public void UploadAvatar(PhotoResult picture) {
+        public void UploadAvatar(Stream pictureStream, Action<Uri> callback) {
             var boundary = Guid.NewGuid().ToString();
             byte[] data;
-            using (var photo = picture.ChosenPhoto)
+            using (pictureStream)
             using (var ms = new MemoryStream()) {
                 ms.WriteLine("--" + boundary);
                 ms.WriteLine("Content-Disposition: form-data; name=\"user[avatar]\"; filename=\"GenericImage.png\"");
                 ms.WriteLine("Content-Type: image/png");
                 ms.WriteLine();
-                photo.CopyTo(ms);
+                pictureStream.CopyTo(ms);
                 ms.WriteLine();
                 ms.WriteLine("--" + boundary + "--");
                 data = ms.ToArray();
@@ -336,9 +340,13 @@ namespace Cloudsdale.Models {
                     }
                     responseData["result"].ToObject<User>().CopyTo(this);
                     PonyvilleCensus.Heartbeat(this);
+                    Deployment.Current.Dispatcher.BeginInvoke(() => callback(avatar.Normal));
                 }, null);
             }, null);
         }
+
+        public Uri CurrentAvatar { get { return avatar.Normal; } }
+        public Uri DefaultAvatar { get { return new Uri("https://c776950.ssl.cf2.rackcdn.com/assets/fallback/avatar_user.png"); } }
     }
 
     public enum Status {
