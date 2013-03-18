@@ -11,7 +11,8 @@ namespace Cloudsdale.Avatars {
             instance.Avatar.Source = new BitmapImage(newAvatar);
             instance.LoadingBar.IsIndeterminate = false;
         }
-        private bool mlfw;
+
+        public static bool mlfw;
 
         public ChangeAvatar() {
             instance = this;

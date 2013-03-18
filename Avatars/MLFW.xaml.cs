@@ -42,5 +42,9 @@ namespace Cloudsdale.Avatars {
             MLFWConfirm.target = face;
             NavigationService.Navigate(new Uri("/Avatars/MLFWConfirm.xaml", UriKind.Relative));
         }
+
+        protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e) {
+            ChangeAvatar.mlfw = false;
+        }
     }
 }
