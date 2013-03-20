@@ -202,4 +202,7 @@
   <data name="longPollingUrl" xml:space="preserve">
     <value>https://push.cloudsdale.org/push</value>
   </data>
+  <data name="DevMessages" xml:space="preserve">
+    <value>false</value>
+  </data>
 </root>

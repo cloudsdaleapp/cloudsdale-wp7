@@ -97,6 +97,15 @@ namespace Cloudsdale {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to false.
+        /// </summary>
+        internal static string DevMessages {
+            get {
+                return ResourceManager.GetString("DevMessages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to http://www.cloudsdale.org/v1/clouds/{cloudid}/drops/search.json?q={query}.
         /// </summary>
         internal static string DropsSearchEndpoint {

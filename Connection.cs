@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -28,10 +29,12 @@ namespace Cloudsdale {
         public static string CloudsdaleClientId;
         public static LoggedInUser CurrentCloudsdaleUser;
         public static bool TransProxWorkaround;
+        public static readonly LoginState LoginState = new LoginState();
 
         public static MessageHandler Faye;
 
         public static void Connect(Page page = null, Dispatcher dispatcher = null, bool pulluserclouds = false) {
+            LoginState.Message = "Logging in...";
             switch (LoginType) {
                 case 0:
                     break;
@@ -99,6 +102,7 @@ namespace Cloudsdale {
         }
 
         public static void FinishConnecting(Page page = null, Dispatcher dispatcher = null) {
+            LoginState.Message = "Connecting...";
             Faye = Wp7Faye.Faye.Connect(Resources.pushUrl);
             Faye.ConnectTimeout += () => FinishConnectingLongPoll(page, dispatcher);
 
@@ -134,6 +138,7 @@ namespace Cloudsdale {
         }
 
         public static void FinishConnectingLongPoll(Page page, Dispatcher dispatcher) {
+            if (Resources.DevMessages == "true") LoginState.Message = "Falling back to long polling...";
             Faye = Wp7Faye.Faye.Connect(Resources.longPollingUrl);
 
             Faye.Timeout = 10000;
@@ -376,7 +381,7 @@ namespace Cloudsdale {
                             if (success != null) Deployment.Current.Dispatcher.BeginInvoke(success);
                         }
                     } catch (WebException ex) {
-                        if (onError != null) onError(ex); 
+                        if (onError != null) onError(ex);
                     }
                 }, null);
             }, null);
@@ -389,5 +394,30 @@ namespace Cloudsdale {
 
     public class WebResponse<T> {
         public T result;
+    }
+
+    public class LoginState : INotifyPropertyChanged {
+
+        private string _message;
+        public string Message {
+            get { return _message; }
+            set {
+                _message = value;
+                OnPropertyChanged("Message");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName) {
+            var handler = PropertyChanged;
+            if (handler != null)
+                if (!Deployment.Current.Dispatcher.CheckAccess()) {
+                    Deployment.Current.Dispatcher.BeginInvoke(
+                        () => handler(this, new PropertyChangedEventArgs(propertyName)));
+                } else {
+                    handler(this, new PropertyChangedEventArgs(propertyName));
+                }
+        }
     }
 }

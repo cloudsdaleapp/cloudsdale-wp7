@@ -1,9 +1,8 @@
-﻿using Microsoft.Phone.Controls;
-
-namespace Cloudsdale {
-    public partial class Connecting : PhoneApplicationPage {
+﻿namespace Cloudsdale {
+    public partial class Connecting {
         public Connecting() {
             InitializeComponent();
+            StatusPanel.DataContext = Connection.LoginState;
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {

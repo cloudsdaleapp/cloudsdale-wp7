@@ -27,6 +27,9 @@
             <Image Source="/Images/cloudsdale-thin-bright-logo.png" />
         </Grid>
 
-        <toolkit:PerformanceProgressBar Foreground="#FF1A91DB" IsIndeterminate="True" />
+        <StackPanel VerticalAlignment="Center" Name="StatusPanel">
+            <TextBlock HorizontalAlignment="Center" Height="30" Foreground="#FF1A91DB" Text="{Binding Path=Message}" />
+            <toolkit:PerformanceProgressBar Foreground="#FF1A91DB" IsIndeterminate="True" />
+        </StackPanel>
     </Grid>
 </phone:PhoneApplicationPage>
