@@ -294,6 +294,7 @@
     <Content Include="Images\Icons\back.png" />
     <Content Include="Images\appbar.minus.rest.png" />
     <Content Include="Sound\harlem-shake.mp3" />
+    <Content Include="Todo.txt" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Resource Include="Images\Icons\i.png" />
@@ -308,7 +309,6 @@
     <Content Include="Images\Icons\search.png" />
     <Content Include="Images\Icons\settings.png" />
     <Content Include="Images\Icons\add.png" />
-    <Content Include="Outline.txt" />
     <Content Include="Settings.txt" />
     <Content Include="SplashScreenImage.jpg" />
   </ItemGroup>
