@@ -5,4 +5,3 @@
 
 Bugs
 - Swiping too quickly over drops hitting drop
-- Pressing Send Message over drops or ponies sends the message and brings up keyboard while on drops menu

@@ -397,6 +397,10 @@ namespace Cloudsdale {
         }
 
         private void CloudInfoClick(object sender, EventArgs eventArgs) {
+            if (userpopup.IsOpen) {
+                userpopup.IsOpen = false;
+                inUserPopup = false;
+            }
             CloudInfoPopup.DataContext = Connection.CurrentCloud;
             CloudInfoPopup.IsOpen = true;
             cloudinfoback.Visibility = Visibility.Visible;
@@ -527,6 +531,16 @@ namespace Cloudsdale {
         }
 
         private void SendTextClick(object sender, EventArgs e) {
+            if (cloudPivot.SelectedIndex != 0 || userpopup.IsOpen || CloudInfoPopup.IsOpen) {
+                userpopup.IsOpen = false;
+                inUserPopup = false;
+                CloudInfoPopup.IsOpen = false;
+                cloudinfoback.Visibility = Visibility.Collapsed;
+                cloudPivot.SelectedIndex = 0;
+
+                SendBox.Focus();
+                return;
+            }
             if (string.IsNullOrWhiteSpace(SendBox.Text)) {
                 return;
             }
@@ -747,6 +761,15 @@ namespace Cloudsdale {
                 LastDropClicked = drop;
                 NavigationService.Navigate(new Uri("/DropViewer.xaml", UriKind.Relative));
             }
+        }
+
+        private void UserPopupMouseUp(object sender, MouseButtonEventArgs e) {
+            var points = e.StylusDevice.GetStylusPoints(UserPopupBorder);
+            if (points.Any(point => point.X > 0 && point.X < 450 && point.Y > 0 && point.Y < 450)) {
+                return;
+            }
+            userpopup.IsOpen = false;
+            inUserPopup = false;
         }
     }
 }

@@ -191,10 +191,10 @@
             </controls:PivotItem>
         </controls:Pivot>
         <Popup Name="userpopup" HorizontalAlignment="Center" VerticalAlignment="Center" Width="800" Height="800">
-            <Border Background="#A0000000">
+            <Border Background="#A0000000" MouseLeftButtonUp="UserPopupMouseUp">
                 <Grid Width="800" Height="800">
                     <Border BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" 
-                            Background="#E0E0E0" BorderBrush="#888888">
+                            Background="#E0E0E0" BorderBrush="#888888" Name="UserPopupBorder">
                         <Grid Height="450" Width="450" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <ScrollViewer Margin="10">
                                 <StackPanel>
