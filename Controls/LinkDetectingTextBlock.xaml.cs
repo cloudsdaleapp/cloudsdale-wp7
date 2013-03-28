@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using System.Windows.Navigation;
 using Cloudsdale.Managers;
-using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
 
 namespace Cloudsdale.Controls {
     public delegate void TextChangedEventHandler(object sender, TextChangedEventArgs args);
@@ -50,6 +45,8 @@ namespace Cloudsdale.Controls {
         }
 
         protected virtual void OnLinkedTextChange(TextChangedEventArgs args) {
+            args.NewText = new Regex(@"([ ]+)").Replace(args.NewText, " ");
+
             if (LinkedTextChanged != null) LinkedTextChanged(this, args);
 
             var matches = Helpers.LinkRegex.Matches(args.NewText);
@@ -58,7 +55,10 @@ namespace Cloudsdale.Controls {
             var block = new Paragraph { FontSize = FontSize, FontFamily = FontFamily };
             foreach (Match match in matches) {
                 var link = match.Value;
-                block.Inlines.Add(new Run { Text = args.NewText.Substring(lastIndex, match.Index - lastIndex) });
+                var nonlink = args.NewText.Substring(lastIndex, match.Index - lastIndex);
+                foreach (var inline in Cursive(nonlink)) {
+                    block.Inlines.Add(inline);
+                }
                 var hyperlink = new Hyperlink {
                     Inlines = { new Run { Text = link } },
                     Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x88, 0xCC)),
@@ -70,9 +70,24 @@ namespace Cloudsdale.Controls {
                 block.Inlines.Add(hyperlink);
                 lastIndex = match.Index + match.Length;
             }
-            block.Inlines.Add(new Run { Text = args.NewText.Substring(lastIndex) });
+            var lastnonlink = args.NewText.Substring(lastIndex);
+            foreach (var inline in Cursive(lastnonlink)) {
+                block.Inlines.Add(inline);
+            }
             RootBlock.Blocks.Add(block);
         }
 
+        protected virtual IEnumerable<Inline> Cursive(string input) {
+            var matches = Helpers.CursiveRegex.Matches(input);
+            var lastIndex = 0;
+
+            foreach (Match match in matches) {
+                yield return new Run { Text = input.Substring(lastIndex, match.Index - lastIndex) };
+                yield return new Italic { Inlines = { new Run { Text = match.Value.Trim('/') } } };
+                lastIndex = match.Index + match.Length;
+            }
+
+            yield return new Run { Text = input.Substring(lastIndex) };
+        }
     }
 }

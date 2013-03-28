@@ -18,6 +18,7 @@ using Cloudsdale.Models;
 namespace Cloudsdale.Managers {
     public static class Helpers {
         public static readonly Regex LinkRegex = new Regex(@"(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'"".,<>?«»“”‘’]))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        public static readonly Regex CursiveRegex = new Regex(@"\/\b(.*?)\b\/", RegexOptions.Compiled);
 
         public static IEnumerable<DependencyObject> AllChildrenMatching(
             this DependencyObject root, Func<DependencyObject, bool> predicate) {
