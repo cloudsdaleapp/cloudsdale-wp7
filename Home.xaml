@@ -59,7 +59,7 @@
                             <TextBlock Margin="10,0,0,0" Foreground="#FF202020">
                                 <Run Text="{Binding Path=name}" />
                             </TextBlock>
-                            <Button Content="Logout" Foreground="#FF202020" BorderBrush="#FF202020" Margin="0"
+                            <Button Content="Logout" Margin="0"
                                 HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="20" Click="LogoutClick" />
                         </StackPanel>
                     </StackPanel>
@@ -82,10 +82,10 @@
                         <ItemsControl x:Name="searchResults" ItemTemplate="{StaticResource CloudsTemplate}" />
                     </ScrollViewer>
                     <Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Popular" 
-                            Foreground="Black" BorderBrush="Black" Width="175" Margin="50,-8" 
+                            Width="175" Margin="50,-8" 
                             Click="PopularClick" />
                     <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Recent" 
-                            Foreground="Black" BorderBrush="Black" Width="175" Margin="50,-8" 
+                            Width="175" Margin="50,-8" 
                             Click="RecentClick" />
                 </Grid>
             </controls:PivotItem>
@@ -100,8 +100,7 @@
                                 <toolkit:ListPickerItem>Busy</toolkit:ListPickerItem>
                                 <toolkit:ListPickerItem>Appear Offline</toolkit:ListPickerItem>
                             </toolkit:ListPicker>
-                            <Button Foreground="#3a3a3a" BorderBrush="#3a3a3a"
-                                    Click="ChangeAvatarClick">Change Avatar</Button>
+                            <Button Click="ChangeAvatarClick">Change Avatar</Button>
                             <TextBlock>Name</TextBlock>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -110,8 +109,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBox Name="Username" Text="{Binding Path=name, Mode=OneWay}"
                                          InputScope="PersonalFullName"/>
-                                <Button Click="ChangeNameClick" Grid.Column="1" Foreground="#3a3a3a"
-                                        BorderBrush="#3a3a3a" Name="UsernameBtn">Change</Button>
+                                <Button Click="ChangeNameClick" Grid.Column="1" Name="UsernameBtn">Change</Button>
                             </Grid>
                             <TextBlock>Email</TextBlock>
                             <Grid>
@@ -121,8 +119,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBox Name="Email" Text="{Binding Path=email, Mode=OneWay}"
                                          InputScope="EmailNameOrAddress"/>
-                                <Button Click="ChangeEmailClick" Grid.Column="1" Foreground="#3a3a3a"
-                                        BorderBrush="#3a3a3a" Name="EmailBtn">Change</Button>
+                                <Button Click="ChangeEmailClick" Grid.Column="1" Name="EmailBtn">Change</Button>
                             </Grid>
                             <TextBlock>Skype Name</TextBlock>
                             <Grid>
@@ -132,8 +129,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBox Name="Skype" Text="{Binding Path=skype_name, Mode=OneWay}"
                                          InputScope="EmailNameOrAddress"/>
-                                <Button Click="ChangeSkypeClick" Grid.Column="1" Foreground="#3a3a3a"
-                                        BorderBrush="#3a3a3a" Name="SkypeBtn">Change</Button>
+                                <Button Click="ChangeSkypeClick" Grid.Column="1" Name="SkypeBtn">Change</Button>
                             </Grid>
                             <TextBlock>Password</TextBlock>
                             <Grid>
@@ -142,8 +138,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <PasswordBox Name="NewPassword"/>
-                                <Button Click="ChangePasswordClick" Grid.Column="1" Foreground="#3a3a3a"
-                                        BorderBrush="#3a3a3a" Name="NewPasswordBtn">Change</Button>
+                                <Button Click="ChangePasswordClick" Grid.Column="1" Name="NewPasswordBtn">Change</Button>
                             </Grid>
                             <CheckBox x:Name="allowaltcodes" Content="Enable alt code entry" 
                                       Checked="AllowaltcodesChecked" Foreground="#3a3a3a"

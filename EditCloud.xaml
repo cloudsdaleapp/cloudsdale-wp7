@@ -30,7 +30,7 @@
             <StackPanel Margin="10,0">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100" />
-                    <Button BorderBrush="#404040" Foreground="#404040" Click="ChangeAvatarClick">Change Avatar</Button>
+                    <Button Click="ChangeAvatarClick">Change Avatar</Button>
                 </StackPanel>
                 <TextBlock FontSize="32" DoubleTap="NameTap">Title</TextBlock>
                 <Grid Margin="0,5,0,10">

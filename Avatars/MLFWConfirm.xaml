@@ -26,10 +26,8 @@
             <TextBlock FontSize="36" HorizontalAlignment="Center">Use this avatar?</TextBlock>
             <Image Width="200" Height="200" Source="{Binding Path=Preview}" Stretch="Fill" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Foreground="#3a3a3a" BorderBrush="#3a3a3a" Name="YesBtn"
-                        HorizontalAlignment="Center" Click="YesClick">Yes</Button>
-                <Button Foreground="#3a3a3a" BorderBrush="#3a3a3a" Name="NoBtn"
-                        HorizontalAlignment="Center" Click="NoClick">No</Button>
+                <Button Name="YesBtn" HorizontalAlignment="Center" Click="YesClick">Yes</Button>
+                <Button Name="NoBtn" HorizontalAlignment="Center" Click="NoClick">No</Button>
             </StackPanel>
         </StackPanel>
     </Grid>

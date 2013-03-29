@@ -191,7 +191,7 @@
             </controls:PivotItem>
         </controls:Pivot>
         <Popup Name="userpopup" HorizontalAlignment="Center" VerticalAlignment="Center" Width="800" Height="800">
-            <Border Background="#A0000000" MouseLeftButtonUp="UserPopupMouseUp">
+            <Border Background="#A0000000" MouseLeftButtonUp="UserPopupMouseUp" MouseLeftButtonDown="UserPopupMouseDown">
                 <Grid Width="800" Height="800">
                     <Border BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" 
                             Background="#E0E0E0" BorderBrush="#888888" Name="UserPopupBorder">
@@ -232,24 +232,20 @@
                                                 Visibility="{Binding Path=CurrentUser.ModOfCurrent,
                                                                      Converter={StaticResource BoolToVis}}">
                                         <StackPanel Orientation="Horizontal" Name="ModToolsButtons">
-                                            <Button Foreground="#FF444444" BorderBrush="#FF444444"
-                                                    Click="BanBanBan">Ban</Button>
+                                            <Button Click="BanBanBan">Ban</Button>
                                             <Button Visibility="{Binding Path=CurrentUser.OwnerOfCurrent, 
                                                                          Converter={StaticResource BoolToVis}}"
                                                     Name="PromoteDemote" Click="PromoteDemoteClick"
-                                                    Foreground="#FF444444" BorderBrush="#FF444444"
                                                     Content="{Binding Path=ModOfCurrent, Converter={StaticResource POD}}"/>
                                         </StackPanel>
                                         <StackPanel Name="BanTools" Visibility="Collapsed">
-                                            <Button Foreground="#FF444444" BorderBrush="#FF444444"
-                                                DataContext="{Binding}" Click="DontBanBanBan">Cancel</Button>
+                                            <Button DataContext="{Binding}" Click="DontBanBanBan">Cancel</Button>
                                             <TextBlock>Reason</TextBlock>
                                             <TextBox Name="BanReason" />
                                             <TextBlock>Ban Until</TextBlock>
                                             <toolkit:TimePicker Name="BanTime" />
                                             <toolkit:DatePicker Name="BanDate" />
-                                            <Button Foreground="#FF444444" BorderBrush="#FF444444"
-                                                    Click="DoTheBanBanBan">Ban</Button>
+                                            <Button Click="DoTheBanBanBan">Ban</Button>
                                         </StackPanel>
                                     </StackPanel>
                                 </StackPanel>

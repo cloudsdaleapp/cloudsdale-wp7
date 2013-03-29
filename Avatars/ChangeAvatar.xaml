@@ -29,8 +29,8 @@
                        Width="200" Height="200"/>
                 <toolkit:PerformanceProgressBar Name="LoadingBar" Foreground="CornflowerBlue" />
             </Grid>
-            <Button Foreground="#3a3a3a" BorderBrush="#3a3a3a" Click="ChooseFromPhoneClick">Select from phone</Button>
-            <Button Foreground="#3a3a3a" BorderBrush="#3a3a3a" Click="MlfwClick">Search My Little Face When</Button>
+            <Button Click="ChooseFromPhoneClick">Select from phone</Button>
+            <Button Click="MlfwClick">Search My Little Face When</Button>
         </StackPanel>
     </Grid>
 

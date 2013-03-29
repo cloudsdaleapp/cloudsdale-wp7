@@ -133,6 +133,7 @@
     <Compile Include="Controls\CountDisplay.xaml.cs">
       <DependentUpon>CountDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Effects\EffectProcessing.cs" />
     <Compile Include="Controls\LinkDetectingTextBlock.xaml.cs">
       <DependentUpon>LinkDetectingTextBlock.xaml</DependentUpon>
     </Compile>

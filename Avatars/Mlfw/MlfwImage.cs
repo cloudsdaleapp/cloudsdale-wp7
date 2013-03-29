@@ -64,6 +64,7 @@ namespace Cloudsdale.Avatars.Mlfw {
 
         public Uri Preview {
             get {
+                if (!Image.EndsWith(".gif")) return ImageUri;
                 if (Thumbnails.Png != null) return Thumbnails.PngUri;
                 if (Thumbnails.Jpg != null) return Thumbnails.JpgUri;
                 if (Resizes.Large != null) return Resizes.LargeUri;

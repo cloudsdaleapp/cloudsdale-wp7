@@ -45,7 +45,7 @@ namespace Cloudsdale.Avatars {
         private void PhotoChosen(object sender, PhotoResult photoResult) {
             if (photoResult.TaskResult != TaskResult.OK) return;
 
-            target.UploadAvatar(photoResult.ChosenPhoto, UpdatedAvatar);
+            target.UploadAvatar(photoResult.ChosenPhoto, "image/png", UpdatedAvatar);
             Avatar.Source = null;
             LoadingBar.IsIndeterminate = true;
         }

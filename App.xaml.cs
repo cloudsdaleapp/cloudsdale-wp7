@@ -39,7 +39,7 @@ namespace Cloudsdale {
             // Show graphics profiling information while debugging.
 #if DEBUG
             // Display the current frame rate counters.
-            Current.Host.Settings.EnableFrameRateCounter = true;
+            //Current.Host.Settings.EnableFrameRateCounter = true;
 
             // Show the areas of the app that are being redrawn in each frame.
             //Application.Current.Host.Settings.EnableRedrawRegions = true;

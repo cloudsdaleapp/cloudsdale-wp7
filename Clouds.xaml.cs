@@ -763,13 +763,23 @@ namespace Cloudsdale {
             }
         }
 
+        private bool userpopupLeaving;
         private void UserPopupMouseUp(object sender, MouseButtonEventArgs e) {
+            if (!userpopupLeaving) return;
+            userpopupLeaving = false;
             var points = e.StylusDevice.GetStylusPoints(UserPopupBorder);
             if (points.Any(point => point.X > 0 && point.X < 450 && point.Y > 0 && point.Y < 450)) {
                 return;
             }
             userpopup.IsOpen = false;
             inUserPopup = false;
+        }
+        private void UserPopupMouseDown(object sender, MouseButtonEventArgs e) {
+            var points = e.StylusDevice.GetStylusPoints(UserPopupBorder);
+            if (points.Any(point => point.X > 0 && point.X < 450 && point.Y > 0 && point.Y < 450)) {
+                return;
+            }
+            userpopupLeaving = true;
         }
     }
 }

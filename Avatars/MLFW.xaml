@@ -25,8 +25,8 @@
 
         <ScrollViewer Grid.Row="1">
             <StackPanel Margin="12">
-                <TextBlock>Order by</TextBlock>
-                <toolkit:ListPicker SelectionChanged="OrderByChanged">
+                <TextBlock Visibility="Collapsed">Order by</TextBlock>
+                <toolkit:ListPicker SelectionChanged="OrderByChanged" Visibility="Collapsed">
                     <toolkit:ListPickerItem>Default</toolkit:ListPickerItem>
                     <toolkit:ListPickerItem>Random</toolkit:ListPickerItem>
                     <toolkit:ListPickerItem>Views</toolkit:ListPickerItem>
@@ -41,7 +41,7 @@
                     <toolkit:ListPickerItem>Images with all of these tags</toolkit:ListPickerItem>
                     <toolkit:ListPickerItem>Images with any of these tag</toolkit:ListPickerItem>
                 </toolkit:ListPicker>
-                <Button Foreground="#3a3a3a" BorderBrush="#3a3a3a" Click="SearchClick">Search</Button>
+                <Button Click="SearchClick">Search</Button>
 
                 <ItemsControl Name="Results">
                     <ItemsControl.ItemTemplate>

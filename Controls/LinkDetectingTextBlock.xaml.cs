@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Cloudsdale.Controls.Effects;
 using Cloudsdale.Managers;
 
 namespace Cloudsdale.Controls {
@@ -18,12 +19,16 @@ namespace Cloudsdale.Controls {
         public string LinkValue { get; internal set; }
     }
 
-
     public partial class LinkDetectingTextBlock {
         public LinkDetectingTextBlock() {
+            EffectHandlers = new List<EffectHandler> {
+                Hyperlink, Redacted, Cursive
+            };
             InitializeComponent();
             RootBlock.DataContext = this;
         }
+
+        public List<EffectHandler> EffectHandlers { get; set; }
 
         public static DependencyProperty LinkedTextProperty = DependencyProperty.
             Register("LinkedText", typeof(string), typeof(LinkDetectingTextBlock),
@@ -49,45 +54,79 @@ namespace Cloudsdale.Controls {
 
             if (LinkedTextChanged != null) LinkedTextChanged(this, args);
 
-            var matches = Helpers.LinkRegex.Matches(args.NewText);
-            var lastIndex = 0;
             RootBlock.Blocks.Clear();
             var block = new Paragraph { FontSize = FontSize, FontFamily = FontFamily };
-            foreach (Match match in matches) {
-                var link = match.Value;
-                var nonlink = args.NewText.Substring(lastIndex, match.Index - lastIndex);
-                foreach (var inline in Cursive(nonlink)) {
-                    block.Inlines.Add(inline);
+
+            var groups = new List<TextGroup> { new TextGroup { Text = args.NewText } };
+
+            foreach (var processor in EffectHandlers) {
+                var nextList = new List<TextGroup>();
+                foreach (var item in groups) {
+                    if (item.Inline != null) {
+                        nextList.Add(item);
+                    } else {
+                        nextList.AddRange(processor(item.Text));
+                    }
                 }
-                var hyperlink = new Hyperlink {
-                    Inlines = { new Run { Text = link } },
-                    Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x88, 0xCC)),
-                    MouseOverForeground = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x66, 0x99)),
-                };
-                hyperlink.Click += (sender, eventArgs) => {
-                    if (LinkClicked != null) LinkClicked(this, new LinkClickedEventArgs { LinkValue = link });
-                };
-                block.Inlines.Add(hyperlink);
-                lastIndex = match.Index + match.Length;
+                groups = nextList;
             }
-            var lastnonlink = args.NewText.Substring(lastIndex);
-            foreach (var inline in Cursive(lastnonlink)) {
-                block.Inlines.Add(inline);
+            foreach (var item in groups) {
+                block.Inlines.Add(item.Inline ?? new Run { Text = item.Text });
             }
+
             RootBlock.Blocks.Add(block);
         }
 
-        protected virtual IEnumerable<Inline> Cursive(string input) {
+        IEnumerable<TextGroup> Hyperlink(string input) {
+            var matches = Helpers.LinkRegex.Matches(input);
+            var lastIndex = 0;
+
+            foreach (Match match in matches) {
+                yield return new TextGroup { Text = input.Substring(lastIndex, match.Index - lastIndex) };
+                var link = match.Value;
+                var hyperlink = new Hyperlink {
+                    Inlines = { new Run { Text = link } },
+                    Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x88, 0xcc)),
+                    TextDecorations = null,
+                    MouseOverForeground = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x55, 0x80)),
+                };
+                hyperlink.Click += (sender, args) => LinkClicked(this, new LinkClickedEventArgs { LinkValue = link });
+                yield return new TextGroup { Inline = hyperlink };
+                lastIndex = match.Index + match.Length;
+            }
+
+            yield return new TextGroup { Text = input.Substring(lastIndex) };
+        }
+
+        static IEnumerable<TextGroup> Cursive(string input) {
             var matches = Helpers.CursiveRegex.Matches(input);
             var lastIndex = 0;
 
             foreach (Match match in matches) {
-                yield return new Run { Text = input.Substring(lastIndex, match.Index - lastIndex) };
-                yield return new Italic { Inlines = { new Run { Text = match.Value.Trim('/') } } };
+                yield return new TextGroup { Text = input.Substring(lastIndex, match.Index - lastIndex) };
+                yield return new TextGroup { Inline = new Italic { Inlines = { new Run { Text = match.Value.Trim('/') } } } };
                 lastIndex = match.Index + match.Length;
             }
 
-            yield return new Run { Text = input.Substring(lastIndex) };
+            yield return new TextGroup { Text = input.Substring(lastIndex) };
+        }
+
+        static IEnumerable<TextGroup> Redacted(string input) {
+            var matches = Helpers.RedactedRegex.Matches(input);
+            var lastIndex = 0;
+
+            foreach (Match match in matches) {
+                yield return new TextGroup { Text = input.Substring(lastIndex, match.Index - lastIndex) };
+                yield return new TextGroup {
+                    Inline = new Bold {
+                        Inlines = { new Run { Text = "[REDACTED]" } },
+                        Foreground = new SolidColorBrush(Colors.Red),
+                    }
+                };
+                lastIndex = match.Index + match.Length;
+            }
+
+            yield return new TextGroup { Text = input.Substring(lastIndex) };
         }
     }
 }

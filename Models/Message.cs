@@ -67,15 +67,15 @@ namespace Cloudsdale.Models {
                         var inserted = false;
                         message = subs[0].content;
                         for (var i = 1; i < subs.Count; ++i) {
-                            message += '\n' + subs[i].content;
-                            if (!inserted && timestamp > subs[i].timestamp) {
+                            if (!inserted && timestamp < subs[i].timestamp) {
                                 message += '\n' + content;
                                 inserted = true;
                             }
+                            message += '\n' + subs[i].content;
                         }
                     }
                     message = Settings.StringParser.ParseLiteral(message);
-                    var split = message.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                    var split = message.Replace("\r\n", "\n").Split(new[] { '\n', '\r' });
                     var lines = new ChatLine[split.Length];
                     for (var i = 0; i < split.Length; ++i) {
                         if (string.IsNullOrWhiteSpace(split[i])) split[i] = " ";

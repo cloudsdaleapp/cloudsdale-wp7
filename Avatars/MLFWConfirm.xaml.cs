@@ -16,8 +16,8 @@ namespace Cloudsdale.Avatars {
         private void YesClick(object sender, RoutedEventArgs e) {
             YesBtn.IsEnabled = false;
             NoBtn.IsEnabled = false;
-            LoadImage(picStream => {
-                ChangeAvatar.target.UploadAvatar(picStream, ChangeAvatar.UpdatedAvatar);
+            LoadImage((picStream, mimeType) => {
+                ChangeAvatar.target.UploadAvatar(picStream, mimeType, ChangeAvatar.UpdatedAvatar);
                 Dispatcher.BeginInvoke(() => {
                     NavigationService.RemoveBackEntry();
                     NavigationService.GoBack();
@@ -32,13 +32,13 @@ namespace Cloudsdale.Avatars {
             NavigationService.GoBack();
         }
 
-        private void LoadImage(Action<Stream> callback, Action failed) {
+        private void LoadImage(Action<Stream, string> callback, Action failed) {
             var request = WebRequest.CreateHttp(target.ImageUri);
             request.BeginGetResponse(ar => {
                 try {
                     using (var response = request.EndGetResponse(ar))
                     using (var responseStream = response.GetResponseStream()) {
-                        callback(responseStream);
+                        callback(responseStream, response.ContentType);
                     }
                 } catch {
                     Deployment.Current.Dispatcher.BeginInvoke(failed);

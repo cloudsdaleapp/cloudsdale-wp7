@@ -271,14 +271,14 @@ namespace Cloudsdale.Models {
             get { return string.IsNullOrWhiteSpace(description) ? "This cloud has no description" : description; }
         }
 
-        public void UploadAvatar(Stream pictureStream, Action<Uri> callback) {
+        public void UploadAvatar(Stream pictureStream, string mimeType, Action<Uri> callback) {
             var boundary = Guid.NewGuid().ToString();
             byte[] data;
             using (pictureStream)
             using (var ms = new MemoryStream()) {
                 ms.WriteLine("--" + boundary);
                 ms.WriteLine("Content-Disposition: form-data; name=\"cloud[avatar]\"; filename=\"GenericImage.png\"");
-                ms.WriteLine("Content-Type: image/png");
+                ms.WriteLine("Content-Type: " + mimeType);
                 ms.WriteLine();
                 pictureStream.CopyTo(ms);
                 ms.WriteLine();
