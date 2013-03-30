@@ -11,8 +11,9 @@
     Foreground="Black"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
-    shell:SystemTray.IsVisible="True" shell:SystemTray.Opacity="0" 
-    shell:SystemTray.ForegroundColor="White" shell:SystemTray.BackgroundColor="Black">
+    shell:SystemTray.IsVisible="True"  
+    shell:SystemTray.ForegroundColor="White" 
+    shell:SystemTray.BackgroundColor="#FF1A91DB">
 
     <Grid x:Name="LayoutRoot">
         <Grid.Background>

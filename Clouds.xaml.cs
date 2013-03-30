@@ -565,7 +565,7 @@ namespace Cloudsdale {
                 var result = response["result"];
                 message.id = (string)result["id"];
                 message.drops = result["drops"].Select(jdrop => jdrop.ToObject<Drop>()).ToArray();
-                message.content = (string)result["content"];
+                //message.content = (string)result["content"];
 
                 cmessages.cache.Trigger(controller.IndexOf(message));
             });
