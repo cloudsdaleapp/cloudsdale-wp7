@@ -229,7 +229,7 @@ namespace Cloudsdale.Models {
         }
 
         public void CopyFrom(Cloud cloud) {
-            if (cloud.Moderators != null) {
+            if (cloud.Moderators != null && cloud.Moderators.Length > 0) {
                 Moderators = cloud.Moderators;
                 OnPropertyChanged("IsModerator");
                 OnPropertyChanged("FullMods");
