@@ -176,8 +176,7 @@
                                 </Grid>
                             </Grid>
                             <ItemsControl x:Name="MediaList" Margin="12,0,12,0" ItemTemplate="{StaticResource DropsTemplate}" />
-                            <Button Width="200" Foreground="Black" BorderBrush="Black"
-                                    Click="MoreDropsClick" Name="MoreDrops">Load More</Button>
+                            <Button Width="200" Click="MoreDropsClick" Name="MoreDrops">Load More</Button>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
