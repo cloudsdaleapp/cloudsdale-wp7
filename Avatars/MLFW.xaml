@@ -13,8 +13,7 @@
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
     shell:SystemTray.IsVisible="True"
-     shell:SystemTray.ForegroundColor="White" 
-    shell:SystemTray.BackgroundColor="#FF1A91DB">
+    shell:SystemTray.Opacity="0">
 
     <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackground}">
         <Grid.RowDefinitions>
