@@ -41,6 +41,12 @@
             </DataTemplate>
             <DataTemplate x:Name="ChatsTemplate">
                 <Grid Margin="0,3,0,5" DataContext="{Binding}">
+                    <toolkit:ContextMenuService.ContextMenu>
+                        <toolkit:ContextMenu>
+                            <toolkit:MenuItem Header="Copy" Click="CopyClick" />
+                            <toolkit:MenuItem Header="Screenshot" Click="ScreenshotClick" />
+                        </toolkit:ContextMenu>
+                    </toolkit:ContextMenuService.ContextMenu>
                     <StackPanel Width="50" HorizontalAlignment="Left" VerticalAlignment="Top">
                         <Border BorderBrush="#FF444444" Height="50" BorderThickness="1" Margin="0,0,0,2">
                             <Image Source="{Binding Path=user.avatar.Preview}"
@@ -151,10 +157,6 @@
                                      DoubleTap="SendBoxDoubleTap" Tap="SendBoxTap" BorderBrush="#888888"
                                      TextWrapping="Wrap" AcceptsReturn="True" SizeChanged="SendBoxSizeChanged"
                                      MaxHeight="200"/>
-                            <!--<Button Grid.Column="1" Click="SendTextClick" Margin="-5,0,10,10"
-                                    Padding="-10" BorderBrush="Transparent" VerticalAlignment="Bottom">
-                                <Image Source="/Images/Icons/send.png" />
-                            </Button>-->
                         </Grid>
                     </Grid>
                 </Grid>
@@ -163,6 +165,7 @@
                 <Grid Margin="-12,-26,-12,0">
                     <ScrollViewer>
                         <StackPanel>
+                            <Image Name="TestImg" />
                             <Grid Margin="0,0,0,-25" Height="100">
                                 <Grid Height="75" VerticalAlignment="Top" Margin="12,0,12,0">
                                     <TextBox Margin="0,0,75,0" Name="SearchBar" BorderBrush="#888888"/>
@@ -305,7 +308,7 @@
                                         </StackPanel>
                                     </StackPanel>
                                     <TextBlock FontSize="20">Sharing link</TextBlock>
-                                    <TextBox Text="{Binding Path=Link}" TextChanged="TextBox_TextChanged" Tap="TextBox_Tap" />
+                                    <TextBox Text="{Binding Path=Link}" TextChanged="CloudLinkTextChanged" Tap="CloudLinkTap" />
                                     <TextBlock FontSize="20" Visibility="{Binding Path=ShowRules}">Rules</TextBlock>
                                     <Border CornerRadius="10" Background="#D0D0D0" Margin="5,0"
                                             Visibility="{Binding Path=ShowRules}">

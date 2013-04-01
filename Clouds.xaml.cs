@@ -22,6 +22,7 @@ using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
@@ -778,16 +779,49 @@ namespace Cloudsdale {
             userpopupLeaving = true;
         }
 
-        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {
-            var tb = (TextBox) sender;
-            tb.Text = ((Cloud) tb.DataContext).Link;
+        private void CloudLinkTextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {
+            var tb = (TextBox)sender;
+            tb.Text = ((Cloud)tb.DataContext).Link;
             tb.SelectAll();
         }
 
-        private void TextBox_Tap(object sender, GestureEventArgs e) {
+        private void CloudLinkTap(object sender, GestureEventArgs e) {
             var tb = (TextBox)sender;
             tb.SelectAll();
             tb.Focus();
+        }
+
+        private void ScreenshotClick(object sender, RoutedEventArgs e) {
+            var menuItem = (MenuItem)sender;
+            var menu = (ContextMenu)menuItem.Parent;
+            var grid = (Grid)menu.Owner;
+
+            grid.Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xF0, 0xF0, 0xF0));
+
+            var screenshot = new WriteableBitmap(grid, null);
+            var screenshotname = String.Format("CloudsdaleScreenshot_{0}", DateTime.Now.Ticks);
+
+            using (var ms = new MemoryStream()) {
+                screenshot.SaveJpeg(ms, screenshot.PixelWidth, screenshot.PixelHeight, 0, 100);
+                ms.Seek(0, SeekOrigin.Begin);
+
+                var library = new MediaLibrary();
+                library.SavePicture(screenshotname, ms);
+            }
+
+            grid.Background = null;
+
+            MessageBox.Show("Picture saved as " + screenshotname);
+        }
+
+        private void CopyClick(object sender, RoutedEventArgs e) {
+            var menuItem = (MenuItem)sender;
+            var menu = (ContextMenu)menuItem.Parent;
+            var grid = (Grid)menu.Owner;
+            var msg = (Message)grid.DataContext;
+            Clipboard.SetText(msg.Split.Aggregate(new StringBuilder()
+                .Append(msg.user.name).Append(" @ ").AppendLine(msg.CorrectedTimestamp),
+                (builder, line) => builder.AppendLine(line.Text)).ToString());
         }
     }
 }
