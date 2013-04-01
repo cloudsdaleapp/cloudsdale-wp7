@@ -15,6 +15,11 @@
             <Controls:StatusColorConverter x:Key="SCC" />
             <Managers:ArrayHasAnyVis x:Key="AHAV" />
             <Managers:PromoOrDemo x:Key="POD" />
+            
+            <Style TargetType="Controls:LinkDetectingTextBlock" x:Key="ChatStyle">
+                <Setter Property="FontFamily" Value="Verdana" />
+                <Setter Property="FontSize" Value="10" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 

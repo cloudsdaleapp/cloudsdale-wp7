@@ -7,10 +7,12 @@ using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Cloudsdale.Avatars;
 using Cloudsdale.Controls;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
+using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
 using Newtonsoft.Json.Linq;
 using Res = Cloudsdale.Resources;
@@ -19,6 +21,12 @@ namespace Cloudsdale {
     public partial class Home {
         public static bool comingfromhome = false;
         public static bool comingfromlogin = true;
+
+        private bool initializedFont;
+        public static readonly string[] Fonts = new[] {
+            "Arial", "Calibri", "Comic Sans MS", "Courier New", "Georgia", "Lucida Sans Unicode",
+            "Segoe WP", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"
+        };
 
         public static readonly ObservableCollection<Cloud> ExploreClouds = new ObservableCollection<Cloud>();
 
@@ -58,6 +66,13 @@ namespace Cloudsdale {
             }
 
             SettingsPanel.DataContext = CurrentUser;
+
+            FontPicker.SetValue(ListPicker.ItemCountThresholdProperty, 12);
+            foreach (var font in Fonts) {
+                FontPicker.Items.Add(new ListPickerItem { Content = font });
+            }
+            FontPicker.SelectedIndex = Array.IndexOf(Fonts, ((App)Application.Current).ChatFont.Source);
+            initializedFont = true;
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
@@ -229,6 +244,15 @@ namespace Cloudsdale {
         #endregion
 
         #region Settings codez
+        private void FontPickerSelectionChanged(object sender, SelectionChangedEventArgs e) {
+            if (!initializedFont) return;
+            var font = new FontFamily(Fonts[FontPicker.SelectedIndex]);
+            ((App)Application.Current).ChatFont = font;
+            var settings = IsolatedStorageSettings.ApplicationSettings;
+            settings["chatfont"] = font.Source;
+            settings.Save();
+        }
+
         private void ChangeUsernameAccess(bool enabled) {
             Username.IsEnabled = enabled;
             UsernameBtn.IsEnabled = enabled;
@@ -290,8 +314,8 @@ namespace Cloudsdale {
                 if (data["flash"] != null) {
                     var message = data["flash"]["message"].ToString();
                     message = data["errors"].Aggregate(message, (current, error) => current +
-                        ("\n - " + error["ref_node"].ToString().UppercaseFirst() 
-                        + (string.IsNullOrWhiteSpace("" + data["result"][error["ref_node"].ToString()]) ? ": " 
+                        ("\n - " + error["ref_node"].ToString().UppercaseFirst()
+                        + (string.IsNullOrWhiteSpace("" + data["result"][error["ref_node"].ToString()]) ? ": "
                         : " \"" + data["result"][error["ref_node"].ToString()] + "\" ") + error["message"]));
                     MessageBox.Show(message, data["flash"]["title"].ToString(),
                                     MessageBoxButton.OK);

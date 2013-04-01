@@ -93,6 +93,8 @@
                 <Grid>
                     <ScrollViewer Foreground="#3a3a3a">
                         <StackPanel Name="SettingsPanel">
+                            <TextBlock>Font</TextBlock>
+                            <toolkit:ListPicker Name="FontPicker" SelectionChanged="FontPickerSelectionChanged" />
                             <TextBlock>Status</TextBlock>
                             <toolkit:ListPicker Name="StatusBox" SelectionChanged="StatusSelectionChanged">
                                 <toolkit:ListPickerItem>Online</toolkit:ListPickerItem>

@@ -2,10 +2,14 @@
 #if DEBUG
 using System.Diagnostics;
 #endif
+using System.IO.IsolatedStorage;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Navigation;
 using BugSense;
+using Cloudsdale.Controls;
 using Cloudsdale.Managers;
 using Cloudsdale.Settings;
 using Microsoft.Phone.Controls;
@@ -34,6 +38,24 @@ namespace Cloudsdale {
             // Phone-specific initialization
             InitializePhoneApplication();
 
+            var psettings = IsolatedStorageSettings.ApplicationSettings;
+            FontFamily font;
+            try {
+                if (psettings.Contains("chatfont")) {
+                    font = new FontFamily((string)psettings["chatfont"]);
+                } else {
+                    font = new FontFamily("Verdana");
+                    psettings["chatfont"] = "Verdana";
+                    psettings.Save();
+                }
+            } catch {
+                font = new FontFamily("Verdana");
+                psettings["chatfont"] = "Verdana";
+                psettings.Save();
+            }
+
+            ChatFont = font;
+
             this.ForceDarkTheme();
 
             // Show graphics profiling information while debugging.
@@ -56,6 +78,22 @@ namespace Cloudsdale {
 
 #endif
 
+        }
+
+        public FontFamily ChatFont {
+            get {
+                var style = (Style)Resources["ChatStyle"];
+                return (FontFamily)((Setter)style.Setters[0]).Value;
+            }
+            set {
+                var style = (Style)Resources["ChatStyle"];
+                var setter = (Setter)style.Setters[0];
+                if (setter.IsSealed) {
+                    style.Setters[0] = new Setter(Control.FontFamilyProperty, value);
+                } else {
+                    setter.Value = value;
+                }
+            }
         }
 
         // Code to execute when the application is launching (eg, from Start)

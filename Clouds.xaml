@@ -8,7 +8,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
-    xmlns:my="clr-namespace:Cloudsdale.Controls" xmlns:Models="clr-namespace:Cloudsdale.Models" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="696"
+    xmlns:my="clr-namespace:Cloudsdale.Controls" xmlns:Models="clr-namespace:Cloudsdale.Models" mc:Ignorable="d" 
+    d:DesignWidth="480" d:DesignHeight="696"
     FontFamily="Segoe WP Bold"
     FontSize="28"
     Foreground="Black"
@@ -83,8 +84,8 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <my:LinkDetectingTextBlock DataContext="{Binding}" LinkedText="{Binding Path=Text}" 
-                                           Foreground="{Binding Path=Color}" FontSize="16" 
-                                           FontFamily="Verdana" LinkClicked="ChatLinkClicked" />
+                                                               Foreground="{Binding Path=Color}" FontSize="18" 
+                                                               LinkClicked="ChatLinkClicked" Style="{StaticResource ChatStyle}"/>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
