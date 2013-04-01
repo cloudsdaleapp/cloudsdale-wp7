@@ -419,10 +419,6 @@ namespace Cloudsdale {
             BanTools.Visibility = Visibility.Visible;
         }
 
-        private void UserCloudClick(object sender, RoutedEventArgs e) {
-            NavigateCloud((Cloud)((FrameworkElement)sender).DataContext);
-        }
-
         private void NavigateCloud(Cloud cloud) {
             Dispatcher.BeginInvoke(() => {
                 Controller.Messages.CollectionChanged -= ScrollDown;
