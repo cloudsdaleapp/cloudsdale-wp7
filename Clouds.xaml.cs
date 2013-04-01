@@ -781,5 +781,17 @@ namespace Cloudsdale {
             }
             userpopupLeaving = true;
         }
+
+        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {
+            var tb = (TextBox) sender;
+            tb.Text = ((Cloud) tb.DataContext).Link;
+            tb.SelectAll();
+        }
+
+        private void TextBox_Tap(object sender, GestureEventArgs e) {
+            var tb = (TextBox)sender;
+            tb.SelectAll();
+            tb.Focus();
+        }
     }
 }

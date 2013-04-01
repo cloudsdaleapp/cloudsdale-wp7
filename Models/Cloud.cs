@@ -41,6 +41,9 @@ namespace Cloudsdale.Models {
         }
 
         [JsonProperty]
+        public string short_name;
+
+        [JsonProperty]
         public DateTime? created_at;
         [JsonProperty]
         public string rules {
@@ -100,6 +103,10 @@ namespace Cloudsdale.Models {
 
         public bool IsModerator {
             get { return IsOwner || Moderators.Any(mid => mid == Connection.CurrentCloudsdaleUser.id); }
+        }
+
+        public string Link {
+            get { return "http://www.cloudsdale.org/clouds/" + (short_name ?? id); }
         }
 
         public void AddModerator(string mid) {

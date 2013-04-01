@@ -8,8 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
-    xmlns:my="clr-namespace:Cloudsdale.Controls"
-    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="696"
+    xmlns:my="clr-namespace:Cloudsdale.Controls" xmlns:Models="clr-namespace:Cloudsdale.Models" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="696"
     FontFamily="Segoe WP Bold"
     FontSize="28"
     Foreground="Black"
@@ -255,7 +254,7 @@
             </Border>
         </Popup>
         <Canvas Height="800" Width="800" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Popup Name="CloudInfoPopup" Margin="160" Canvas.Top="-800">
+            <Popup Name="CloudInfoPopup" Margin="160" Canvas.Top="-800" d:DataContext="{d:DesignInstance Type=Models:Cloud}">
                 <Popup.Resources>
                     <Storyboard x:Name="CloudInfoDown">
                         <DoubleAnimation Storyboard.TargetName="CloudInfoPopup" 
@@ -305,6 +304,8 @@
                                             </Border>
                                         </StackPanel>
                                     </StackPanel>
+                                    <TextBlock FontSize="20">Sharing link</TextBlock>
+                                    <TextBox Text="{Binding Path=Link}" TextChanged="TextBox_TextChanged" Tap="TextBox_Tap" />
                                     <TextBlock FontSize="20" Visibility="{Binding Path=ShowRules}">Rules</TextBlock>
                                     <Border CornerRadius="10" Background="#D0D0D0" Margin="5,0"
                                             Visibility="{Binding Path=ShowRules}">
