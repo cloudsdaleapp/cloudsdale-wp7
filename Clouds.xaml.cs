@@ -309,7 +309,7 @@ namespace Cloudsdale {
                 }
                 _searching = true;
                 MoreDrops.IsEnabled = false;
-                SearchButtonImage.Source = new BitmapImage(new Uri("/Images/Icons/back_white.png", UriKind.Relative));
+                SearchButtonImage.Source = new BitmapImage(new Uri("/Images/Icons/back.png", UriKind.Relative));
                 MoreDrops.Content = "Searching...";
                 var searchList = new ObservableCollection<Drop>();
                 MediaList.ItemsSource = searchList;
