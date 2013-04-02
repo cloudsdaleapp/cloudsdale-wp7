@@ -733,11 +733,18 @@ namespace Cloudsdale {
         }
 
         private void ChatLinkClicked(object sender, LinkClickedEventArgs eargs) {
+            Uri linkuri;
+            try {
+                linkuri = new Uri(eargs.LinkValue);
+            } catch {
+                return;
+            }
+
             var drop = new Drop {
                 id = Guid.NewGuid().ToString(),
                 preview = new Uri("http://assets.cloudsdale.org/assets/fallback/preview_thumb_drop.png"),
                 title = eargs.LinkValue,
-                url = new Uri(eargs.LinkValue),
+                url = linkuri,
             };
 
             if (CloudsdaleUrl.IsMatch(drop.url.ToString())) {
