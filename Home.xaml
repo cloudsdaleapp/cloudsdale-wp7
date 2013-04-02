@@ -93,6 +93,7 @@
                 <Grid>
                     <ScrollViewer Foreground="#3a3a3a">
                         <StackPanel Name="SettingsPanel">
+                            <Button Click="AboutClick">About</Button>
                             <TextBlock>Font</TextBlock>
                             <toolkit:ListPicker Name="FontPicker" SelectionChanged="FontPickerSelectionChanged" />
                             <TextBlock>Status</TextBlock>

@@ -24,8 +24,8 @@ namespace Cloudsdale {
 
         private bool initializedFont;
         public static readonly string[] Fonts = new[] {
-            "Arial", "Calibri", "Comic Sans MS", "Courier New", "Georgia", "Lucida Sans Unicode",
-            "Segoe WP", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"
+            "Calibri", "Comic Sans MS", "Courier New",
+            "Segoe WP", "Tahoma", "Times New Roman", "Verdana"
         };
 
         public static readonly ObservableCollection<Cloud> ExploreClouds = new ObservableCollection<Cloud>();
@@ -69,10 +69,12 @@ namespace Cloudsdale {
 
             FontPicker.SetValue(ListPicker.ItemCountThresholdProperty, 12);
             foreach (var font in Fonts) {
-                FontPicker.Items.Add(new ListPickerItem { Content = font });
+                var fonttext = font == "Verdana" ? font + " (Recommended)" : font;
+                FontPicker.Items.Add(new ListPickerItem { Content = fonttext, FontFamily = new FontFamily(font)});
             }
-            FontPicker.SelectedIndex = Array.IndexOf(Fonts, ((App)Application.Current).ChatFont.Source);
             initializedFont = true;
+            var index = Array.IndexOf(Fonts, ((App)Application.Current).ChatFont.Source);
+            FontPicker.SelectedIndex = index < 0 ? 0 : index;
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
@@ -95,6 +97,10 @@ namespace Cloudsdale {
 
         public LoggedInUser CurrentUser {
             get { return Connection.CurrentCloudsdaleUser; }
+        }
+
+        private void AboutClick(object sender, RoutedEventArgs e) {
+            NavigationService.Navigate(new Uri("/Information/About.xaml", UriKind.Relative));
         }
         #endregion
 
@@ -326,5 +332,6 @@ namespace Cloudsdale {
             });
         }
         #endregion
+
     }
 }
