@@ -63,7 +63,7 @@
                         </Border>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="60,0,0,0">
-                        <TextBlock DataContext="{Binding Path=user}"
+                        <TextBlock DataContext="{Binding Path=user}" FontFamily="Verdana"
                                    FontSize="18" Foreground="{Binding Path=CloudColor}">
                             <Run Text="●" Foreground="{Binding Path=Status, Converter={StaticResource SCC}}" />
                             <Run Text="{Binding Path=name}" />

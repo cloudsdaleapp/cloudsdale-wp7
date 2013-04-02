@@ -196,6 +196,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Screenshot\UploadResult.xaml.cs">
+      <DependentUpon>UploadResult.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Screenshot\ViewShot.xaml.cs">
+      <DependentUpon>ViewShot.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\ForceTheme.cs" />
     <Compile Include="Settings\StringParser.cs" />
     <Page Include="Account\Register.xaml">
@@ -259,6 +265,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Information\TermsAndConditions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Screenshot\UploadResult.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Screenshot\ViewShot.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -341,9 +355,7 @@
       <Name>Wp7Faye</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Screenshot\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

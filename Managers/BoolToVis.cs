@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Cloudsdale.Models;
+using Newtonsoft.Json.Linq;
 
 namespace Cloudsdale.Managers {
     public class BoolToVis : IValueConverter {
@@ -51,6 +52,20 @@ namespace Cloudsdale.Managers {
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
             throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+
+    public class JUri : IValueConverter {
+        #region Implementation of IValueConverter
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+            return new Uri(value.ToString());
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+            return JToken.FromObject(value);
         }
 
         #endregion

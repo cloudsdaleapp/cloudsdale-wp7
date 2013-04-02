@@ -20,6 +20,7 @@ using System.Windows.Navigation;
 using Cloudsdale.Controls;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
+using Cloudsdale.Screenshot;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Microsoft.Xna.Framework.Media;
@@ -804,21 +805,10 @@ namespace Cloudsdale {
             var grid = (Grid)menu.Owner;
 
             grid.Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xF0, 0xF0, 0xF0));
-
             var screenshot = new WriteableBitmap(grid, null);
-            var screenshotname = String.Format("CloudsdaleScreenshot_{0}", DateTime.Now.Ticks);
-
-            using (var ms = new MemoryStream()) {
-                screenshot.SaveJpeg(ms, screenshot.PixelWidth, screenshot.PixelHeight, 0, 100);
-                ms.Seek(0, SeekOrigin.Begin);
-
-                var library = new MediaLibrary();
-                library.SavePicture(screenshotname, ms);
-            }
-
-            grid.Background = null;
-
-            MessageBox.Show("Picture saved as " + screenshotname);
+            ViewShot.Image = screenshot;
+            ViewShot.ScreenshotGrid = grid;
+            NavigationService.Navigate(new Uri("/Screenshot/ViewShot.xaml", UriKind.Relative));
         }
 
         private void CopyClick(object sender, RoutedEventArgs e) {
@@ -830,5 +820,6 @@ namespace Cloudsdale {
                 .Append(msg.user.name).Append(" @ ").AppendLine(msg.CorrectedTimestamp),
                 (builder, line) => builder.AppendLine(line.Text)).ToString());
         }
+
     }
 }
