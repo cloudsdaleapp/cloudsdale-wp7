@@ -113,7 +113,7 @@ namespace Cloudsdale.Models {
                            ? new SolidColorBrush(Color.FromArgb(0xFF, 0x80, 0x00, 0xFF))
                            : ModOfCurrent
                                  ? new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x66, 0xFF))
-                                 : new SolidColorBrush(Color.FromArgb(0xFF, 0x44, 0x44, 0x44));
+                                 : new SolidColorBrush(Color.FromArgb(0xFF, 0x5a, 0x5a, 0x5a));
             }
         }
 

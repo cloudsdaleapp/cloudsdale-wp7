@@ -62,12 +62,16 @@
                                        Foreground="White" FontSize="10" Name="Username" />
                         </Border>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="60,0,0,0">
-                        <TextBlock DataContext="{Binding Path=user}" FontFamily="Verdana"
-                                   FontSize="18" Foreground="{Binding Path=CloudColor}">
-                            <Run Text="●" Foreground="{Binding Path=Status, Converter={StaticResource SCC}}" />
-                            <Run Text="{Binding Path=name}" />
-                        </TextBlock>
+                    <StackPanel Margin="60,0,0,0" VerticalAlignment="Top">
+                        <RichTextBox DataContext="{Binding Path=user}" FontFamily="Segoe WP"
+                                   FontSize="18" Foreground="{Binding Path=CloudColor}" Margin="-10,0">
+                            <Paragraph>
+                                <Run Text="●" Foreground="{Binding Path=Status, Converter={StaticResource SCC}}" />
+                                <Bold>
+                                    <Run Text="{Binding Path=name}" />
+                                </Bold>
+                            </Paragraph>
+                        </RichTextBox>
                     </StackPanel>
                     <TextBlock DataContext="{Binding}"
                                HorizontalAlignment="Right"
@@ -75,7 +79,7 @@
                         <Run Text="{Binding Path=CorrectedTimestamp}" />
                         <Run Text="{Binding Path=DeviceStub}" FontSize="16" />
                     </TextBlock>
-                    <Grid Margin="60,20,0,0">
+                    <Grid Margin="60,24,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
