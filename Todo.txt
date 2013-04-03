@@ -1,7 +1,5 @@
 ﻿Todo list
-- Transitions
-- Background on user/cloud info closing dialog
-- Add about page with copyright info, etc.
+- Background on cloud info closing dialog
 
 Bugs
 - Swiping too quickly over drops hitting drop
