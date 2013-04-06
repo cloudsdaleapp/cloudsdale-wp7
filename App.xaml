@@ -12,6 +12,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="XamlResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Managers:BoolToVis x:Key="BTV" />
             <Controls:StatusColorConverter x:Key="SCC" />
             <Managers:ArrayHasAnyVis x:Key="AHAV" />
             <Managers:PromoOrDemo x:Key="POD" />

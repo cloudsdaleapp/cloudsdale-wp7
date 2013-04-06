@@ -202,6 +202,14 @@ namespace Cloudsdale {
         #region Clouds
         private void CloudClick(object sender, RoutedEventArgs e) {
             var cloud = (Cloud)((FrameworkElement)sender).DataContext;
+
+            if (cloud.IsBannedFrom) {
+                var ban = cloud.ApplicableBan;
+                MessageBox.Show("You have been banned from " + cloud.name + " for the reason \"" + ban.reason +
+                                "\" until " + ban.due, "You are banned!", MessageBoxButton.OK);
+                return;
+            }
+
             Connection.CurrentCloud = cloud;
             NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
         }
@@ -211,7 +219,16 @@ namespace Cloudsdale {
         }
 
         private void CloudClicked(object sender, CloudTileManager.CloudEventArgs args) {
-            Connection.CurrentCloud = args.Cloud;
+            var cloud = args.Cloud;
+
+            if (cloud.IsBannedFrom) {
+                var ban = cloud.ApplicableBan;
+                MessageBox.Show("You have been banned from " + cloud.name + " for the reason \"" + ban.reason +
+                                "\" until " + ban.due, "You are banned!", MessageBoxButton.OK);
+                return;
+            }
+
+            Connection.CurrentCloud = cloud;
             NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
         }
         #endregion

@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Threading;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
@@ -86,7 +83,7 @@ namespace Cloudsdale.Controls {
                 return;
             }
 
-            var tile = (HubTile)sender;
+            var tile = (DisablingHubTile)sender;
             var grid = (TiltGrid)tile.Parent;
             var content = tiles.First(presenter => presenter.DataContext == grid.DataContext);
 
@@ -105,7 +102,7 @@ namespace Cloudsdale.Controls {
                 return;
             }
 
-            var tile = (HubTile) sender;
+            var tile = (DisablingHubTile) sender;
             var grid = (TiltGrid) tile.Parent;
             var content = tiles.First(presenter => presenter.DataContext == grid.DataContext);
 
@@ -126,7 +123,7 @@ namespace Cloudsdale.Controls {
                 return;
             }
 
-            var tile = (HubTile)sender;
+            var tile = (DisablingHubTile)sender;
             var grid = (TiltGrid)tile.Parent;
             var content = tiles.First(presenter => presenter.DataContext == grid.DataContext);
 
@@ -193,7 +190,7 @@ namespace Cloudsdale.Controls {
         }
 
         private void GestureListenerTap(object sender, GestureEventArgs e) {
-            var tile = (HubTile) sender;
+            var tile = (DisablingHubTile) sender;
             var cloud = (Cloud) tile.DataContext;
             CloudClicked(this, new CloudEventArgs{Cloud = cloud});
         }

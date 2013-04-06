@@ -23,7 +23,6 @@ using Cloudsdale.Models;
 using Cloudsdale.Screenshot;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
@@ -37,7 +36,7 @@ namespace Cloudsdale {
         public static bool Wasoncloud;
         public DerpyHoovesMailCenter Controller { get; set; }
         public bool Leaving;
-        private bool inUserPopup = false;
+        private bool inUserPopup;
 
         public static readonly Regex CloudsdaleUrl = new Regex("http\\:\\/\\/(www\\.)?cloudsdale\\.org\\/clouds\\/([a-zA-Z0-9]+)",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);

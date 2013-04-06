@@ -53,6 +53,7 @@ namespace Cloudsdale.Managers {
             Connection.Faye.MessageRecieved += FayeMessageRecieved;
 
             Connection.Faye.Subscribe("/users/" + Connection.CurrentCloudsdaleUser.id + "/private");
+            Connection.Faye.Subscribe("/users/" + Connection.CurrentCloudsdaleUser.id + "/bans");
         }
 
         static void FayeMessageRecieved(JObject jobj) {
@@ -62,20 +63,35 @@ namespace Cloudsdale.Managers {
                 var chansplit = jobj["channel"].ToString().ToLower().Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                 if (chansplit.Length < 2) return;
                 if (!Cache.ContainsKey(chansplit[1])) return;
-                if (chansplit.Length == 2 || (chansplit.Length == 3 && chansplit[2] == "private")) {
-                    if (chansplit[0] == "clouds") {
-                        Deployment.Current.Dispatcher.BeginInvoke(
-                            () => PonyvilleDirectory.GetCloud(chansplit[1]).UpdateCloud(jobj));
-                    } else if (chansplit[0] == "users") {
-                        var user = jobj["data"].ToObject<User>();
-                        user.CopyTo(Connection.CurrentCloudsdaleUser);
-                        if ((Connection.CurrentCloudsdaleUser.suspended_until ?? new DateTime(0)) > DateTime.Now) {
-                            Deployment.Current.Dispatcher.BeginInvoke(() => {
-                                MessageBox.Show("You are banned until" + Connection.CurrentCloudsdaleUser.suspended_until +
-                                    "\n" + Connection.CurrentCloudsdaleUser.reason_for_suspension);
-                                throw new ApplicationTerminationException();
-                            });
-                        }
+                if (chansplit.Length == 2 || (chansplit.Length == 3 && chansplit[0] == "users")) {
+                    switch (chansplit[0]) {
+                        case "clouds":
+                            Deployment.Current.Dispatcher.BeginInvoke(
+                                () => PonyvilleDirectory.GetCloud(chansplit[1]).UpdateCloud(jobj));
+                            break;
+                        case "users":
+                            switch (chansplit[2]) {
+                                case "private":
+                                    var user = jobj["data"].ToObject<User>();
+                                    user.CopyTo(Connection.CurrentCloudsdaleUser);
+                                    if ((Connection.CurrentCloudsdaleUser.suspended_until ?? new DateTime(0)) > DateTime.Now) {
+                                        Deployment.Current.Dispatcher.BeginInvoke(() => {
+                                            MessageBox.Show("You are banned until" + Connection.CurrentCloudsdaleUser.suspended_until +
+                                                            "\n" + Connection.CurrentCloudsdaleUser.reason_for_suspension);
+                                            throw new ApplicationTerminationException();
+                                        });
+                                    }
+                                    break;
+                                case "bans":
+                                    var ban = jobj["data"].ToObject<Ban>();
+                                    var bans = Connection.CurrentCloudsdaleUser.bans.ToList();
+                                    var dupe = bans.FirstOrDefault(b => b.id == ban.id);
+                                    if (dupe != null) bans.Remove(dupe);
+                                    bans.Add(ban);
+                                    Connection.CurrentCloudsdaleUser.bans = bans.ToArray();
+                                    break;
+                            }
+                            break;
                     }
                 } else {
                     if (chansplit[0] != "clouds") return;

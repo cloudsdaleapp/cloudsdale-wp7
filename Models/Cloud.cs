@@ -109,6 +109,20 @@ namespace Cloudsdale.Models {
             get { return "http://www.cloudsdale.org/clouds/" + (short_name ?? id); }
         }
 
+        public bool IsBannedFrom {
+            get {
+                return Connection.CurrentCloudsdaleUser.bans.Where(ban => ban.jurisdiction_id == id)
+                    .Any(ban => (ban.is_active ?? false) && !(ban.revoke ?? false) && ban.due > DateTime.Now);
+            }
+        }
+
+        public Ban ApplicableBan {
+            get {
+                return Connection.CurrentCloudsdaleUser.bans.Where(ban => ban.jurisdiction_id == id)
+                    .FirstOrDefault(ban => (ban.is_active ?? false) && !(ban.revoke ?? false) && ban.due > DateTime.Now);
+            }
+        }
+
         public void AddModerator(string mid) {
             OnPropertyChanged("FullMods");
             var list = new List<string>(Moderators) { mid };
@@ -182,11 +196,11 @@ namespace Cloudsdale.Models {
 
         protected virtual void OnPropertyChanged(string propertyName) {
             if (Deployment.Current.Dispatcher.CheckAccess()) {
-                PropertyChangedEventHandler handler = PropertyChanged;
+                var handler = PropertyChanged;
                 if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
             } else {
                 Deployment.Current.Dispatcher.BeginInvoke(() => {
-                    PropertyChangedEventHandler handler = PropertyChanged;
+                    var handler = PropertyChanged;
                     if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
                 });
             }
@@ -315,6 +329,10 @@ namespace Cloudsdale.Models {
                     Deployment.Current.Dispatcher.BeginInvoke(() => callback(avatar.Normal));
                 }, null);
             }, null);
+        }
+
+        public void PropChanged(string property) {
+            OnPropertyChanged(property);
         }
 
         public Uri CurrentAvatar { get { return avatar.Normal; } }

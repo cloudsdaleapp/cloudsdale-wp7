@@ -134,6 +134,7 @@
     <Compile Include="Controls\CountDisplay.xaml.cs">
       <DependentUpon>CountDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DisablingHubTile.cs" />
     <Compile Include="Controls\Effects\EffectProcessing.cs" />
     <Compile Include="Controls\LinkDetectingTextBlock.xaml.cs">
       <DependentUpon>LinkDetectingTextBlock.xaml</DependentUpon>
@@ -170,6 +171,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Managers\AppleFarm.cs" />
+    <Compile Include="Managers\BanDiff.cs" />
     <Compile Include="Managers\BoolToVis.cs" />
     <Compile Include="Managers\GenericBinding.cs" />
     <Compile Include="Managers\DerpyHoovesMailCenter.cs" />

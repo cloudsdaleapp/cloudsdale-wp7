@@ -113,7 +113,7 @@
         <Setter Property="Foreground" Value="#FFFFFFFF"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="toolkit:HubTile">
+                <ControlTemplate TargetType="my:DisablingHubTile">
                     <StackPanel x:Name="Viewport" Height="173" Width="173">
                         <StackPanel.Resources>
                             <CubicEase x:Key="HubTileEaseOut" EasingMode="EaseOut"/>
@@ -252,7 +252,9 @@
                                 <TextBlock x:Name="NotificationBlock" Foreground="{TemplateBinding Foreground}" FontSize="24" FontFamily="{StaticResource PhoneFontFamilyNormal}" LineStackingStrategy="BlockLineHeight" LineHeight="32" Margin="8,8,0,6" Grid.Row="0" TextWrapping="NoWrap" Text="{TemplateBinding Notification}"/>
                                 <TextBlock x:Name="MessageBlock" Foreground="{TemplateBinding Foreground}" FontSize="20" FontFamily="{StaticResource PhoneFontFamilyNormal}" LineStackingStrategy="BlockLineHeight" LineHeight="23.333" Margin="10,10,10,6" Grid.Row="0" TextWrapping="Wrap" Text="{TemplateBinding Message}"/>
                             </Grid>
+                            <Border Grid.Row="0" Background="Red" Visibility="{Binding IsDisabled, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BTV}}" Width="173" Height="173" Opacity=".4" />
                             <Image x:Name="Image" Height="173" Grid.Row="1" Source="{TemplateBinding Source}" Stretch="Uniform" Width="173"/>
+                            <Border Grid.Row="1" Background="Red" Visibility="{Binding IsDisabled, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BTV}}" Width="173" Height="173" Opacity=".4" />
                         </Grid>
                     </StackPanel>
                 </ControlTemplate>

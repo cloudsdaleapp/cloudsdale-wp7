@@ -18,11 +18,11 @@
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate x:Name="ItemTemplate">
                 <my:TiltGrid my:TiltEffect.IsTiltEnabled="True">
-                    <toolkit:HubTile 
+                    <my:DisablingHubTile
                         Title="{Binding Path=name}"
                         Source="{Binding Path=avatar.Normal}"
                         Style="{StaticResource HubTileStyle0}"
-                        Background="#FF1A91DB">
+                        Background="#FF1A91DB" IsDisabled="{Binding Path=IsBannedFrom}">
                         <toolkit:GestureService.GestureListener>
                             <toolkit:GestureListener DragStarted="GestureListenerDragStarted"
                                                      DragDelta="GestureListenerDragDelta"
@@ -31,7 +31,7 @@
                                                      GestureCompleted="GestureListenerGestureCompleted"
                                                      Tap="GestureListenerTap"/>
                         </toolkit:GestureService.GestureListener>
-                    </toolkit:HubTile>
+                    </my:DisablingHubTile>
                     <my:CountDisplay HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10, 10"
                                      Count="{Binding Path=Controller.Unread}"/>
                 </my:TiltGrid>

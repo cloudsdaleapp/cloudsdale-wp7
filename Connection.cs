@@ -93,6 +93,31 @@ namespace Cloudsdale {
                         });
                         return;
                     }
+
+                    CurrentCloudsdaleUser.PropertyChanged += (sender, args) => {
+                        if (args.PropertyName != "bans") return;
+
+                        foreach (var diff in BanDifferentiation.DifferentiateBans
+                            (CurrentCloudsdaleUser.old_bans, CurrentCloudsdaleUser.bans)) {
+                            if (diff.isnew && diff.active == true) {
+                                MessageBox.Show("You have been banned from " +
+                                                PonyvilleDirectory.GetCloud(diff.cloud).name +
+                                                " for \"" + diff.reason + "\" until " + diff.due,
+                                                "Banned!", MessageBoxButton.OK);
+                                if (CurrentCloud.id == diff.cloud) {
+                                    while (((TransitionFrame)Application.Current.RootVisual).CanGoBack) {
+                                        ((TransitionFrame)Application.Current.RootVisual).GoBack();
+                                    }
+                                }
+                            } else if ((diff.due != null && diff.due < DateTime.Now) ||
+                                (diff.active == false || diff.revoked == true)) {
+                                MessageBox.Show("You are no longer banned from " +
+                                                PonyvilleDirectory.GetCloud(diff.cloud).name +
+                                                "!", "No longer banned!", MessageBoxButton.OK);
+                            }
+                        }
+                    };
+
                     FinishConnecting(page, dispatcher);
                 });
             } else {

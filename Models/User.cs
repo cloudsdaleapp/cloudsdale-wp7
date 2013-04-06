@@ -240,6 +240,10 @@ namespace Cloudsdale.Models {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class LoggedInUser : User, IAvatarUploadable {
+        public LoggedInUser() {
+            bans = new Ban[0];
+        }
+
         [JsonProperty]
         public string auth_token;
         [JsonProperty]
@@ -252,8 +256,11 @@ namespace Cloudsdale.Models {
         public bool? needs_name_change;
         [JsonProperty("preferred_status")]
         public string status;
+
         [JsonProperty]
-        public Ban[] bans;
+        public Ban[] bans { get; set; }
+
+        public Ban[] old_bans;
 
         [JsonIgnore]
         private readonly ObservableCollection<Cloud> _cloudCol = new ObservableCollection<Cloud>();
@@ -301,6 +308,15 @@ namespace Cloudsdale.Models {
                 user.needs_name_change = needs_name_change;
             if (clouds != null)
                 user.clouds = clouds;
+            if (bans != null) {
+                user.old_bans = user.bans;
+                user.bans = bans;
+                foreach (var cloud in Connection.CurrentCloudsdaleUser.clouds) {
+                    cloud.PropChanged("IsBannedFrom");
+                    cloud.PropChanged("ApplicableBan");
+                }
+                OnPropertyChanged("bans");
+            }
             if (status != null)
                 user.status = status;
         }
