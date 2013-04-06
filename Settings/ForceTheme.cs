@@ -54,7 +54,7 @@ namespace Cloudsdale.Settings {
             ((SolidColorBrush)application.Resources["PhoneRadioCheckBoxPressedBrush"]).Color = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
             ((SolidColorBrush)application.Resources["PhoneRadioCheckBoxPressedBorderBrush"]).Color = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
             ((SolidColorBrush)application.Resources["PhoneSemitransparentBrush"]).Color = Color.FromArgb(0xAA, 0x00, 0x00, 0x00);
-            ((SolidColorBrush)application.Resources["PhoneChromeBrush"]).Color = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
+            ((SolidColorBrush)application.Resources["PhoneChromeBrush"]).Color = Color.FromArgb(0xFF, 0x1A, 0x91, 0xDB); //Color.FromArgb(0xFF, 0x00, 0x55, 0x80); Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
             ((SolidColorBrush)application.Resources["PhoneInactiveBrush"]).Color = Color.FromArgb(0x33, 0xFF, 0xFF, 0xFF);
             ((SolidColorBrush)application.Resources["PhoneInverseInactiveBrush"]).Color = Color.FromArgb(0xFF, 0xCC, 0xCC, 0xCC);
             ((SolidColorBrush)application.Resources["PhoneInverseBackgroundBrush"]).Color = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);

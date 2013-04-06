@@ -117,6 +117,11 @@
                             <Button Click="AboutClick">About</Button>
                             <TextBlock>Font</TextBlock>
                             <toolkit:ListPicker Name="FontPicker" SelectionChanged="FontPickerSelectionChanged" />
+                            <TextBlock>Color Scheme</TextBlock>
+                            <toolkit:ListPicker Name="ThemePicker" SelectionChanged="ThemePickerSelectionChanged">
+                                <toolkit:ListPickerItem>Bright</toolkit:ListPickerItem>
+                                <toolkit:ListPickerItem>Dark</toolkit:ListPickerItem>
+                            </toolkit:ListPicker>
                             <TextBlock>Status</TextBlock>
                             <toolkit:ListPicker Name="StatusBox" SelectionChanged="StatusSelectionChanged">
                                 <toolkit:ListPickerItem>Online</toolkit:ListPickerItem>

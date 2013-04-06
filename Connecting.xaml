@@ -30,7 +30,7 @@
     <Grid>
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" >
-                <GradientStop Offset=".15" Color="#FF1A91DB" />
+                <GradientStop Offset=".15" Color="{Binding Source={StaticResource PhoneChromeBrush}, Path=Color}" />
                 <GradientStop Offset=".15" Color="#FFF0F0F0" />
             </LinearGradientBrush>
         </Grid.Background>

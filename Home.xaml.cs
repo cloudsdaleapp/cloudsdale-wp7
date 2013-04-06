@@ -22,7 +22,9 @@ namespace Cloudsdale {
         public static bool comingfromhome = false;
         public static bool comingfromlogin = true;
 
+        // ReSharper disable FieldCanBeMadeReadOnly.Local
         private bool initializedFont;
+        // ReSharper restore FieldCanBeMadeReadOnly.Local
         public static readonly string[] Fonts = new[] {
             "Calibri", "Comic Sans MS", "Courier New",
             "Segoe WP", "Tahoma", "Times New Roman", "Verdana"
@@ -70,11 +72,14 @@ namespace Cloudsdale {
             FontPicker.SetValue(ListPicker.ItemCountThresholdProperty, 12);
             foreach (var font in Fonts) {
                 var fonttext = font == "Verdana" ? font + " (Recommended)" : font;
-                FontPicker.Items.Add(new ListPickerItem { Content = fonttext, FontFamily = new FontFamily(font)});
+                FontPicker.Items.Add(new ListPickerItem { Content = fonttext, FontFamily = new FontFamily(font) });
             }
             initializedFont = true;
             var index = Array.IndexOf(Fonts, ((App)Application.Current).ChatFont.Source);
             FontPicker.SelectedIndex = index < 0 ? 0 : index;
+
+            ThemePicker.SelectedIndex = ((SolidColorBrush)Application.Current.Resources["PhoneChromeBrush"]).
+                Color == Color.FromArgb(0xFF, 0x1A, 0x91, 0xDB) ? 0 : 1;
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
@@ -274,6 +279,23 @@ namespace Cloudsdale {
             var settings = IsolatedStorageSettings.ApplicationSettings;
             settings["chatfont"] = font.Source;
             settings.Save();
+        }
+
+        private void ThemePickerSelectionChanged(object sender, SelectionChangedEventArgs e) {
+            if (ThemePicker == null) return;
+
+            var settings = IsolatedStorageSettings.ApplicationSettings;
+            var newcolor = ThemePicker.SelectedIndex == 0
+                ? Color.FromArgb(0xFF, 0x1A, 0x91, 0xDB)
+                : Color.FromArgb(0xFF, 0x00, 0x55, 0x80);
+
+            if (settings.Contains("theme") && (Color)settings["theme"] == newcolor) return;
+
+            ((SolidColorBrush)Application.Current.Resources["PhoneChromeBrush"]).Color = newcolor;
+            settings["theme"] = newcolor;
+            settings.Save();
+
+            LayoutRoot.InvalidateArrange();
         }
 
         private void ChangeUsernameAccess(bool enabled) {

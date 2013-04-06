@@ -3,13 +3,11 @@
 using System.Diagnostics;
 #endif
 using System.IO.IsolatedStorage;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using BugSense;
-using Cloudsdale.Controls;
 using Cloudsdale.Managers;
 using Cloudsdale.Settings;
 using Microsoft.Phone.Controls;
@@ -57,6 +55,11 @@ namespace Cloudsdale {
             ChatFont = font;
 
             this.ForceDarkTheme();
+
+            if (psettings.Contains("theme")) {
+                var tcolor = (Color)psettings["theme"];
+                ((SolidColorBrush)Resources["PhoneChromeBrush"]).Color = tcolor;
+            }
 
             // Show graphics profiling information while debugging.
 #if DEBUG
@@ -128,11 +131,11 @@ namespace Cloudsdale {
         // Code to execute when the application is deactivated (sent to background)
         // This code will not execute when the application is closing
         private void ApplicationDeactivated(object sender, DeactivatedEventArgs e) {
-            Managers.PonyvilleCensus.Save();
+            PonyvilleCensus.Save();
 
-            if (Managers.DerpyHoovesMailCenter.PresenceAnnouncer != null)
-                Managers.DerpyHoovesMailCenter.PresenceAnnouncer.Dispose();
-            Managers.DerpyHoovesMailCenter.PresenceAnnouncer = null;
+            if (DerpyHoovesMailCenter.PresenceAnnouncer != null)
+                DerpyHoovesMailCenter.PresenceAnnouncer.Dispose();
+            DerpyHoovesMailCenter.PresenceAnnouncer = null;
             if (Connection.Faye != null)
                 Connection.Faye.Disconnect();
         }
@@ -140,7 +143,7 @@ namespace Cloudsdale {
         // Code to execute when the application is closing (eg, user hit Back)
         // This code will not execute when the application is deactivated
         private void ApplicationClosing(object sender, ClosingEventArgs e) {
-            Managers.PonyvilleCensus.Save();
+            PonyvilleCensus.Save();
 
             if (Connection.Faye != null)
                 Connection.Faye.Disconnect();

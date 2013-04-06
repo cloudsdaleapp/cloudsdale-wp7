@@ -163,7 +163,7 @@ namespace Cloudsdale {
                 throw new ApplicationTerminationException();
             }
 
-            if (reconstruction) reconstruction = false;
+            reconstruction = false;
 
             base.OnNavigatedTo(e);
         }

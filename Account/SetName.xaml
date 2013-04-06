@@ -26,7 +26,7 @@
         
         <StackPanel Grid.Row="1">
             <TextBox Height="75" VerticalAlignment="Top" Margin="0,175,0,0" Name="Username" />
-            <Button Foreground="#3a3a3a" BorderBrush="#3a3a3a" Margin="50" Click="DoneClick">Done</Button>
+            <Button Margin="50" Click="DoneClick">Done</Button>
         </StackPanel>
     </Grid>
 

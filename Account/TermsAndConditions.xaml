@@ -22,9 +22,9 @@
         </Grid.RowDefinitions>
         <phone:WebBrowser Source="http://www.cloudsdale.org/terms-and-conditions?layout=mobile" />
         <Grid Grid.Row="1">
-            <Button Margin="0,0,240,0" Foreground="Green" BorderBrush="Green"
+            <Button Margin="0,0,240,0" Foreground="Green" BorderBrush="Green" Background="Transparent"
                     Click="AcceptClick">Accept</Button>
-            <Button Margin="240,0,0,0" Foreground="Red" BorderBrush="Red"
+            <Button Margin="240,0,0,0" Foreground="Red" BorderBrush="Red" Background="Transparent"
                     Click="RejectClick">Reject</Button>
         </Grid>
     </Grid>
