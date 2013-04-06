@@ -144,7 +144,7 @@ namespace Wp7Faye {
 
         private void WaitForTimeout() {
             Thread.Sleep(Timeout);
-            if (!Opened) {
+            if (!EstablishedConnection) {
                 OnConnectTimeout();
             }
         }
@@ -163,6 +163,10 @@ namespace Wp7Faye {
             get {
                 return ((state.socket != null) && ((state.socket.State == WebSocketState.Open) || (state.socket.State == WebSocketState.Connecting)));
             }
+        }
+
+        public bool EstablishedConnection {
+            get { return Opened && state.socket.State == WebSocketState.Open; }
         }
 
         public struct SessionState {
