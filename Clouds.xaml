@@ -381,7 +381,8 @@
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" BackgroundColor="#FF1A91DB" ForegroundColor="White">
+        <shell:ApplicationBar IsVisible="True" ForegroundColor="White"
+                              BackgroundColor="{Binding Source={StaticResource PhoneChromeBrush}, Path=Color}">
             <shell:ApplicationBarIconButton Text="Send" IconUri="/Images/appbar.send.text.rest.png" Click="SendTextClick" />
             <shell:ApplicationBarIconButton Text="Info" IconUri="/Images/appbar.info.rest.png" Click="CloudInfoClick" />
             <shell:ApplicationBar.MenuItems>

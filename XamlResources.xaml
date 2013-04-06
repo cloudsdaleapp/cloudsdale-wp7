@@ -4,23 +4,23 @@
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:my="clr-namespace:Cloudsdale.Controls">
     <LinearGradientBrush x:Key="PortraitBackground" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#FF1A91DB" Offset="0.1425" />
+        <GradientStop Color="{Binding Source={StaticResource PhoneChromeBrush}, Path=Color}" Offset="0.1425" /> <!--#FF1A91DB-->
         <GradientStop Color="#FFF0F0F0" Offset="0.1425" />
         <GradientStop Color="#FFF0F0F0" Offset="1" />
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="PortraitBackgroundChat" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#FF1A91DB" Offset="0.157" />
+        <GradientStop Color="{Binding Source={StaticResource PhoneChromeBrush}, Path=Color}" Offset="0.157" />
         <GradientStop Color="#FFF0F0F0" Offset="0.157" />
         <GradientStop Color="#FFF0F0F0" Offset="1" />
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="LandscapeBackground" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#FF1A91DB" Offset="0.2365" />
+        <GradientStop Color="{Binding Source={StaticResource PhoneChromeBrush}, Path=Color}" Offset="0.2365" />
         <GradientStop Color="#FFF0F0F0" Offset="0.2365" />
         <GradientStop Color="#FFF0F0F0" Offset="1" />
     </LinearGradientBrush>
     <Style TargetType="Button">
-        <Setter Property="Background" Value="#FF1A91DB"/>
-        <Setter Property="BorderBrush" Value="#FF1A91DB"/>
+        <Setter Property="Background" Value="{StaticResource PhoneChromeBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource PhoneChromeBrush}"/>
         <Setter Property="Foreground" Value="#FFFFFFFF"/>
         <Setter Property="BorderThickness" Value="{StaticResource PhoneBorderThickness}"/>
         <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>

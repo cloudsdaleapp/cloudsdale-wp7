@@ -22,7 +22,7 @@
                         Title="{Binding Path=name}"
                         Source="{Binding Path=avatar.Normal}"
                         Style="{StaticResource HubTileStyle0}"
-                        Background="#FF1A91DB" IsDisabled="{Binding Path=IsBannedFrom}">
+                        Background="{StaticResource PhoneChromeBrush}" IsDisabled="{Binding Path=IsBannedFrom}">
                         <toolkit:GestureService.GestureListener>
                             <toolkit:GestureListener DragStarted="GestureListenerDragStarted"
                                                      DragDelta="GestureListenerDragDelta"
