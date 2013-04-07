@@ -21,7 +21,7 @@ namespace Cloudsdale.Screenshot {
         }
 
         protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e) {
-            ScreenshotGrid.Background = null;
+            if (ScreenshotGrid.Name != "LayoutRoot") ScreenshotGrid.Background = null;
         }
 
         private void SaveClick(object sender, RoutedEventArgs e) {

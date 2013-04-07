@@ -386,6 +386,7 @@
             <shell:ApplicationBarIconButton Text="Info" IconUri="/Images/appbar.info.rest.png" Click="CloudInfoClick" />
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="Leave cloud" Click="RemoveThisCloud" />
+                <shell:ApplicationBarMenuItem Text="Screenshot" Click="ScreenshotChat" />
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>

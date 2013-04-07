@@ -819,8 +819,15 @@ namespace Cloudsdale {
             var grid = (Grid)menu.Owner;
             var msg = (Message)grid.DataContext;
             Clipboard.SetText(msg.Split.Aggregate(new StringBuilder()
-                .Append(msg.user.name).Append(" @ ").AppendLine(msg.CorrectedTimestamp),
-                (builder, line) => builder.AppendLine(line.Text)).ToString());
+                .Append(msg.user.name),
+                (builder, line) => builder.Append("> ").AppendLine(line.Text)).ToString());
+        }
+
+        private void ScreenshotChat(object sender, EventArgs e) {
+            var screenshot = new WriteableBitmap(LayoutRoot, null);
+            ViewShot.Image = screenshot;
+            ViewShot.ScreenshotGrid = LayoutRoot;
+            NavigationService.Navigate(new Uri("/Screenshot/ViewShot.xaml", UriKind.Relative));
         }
 
     }
