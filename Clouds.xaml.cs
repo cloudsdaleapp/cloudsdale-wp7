@@ -556,7 +556,7 @@ namespace Cloudsdale {
                 id = Guid.NewGuid().ToString(),
                 device = "mobile",
                 content = SendBox.Text.Replace("\n", "\\n"),
-                timestamp = DateTime.Now + DerpyHoovesMailCenter.ServerDiff,
+                timestamp = DateTime.Now,
                 user = PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id)
             };
             cmessages.Add(message);
