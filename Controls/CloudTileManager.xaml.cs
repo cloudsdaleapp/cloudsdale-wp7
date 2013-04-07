@@ -198,5 +198,10 @@ namespace Cloudsdale.Controls {
         public class CloudEventArgs : EventArgs {
             public Cloud Cloud;
         }
+
+        private void OnMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            Scroller.IsHitTestVisible = true;
+            Pivot.IsHitTestVisible = true;
+        }
     }
 }
