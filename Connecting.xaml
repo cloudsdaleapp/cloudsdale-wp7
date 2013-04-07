@@ -39,8 +39,8 @@
         </Grid>
 
         <StackPanel VerticalAlignment="Center" Name="StatusPanel">
-            <TextBlock HorizontalAlignment="Center" Height="30" Foreground="#FF1A91DB" Text="{Binding Path=Message}" />
-            <toolkit:PerformanceProgressBar Foreground="#FF1A91DB" IsIndeterminate="True" />
+            <TextBlock HorizontalAlignment="Center" Height="30" Foreground="{StaticResource PhoneChromeBrush}" Text="{Binding Path=Message}" />
+            <toolkit:PerformanceProgressBar Foreground="{StaticResource PhoneChromeBrush}" IsIndeterminate="True" />
         </StackPanel>
     </Grid>
 </phone:PhoneApplicationPage>

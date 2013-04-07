@@ -18,11 +18,11 @@ namespace Cloudsdale.Managers {
         #region Implementation of IValueConverter
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            return (bool) value ? Visibility.Visible : Visibility.Collapsed;
+            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-            return (Visibility) value == Visibility.Visible;
+            return (Visibility)value == Visibility.Visible;
         }
 
         #endregion
@@ -32,7 +32,7 @@ namespace Cloudsdale.Managers {
         #region Implementation of IValueConverter
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            var array = (Array) value;
+            var array = (Array)value;
             return array != null && array.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -66,6 +66,30 @@ namespace Cloudsdale.Managers {
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
             return JToken.FromObject(value);
+        }
+
+        #endregion
+    }
+
+    public class Translucent : IValueConverter {
+        #region Implementation of IValueConverter
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+            Color color;
+            if (value is SolidColorBrush) {
+                color = (value as SolidColorBrush).Color;
+            } else {
+                color = (Color)value;
+            }
+
+            color.R += (byte)((255 - color.R) / 2);
+            color.G += (byte)((255 - color.G) / 2);
+            color.B += (byte)((255 - color.B) / 2);
+            return color;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+            throw new NotImplementedException();
         }
 
         #endregion

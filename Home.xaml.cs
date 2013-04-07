@@ -70,15 +70,16 @@ namespace Cloudsdale {
 
             FontPicker.SetValue(ListPicker.ItemCountThresholdProperty, 12);
             foreach (var font in Fonts) {
-                var fonttext = font == "Verdana" ? font + " (Recommended)" : font;
+                var fonttext = font;
                 FontPicker.Items.Add(new ListPickerItem { Content = fonttext, FontFamily = new FontFamily(font) });
             }
             initializedFont = true;
             var index = Array.IndexOf(Fonts, ((App)Application.Current).ChatFont.Source);
             FontPicker.SelectedIndex = index < 0 ? 0 : index;
 
-            ThemePicker.SelectedIndex = ((SolidColorBrush)Application.Current.Resources["PhoneChromeBrush"]).
-                Color == Color.FromArgb(0xFF, 0x1A, 0x91, 0xDB) ? 0 : 1;
+            ThemePicker.SetValue(ListPicker.ItemCountThresholdProperty, 7);
+            ThemePicker.SelectedIndex = Math.Max(Array.IndexOf(App.ThemeColors,
+                ((SolidColorBrush)Application.Current.Resources["PhoneChromeBrush"]).Color), 0);
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
@@ -284,9 +285,7 @@ namespace Cloudsdale {
             if (ThemePicker == null) return;
 
             var settings = IsolatedStorageSettings.ApplicationSettings;
-            var newcolor = ThemePicker.SelectedIndex == 0
-                ? Color.FromArgb(0xFF, 0x1A, 0x91, 0xDB)
-                : Color.FromArgb(0xFF, 0x00, 0x55, 0x80);
+            var newcolor = App.ThemeColors[ThemePicker.SelectedIndex];
 
             if (settings.Contains("theme") && (Color)settings["theme"] == newcolor) return;
 

@@ -22,6 +22,15 @@ namespace Cloudsdale {
         /// <returns>The root frame of the Phone Application.</returns>
         public PhoneApplicationFrame RootFrame { get; private set; }
 
+        public static Color[] ThemeColors = {
+            Color.FromArgb(0xFF, 0x1A, 0x91, 0xDB),
+            Color.FromArgb(0xFF, 0x00, 0x55, 0x80),
+            Color.FromArgb(0xFF, 0xCF, 0x2A, 0x2A),
+            Color.FromArgb(0xFF, 0x2A, 0xAA, 0x2A),
+            Color.FromArgb(0xFF, 0x3A, 0x3A, 0x3A),
+            Color.FromArgb(0xFF, 0xFA, 0xCB, 0x03),
+        };
+
         /// <summary>
         /// Constructor for the Application object.
         /// </summary>
