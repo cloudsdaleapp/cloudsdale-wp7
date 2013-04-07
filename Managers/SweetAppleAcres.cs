@@ -77,7 +77,7 @@ namespace Cloudsdale.Managers {
                 var last = cache[cache.Count - 1];
                 if (last.user.id == item.user.id) {
                     last.AddSub(item);
-                    //cache.Trigger(cache.Count - 1);
+                    cache.Trigger(cache.Count - 1);
                 } else {
                     cache.Add(item);
                 }
