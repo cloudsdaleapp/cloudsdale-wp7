@@ -71,6 +71,9 @@ namespace Cloudsdale {
             }).Start();
 
             Wasoncloud = true;
+
+            ApplicationBar.ForegroundColor = Colors.White;
+            ApplicationBar.BackgroundColor = ((SolidColorBrush)Application.Current.Resources["PhoneChromeBrush"]).Color;
         }
 
         public void ScrollDown(object sender, EventArgs args) {

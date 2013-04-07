@@ -213,10 +213,10 @@ namespace Cloudsdale.Managers {
                         var oldmsgs = Cache[id].Messages.Where(msg => msg.timestamp > result.result.Last().timestamp).ToArray();
                         Cache[id].messages.Clear();
                         foreach (var m in result.result.Where(m => m != null && m.user != null && m.id != null && m.content != null)) {
-                            Cache[id].messages.Add(m);
+                            Cache[id].messages.AddToEnd(m);
                         }
                         foreach (var m in oldmsgs) {
-                            Cache[id].messages.Add(m);
+                            Cache[id].messages.AddToEnd(m);
                         }
                     }
                     if (onComplete != null) Deployment.Current.Dispatcher.BeginInvoke(onComplete);

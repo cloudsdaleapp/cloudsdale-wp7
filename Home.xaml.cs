@@ -13,7 +13,6 @@ using Cloudsdale.Controls;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
-using Microsoft.Phone.Tasks;
 using Newtonsoft.Json.Linq;
 using Res = Cloudsdale.Resources;
 

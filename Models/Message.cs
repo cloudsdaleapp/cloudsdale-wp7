@@ -3,13 +3,15 @@ using System.Collections.Generic;
 #if DEBUG
 using System.Diagnostics;
 #endif
+using System.ComponentModel;
+using System.Text;
 using System.Windows.Media;
 using Newtonsoft.Json;
 using System.Linq;
 
 namespace Cloudsdale.Models {
     [JsonObject(MemberSerialization.OptIn)]
-    public class Message : CloudsdaleItem, IComparable<Message> {
+    public class Message : CloudsdaleItem, IComparable<Message>, INotifyPropertyChanged {
         public Message() {
             subs = new List<Message>();
         }
@@ -39,8 +41,9 @@ namespace Cloudsdale.Models {
         public string CorrectedTimestamp {
             get {
                 var datestring = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern;
-                return timestamp > DateTime.Now.AddDays(-1) ? timestamp.ToString("HH:mm:ss") :
-                    timestamp.ToString(datestring + " HH:mm:ss");
+                var time = (subs.Any() ? subs.Last() : this).timestamp;
+                return time > DateTime.Now.AddDays(-1) ? time.ToString("HH:mm:ss") :
+                    time.ToString(datestring + " HH:mm:ss");
             }
         }
 
@@ -57,23 +60,8 @@ namespace Cloudsdale.Models {
         public ChatLine[] Split {
             get {
                 try {
-                    string message;
-                    if (subs.Count < 1 || subs[0].timestamp > timestamp) {
-                        message = content;
-                        foreach (var msg in subs) {
-                            message += '\n' + msg.content;
-                        }
-                    } else {
-                        var inserted = false;
-                        message = subs[0].content;
-                        for (var i = 1; i < subs.Count; ++i) {
-                            if (!inserted && timestamp < subs[i].timestamp) {
-                                message += '\n' + content;
-                                inserted = true;
-                            }
-                            message += '\n' + subs[i].content;
-                        }
-                    }
+                    var message = subs.Aggregate(new StringBuilder(content), (builder, msg) => 
+                        builder.Append('\n').Append(msg.content)).ToString();
                     message = Settings.StringParser.ParseLiteral(message);
                     var split = message.Replace("\r\n", "\n").Split(new[] { '\n', '\r' });
                     var lines = new ChatLine[split.Length];
@@ -105,12 +93,11 @@ namespace Cloudsdale.Models {
         }
 
         public void AddSub(Message item) {
-            foreach (var sub in subs) {
-                if (sub.id == item.id) return;
-            }
-            var greatest = 0;
-            while (greatest < subs.Count && subs[greatest].timestamp < item.timestamp) greatest++;
-            subs.Insert(greatest, item);
+            if (subs.Any(sub => sub.id == item.id)) return;
+            subs.Add(item);
+            OnPropertyChanged("Split");
+            OnPropertyChanged("Drops");
+            OnPropertyChanged("CorrectedTimestamp");
         }
 
         public int CompareTo(Message other) {
@@ -123,6 +110,13 @@ namespace Cloudsdale.Models {
 
         public static bool operator <(Message m1, Message m2) {
             return m1.timestamp < m2.timestamp;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName) {
+            var handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
