@@ -819,7 +819,7 @@ namespace Cloudsdale {
             var grid = (Grid)menu.Owner;
             var msg = (Message)grid.DataContext;
             Clipboard.SetText(msg.Split.Aggregate(new StringBuilder()
-                .Append(msg.user.name),
+                .AppendLine(msg.user.name),
                 (builder, line) => builder.Append("> ").AppendLine(line.Text)).ToString());
         }
 
