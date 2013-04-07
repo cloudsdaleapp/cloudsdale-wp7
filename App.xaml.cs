@@ -23,12 +23,13 @@ namespace Cloudsdale {
         public PhoneApplicationFrame RootFrame { get; private set; }
 
         public static Color[] ThemeColors = {
+            default(Color),
             Color.FromArgb(0xFF, 0x1A, 0x91, 0xDB),
             Color.FromArgb(0xFF, 0x00, 0x55, 0x80),
             Color.FromArgb(0xFF, 0xCF, 0x2A, 0x2A),
             Color.FromArgb(0xFF, 0x2A, 0xAA, 0x2A),
             Color.FromArgb(0xFF, 0x3A, 0x3A, 0x3A),
-            Color.FromArgb(0xFF, 0xFA, 0xCB, 0x03),
+            Color.FromArgb(0xFF, 0xF0, 0x96, 0x08),
         };
 
         /// <summary>
@@ -37,7 +38,6 @@ namespace Cloudsdale {
         public App() {
             BugSenseHandler.Instance.Init(this, Res.BugsenseApiKey);
             BugSenseHandler.Instance.UnhandledException += ApplicationUnhandledException;
-            //UnhandledException += ApplicationUnhandledException;
 
             // Standard Silverlight initialization
             InitializeComponent();
@@ -65,8 +65,13 @@ namespace Cloudsdale {
 
             this.ForceDarkTheme();
 
+            ThemeColors[0] = ((SolidColorBrush)Resources["PhoneAccentBrush"]).Color;
+
             if (psettings.Contains("theme")) {
                 var tcolor = (Color)psettings["theme"];
+                ((SolidColorBrush)Resources["PhoneChromeBrush"]).Color = tcolor;
+            } else {
+                var tcolor = Color.FromArgb(0xFF, 0x1A, 0x91, 0xDB);
                 ((SolidColorBrush)Resources["PhoneChromeBrush"]).Color = tcolor;
             }
 

@@ -119,6 +119,7 @@
                             <toolkit:ListPicker Name="FontPicker" SelectionChanged="FontPickerSelectionChanged" />
                             <TextBlock>Color Scheme</TextBlock>
                             <toolkit:ListPicker Name="ThemePicker" SelectionChanged="ThemePickerSelectionChanged">
+                                <toolkit:ListPickerItem>My Phone's Color</toolkit:ListPickerItem>
                                 <toolkit:ListPickerItem>Blue</toolkit:ListPickerItem>
                                 <toolkit:ListPickerItem>Dark Blue</toolkit:ListPickerItem>
                                 <toolkit:ListPickerItem>Red</toolkit:ListPickerItem>

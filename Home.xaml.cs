@@ -77,7 +77,7 @@ namespace Cloudsdale {
             var index = Array.IndexOf(Fonts, ((App)Application.Current).ChatFont.Source);
             FontPicker.SelectedIndex = index < 0 ? 0 : index;
 
-            ThemePicker.SetValue(ListPicker.ItemCountThresholdProperty, 7);
+            ThemePicker.SetValue(ListPicker.ItemCountThresholdProperty, 8);
             ThemePicker.SelectedIndex = Math.Max(Array.IndexOf(App.ThemeColors,
                 ((SolidColorBrush)Application.Current.Resources["PhoneChromeBrush"]).Color), 0);
         }
