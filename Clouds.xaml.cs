@@ -598,6 +598,7 @@ namespace Cloudsdale {
                 Thread.Sleep(30 * 1000);
                 harlemShaking = false;
                 Dispatcher.BeginInvoke(() => {
+                    titletext.Projection = new PlaneProjection();
                     var images = LayoutRoot.AllChildrenMatching<Image>().OfType<Image>();
                     foreach (var image in images) {
                         image.Projection = new PlaneProjection();
@@ -676,41 +677,47 @@ namespace Cloudsdale {
         }
         private void ShakeText(FrameworkElement text) {
             if (text.Projection == null) text.Projection = new PlaneProjection {
-                CenterOfRotationY = -(text.ActualHeight / 2)
+                CenterOfRotationY = .5
             };
 
 
             var sidetoside = new DoubleAnimation {
                 From = -10,
                 To = 10,
-                Duration = new Duration(TimeSpan.FromSeconds(0.3)),
-                RepeatBehavior = new RepeatBehavior(30 * 3.3333 / 2.0),
+                Duration = new Duration(TimeSpan.FromSeconds(0.2)),
+                RepeatBehavior = new RepeatBehavior(30 * 5 / 2.0),
                 AutoReverse = true,
-            };
-            sidetoside.Completed += (sender, args) => {
-                ((PlaneProjection)text.Projection).LocalOffsetX = 0;
             };
 
             var slightrotation = new DoubleAnimation {
                 From = -10,
                 To = 10,
-                Duration = new Duration(TimeSpan.FromSeconds(.3)),
-                RepeatBehavior = new RepeatBehavior(30 * 3.3333 / 2.0),
+                Duration = new Duration(TimeSpan.FromSeconds(.05)),
+                RepeatBehavior = new RepeatBehavior(30 * 20 / 2.0),
                 AutoReverse = true,
             };
-            slightrotation.Completed += (sender, args) => {
-                ((PlaneProjection)text.Projection).RotationZ = 0;
+
+            var centerofrotation = new DoubleAnimation {
+                From = -1.1,
+                To = 1.1,
+                Duration = new Duration(TimeSpan.FromSeconds(.3)),
+                RepeatBehavior = new RepeatBehavior(30 * 3.3333333333 / 2.0),
+                AutoReverse = true,
             };
 
             var storyboard = new Storyboard();
             storyboard.Children.Add(sidetoside);
             storyboard.Children.Add(slightrotation);
+            storyboard.Children.Add(centerofrotation);
 
             Storyboard.SetTarget(sidetoside, text.Projection);
             Storyboard.SetTargetProperty(sidetoside, new PropertyPath("(PlaneProjection.LocalOffsetX)"));
 
             Storyboard.SetTarget(slightrotation, text.Projection);
             Storyboard.SetTargetProperty(slightrotation, new PropertyPath("(PlaneProjection.RotationZ)"));
+
+            Storyboard.SetTarget(centerofrotation, text.Projection);
+            Storyboard.SetTargetProperty(centerofrotation, new PropertyPath("(PlaneProjection.CenterOfRotationY)"));
 
             LayoutRoot.Resources.Add(Guid.NewGuid().ToString(), storyboard);
 
