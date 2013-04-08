@@ -561,7 +561,7 @@ namespace Cloudsdale {
                 timestamp = DateTime.Now,
                 user = PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id)
             };
-            cmessages.Add(message);
+            cmessages.AddToEnd(message);
 
             Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text.Replace("\n", "\\n"), response => {
                 var result = response["result"];
