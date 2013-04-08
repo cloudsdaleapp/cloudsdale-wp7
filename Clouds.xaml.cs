@@ -547,6 +547,8 @@ namespace Cloudsdale {
             if (SendBox.Text.StartsWith("#shakeit")) {
                 SendBox.Text = "";
                 DoTheHarlemShake();
+                SendBox.IsEnabled = false;
+                Dispatcher.BeginInvoke(() => SendBox.IsEnabled = true);
                 return;
             }
 
@@ -584,23 +586,28 @@ namespace Cloudsdale {
             harlemShaking = true;
             mediaPlayer.Source = new Uri("/Sound/harlem-shake.mp3", UriKind.Relative);
             mediaPlayer.Play();
-
-            var titletext =
-                LayoutRoot.AllChildrenMatching(
-                    child => child is TextBlock && (child as TextBlock).Text == (string)cloudPivot.Title).OfType<TextBlock>().First();
+        }
+        private void HarlemShakeReady(object sender, RoutedEventArgs e) {
+            var titletext = LayoutRoot.AllChildrenMatching(
+                    child => child is TextBlock && (child as TextBlock).Text ==
+                        (string)cloudPivot.Title).OfType<TextBlock>().First();
 
             ShakeText(titletext);
 
             new Thread(() => {
-                Thread.Sleep(35);
+                Thread.Sleep(30 * 1000);
                 harlemShaking = false;
-            }).Start();
-            new Thread(() => {
-                Thread.Sleep((int)(15.8 * 1000));
                 Dispatcher.BeginInvoke(() => {
                     var images = LayoutRoot.AllChildrenMatching<Image>().OfType<Image>();
-                    var usernames = LayoutRoot.AllChildrenMatching(child => child is FrameworkElement &&
-                                        (child as FrameworkElement).Name == "Username").OfType<TextBlock>();
+                    foreach (var image in images) {
+                        image.Projection = new PlaneProjection();
+                    }
+                });
+            }).Start();
+            new Thread(() => {
+                Thread.Sleep((int)(15.3 * 1000));
+                Dispatcher.BeginInvoke(() => {
+                    var images = LayoutRoot.AllChildrenMatching<Image>().OfType<Image>();
                     foreach (var image in images) {
                         HarlemImage(image);
                     }
@@ -615,19 +622,16 @@ namespace Cloudsdale {
             PropertyPath property1 = null;
             PropertyPath property2 = null;
             PropertyPath property3 = null;
-            if (harlemRandom.NextDouble() < .2) {
+            if (harlemRandom.NextDouble() < .3) {
                 animation1 = new DoubleAnimation {
                     From = 0,
                     To = 360,
                     Duration = new Duration(TimeSpan.FromSeconds(1)),
                     RepeatBehavior = new RepeatBehavior(14.2),
                 };
-                animation1.Completed += (sender, args) => {
-                    ((PlaneProjection)image.Projection).RotationZ = 0;
-                };
                 property1 = new PropertyPath("(PlaneProjection.RotationZ)");
             }
-            if (harlemRandom.NextDouble() < .4) {
+            if (harlemRandom.NextDouble() < .5) {
                 animation2 = new DoubleAnimation {
                     From = 0,
                     To = -1000,
@@ -635,21 +639,15 @@ namespace Cloudsdale {
                     RepeatBehavior = new RepeatBehavior(14.2 * 5),
                     AutoReverse = true,
                 };
-                animation2.Completed += (sender, args) => {
-                    ((PlaneProjection)image.Projection).LocalOffsetZ = 0;
-                };
                 property2 = new PropertyPath("(PlaneProjection.LocalOffsetZ)");
             }
-            if (harlemRandom.NextDouble() < .4) {
+            if (harlemRandom.NextDouble() < .5) {
                 animation3 = new DoubleAnimation {
                     From = -10,
                     To = 10,
                     Duration = new Duration(TimeSpan.FromSeconds(0.1)),
                     RepeatBehavior = new RepeatBehavior(TimeSpan.FromSeconds(14.2 * 5)),
                     AutoReverse = true,
-                };
-                animation3.Completed += (sender, args) => {
-                    ((PlaneProjection)image.Projection).LocalOffsetX = 0;
                 };
                 property3 = new PropertyPath("(PlaneProjection.LocalOffsetX)");
             }
