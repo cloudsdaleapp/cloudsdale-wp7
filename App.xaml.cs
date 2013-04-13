@@ -110,6 +110,13 @@ namespace Cloudsdale {
                 } else {
                     setter.Value = value;
                 }
+                style = (Style)Resources["RichChatStyle"];
+                setter = (Setter)style.Setters[0];
+                if (setter.IsSealed) {
+                    style.Setters[0] = new Setter(Control.FontFamilyProperty, value);
+                } else {
+                    setter.Value = value;
+                }
             }
         }
 

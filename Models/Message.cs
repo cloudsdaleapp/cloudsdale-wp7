@@ -60,18 +60,17 @@ namespace Cloudsdale.Models {
         public ChatLine[] Split {
             get {
                 try {
-                    var message = subs.Aggregate(new StringBuilder(content), (builder, msg) => 
-                        builder.Append('\n').Append(msg.content)).ToString();
+                    var message = subs.Aggregate(new StringBuilder(content.Trim()), (builder, msg) => 
+                        builder.Append('\n').Append(msg.content.Trim())).ToString();
                     message = Settings.StringParser.ParseLiteral(message);
                     var split = message.Replace("\r\n", "\n").Split(new[] { '\n', '\r' });
                     var lines = new ChatLine[split.Length];
                     for (var i = 0; i < split.Length; ++i) {
                         if (string.IsNullOrWhiteSpace(split[i])) split[i] = " ";
                         lines[i] = new ChatLine {
-                            Text = split[i].StartsWith("/me ") ? '*' + split[i].Substring(4).Trim() + '*' : split[i].Trim(),
+                            Text = split[i].Trim(),
                             Color = new SolidColorBrush(split[i].StartsWith(">") ?
-                                Color.FromArgb(0xFF, 0x32, 0x82, 0x32) :
-                                split[i].StartsWith("/me ") ? Colors.Purple : Colors.Black)
+                                Color.FromArgb(0xFF, 0x32, 0x82, 0x32) : Colors.Black)
                         };
                     }
                     return lines;
@@ -82,6 +81,13 @@ namespace Cloudsdale.Models {
                     return new ChatLine[0];
                 }
             }
+        }
+
+        public bool IsSlashMe {
+            get { return content.StartsWith("/me"); }
+        }
+        public string SlashMeForm {
+            get { return user.name + content.Substring(3); }
         }
 
         public Drop[] Drops {

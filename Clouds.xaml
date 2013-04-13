@@ -61,7 +61,33 @@
                     </Grid>
                 </Button>
             </DataTemplate>
-            <DataTemplate x:Name="ChatsTemplate">
+            <DataTemplate x:Key="SlashMeTemplate">
+                <Grid Margin="0,3,0,5" DataContext="{Binding}">
+                    <toolkit:ContextMenuService.ContextMenu>
+                        <toolkit:ContextMenu>
+                            <toolkit:MenuItem Header="Copy" Click="CopyClick" />
+                            <toolkit:MenuItem Header="Screenshot" Click="ScreenshotClick" />
+                        </toolkit:ContextMenu>
+                    </toolkit:ContextMenuService.ContextMenu>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock FontSize="16" Foreground="#ff6f8f8f"
+                               HorizontalAlignment="Center" 
+                               Text="{Binding Path=CorrectedTimestamp}" />
+                    <TextBlock FontSize="16" Foreground="#ff6f8f8f"
+                               HorizontalAlignment="Right" 
+                               Text="{Binding Path=DeviceStub}" />
+                    <RichTextBox Grid.Row="1" HorizontalAlignment="Center" TextWrapping="Wrap" 
+                                 FontSize="18" Style="{StaticResource RichChatStyle}" Foreground="Black">
+                        <Paragraph>
+                            <Run Text="{Binding Path=SlashMeForm}" />
+                        </Paragraph>
+                    </RichTextBox>
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:Key="StandardChatTemplate">
                 <Grid Margin="0,3,0,5" DataContext="{Binding}">
                     <toolkit:ContextMenuService.ContextMenu>
                         <toolkit:ContextMenu>
@@ -137,6 +163,12 @@
                         </ItemsControl>
                     </Grid>
                 </Grid>
+            </DataTemplate>
+            <DataTemplate x:Name="ChatsTemplate">
+                <my:AlternatableContent Content="{Binding}" 
+                                        PrimaryTemplate="{StaticResource StandardChatTemplate}" 
+                                        SecondaryTemplate="{StaticResource SlashMeTemplate}"
+                                        UseAlternate="{Binding Path=IsSlashMe}" />
             </DataTemplate>
             <DataTemplate x:Name="DropsTemplate">
                 <Button BorderBrush="Transparent" Padding="-12" 

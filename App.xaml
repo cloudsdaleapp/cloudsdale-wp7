@@ -22,6 +22,10 @@
                 <Setter Property="FontFamily" Value="Verdana" />
                 <Setter Property="FontSize" Value="10" />
             </Style>
+            <Style TargetType="RichTextBox" x:Key="RichChatStyle">
+                <Setter Property="FontFamily" Value="Verdana" />
+                <Setter Property="FontSize" Value="10" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 
