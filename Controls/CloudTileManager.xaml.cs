@@ -147,6 +147,8 @@ namespace Cloudsdale.Controls {
                 return;
             }
 
+            Scroller.IsHitTestVisible = false;
+
             var tile = (DisablingHubTile)sender;
             var grid = (TiltGrid)tile.Parent;
             var content = tiles.First(presenter => presenter.DataContext == grid.DataContext);
