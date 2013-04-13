@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
@@ -41,7 +43,7 @@ namespace Cloudsdale.Controls {
 
         private readonly List<ContentPresenter> tiles = new List<ContentPresenter>();
 
-        private ObservableCollection<Cloud> _source; 
+        private ObservableCollection<Cloud> _source;
         public ObservableCollection<Cloud> ItemSource {
             get { return _source; }
             set {
@@ -49,23 +51,66 @@ namespace Cloudsdale.Controls {
                 _source = value;
                 _source.CollectionChanged += SourceOnCollectionChanged;
                 foreach (var control in tiles) {
-                    TileCanvas.Children.Remove(control);
+                    if (_source.All(cloud => cloud.id != ((Cloud)control.DataContext).id)) TileCanvas.Children.Remove(control);
                 }
-                tiles.Clear();
                 for (var i = 0; i < _source.Count; i++) {
                     CreateTile(_source[i], i);
                 }
             }
         }
 
+        private bool MoveTile(CloudsdaleItem cloud, int index) {
+            var tile = tiles.FirstOrDefault(control => ((Cloud)control.Content).id == cloud.id);
+            if (tile == null) return false;
+            if (isDragging && draggingItem != null && tile.DataContext == draggingItem.DataContext) return true;
+
+            var x = (index % 2 == 0) ? 5 : 185;
+            var y = Math.Floor(index / 2.0) * 180;
+
+            var leftAnimation = new DoubleAnimation {
+                From = Canvas.GetLeft(tile),
+                To = x,
+                Duration = new Duration(TimeSpan.FromMilliseconds(100)),
+            };
+
+            var topAnimation = new DoubleAnimation {
+                From = Canvas.GetTop(tile),
+                To = y,
+                Duration = new Duration(TimeSpan.FromMilliseconds(100)),
+            };
+
+            var storyboard = new Storyboard();
+            storyboard.Children.Add(leftAnimation);
+            storyboard.Children.Add(topAnimation);
+
+            Storyboard.SetTarget(leftAnimation, tile);
+            Storyboard.SetTarget(topAnimation, tile);
+
+            Storyboard.SetTargetProperty(leftAnimation, new PropertyPath(Canvas.LeftProperty));
+            Storyboard.SetTargetProperty(topAnimation, new PropertyPath(Canvas.TopProperty));
+
+            Resources.Add(Guid.NewGuid().ToString(), storyboard);
+
+            storyboard.Begin();
+
+            return true;
+        }
+
+        private void CreateTile(CloudsdaleItem cloud, int index) {
+            if (MoveTile(cloud, index)) return;
+            var control = new ContentPresenter { ContentTemplate = ItemTemplate, Content = cloud };
+            Canvas.SetLeft(control, (index % 2 == 0) ? 5 : 185);
+            Canvas.SetTop(control, Math.Floor(index / 2.0) * 180);
+            TileCanvas.Children.Add(control);
+            tiles.Add(control);
+
+            LayoutRoot.Height = Math.Ceiling(tiles.Count / 2.0) * 180;
+        }
+
         private void SourceOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs) {
             if (notifyCollectionChangedEventArgs.Action == NotifyCollectionChangedAction.Reset) {
-                foreach (var control in tiles) {
-                    TileCanvas.Children.Remove(control);
-                }
-                tiles.Clear();
             } else if (notifyCollectionChangedEventArgs.Action == NotifyCollectionChangedAction.Add) {
-                CreateTile((Cloud) notifyCollectionChangedEventArgs.NewItems[0],
+                CreateTile((Cloud)notifyCollectionChangedEventArgs.NewItems[0],
                            notifyCollectionChangedEventArgs.NewStartingIndex);
             }
         }
@@ -102,8 +147,8 @@ namespace Cloudsdale.Controls {
                 return;
             }
 
-            var tile = (DisablingHubTile) sender;
-            var grid = (TiltGrid) tile.Parent;
+            var tile = (DisablingHubTile)sender;
+            var grid = (TiltGrid)tile.Parent;
             var content = tiles.First(presenter => presenter.DataContext == grid.DataContext);
 
             var x = Canvas.GetLeft(content);
@@ -114,6 +159,13 @@ namespace Cloudsdale.Controls {
             y += e.VerticalChange;
 
             Canvas.SetTop(content, y);
+
+            var cloudId = ((Cloud)grid.DataContext).id;
+            var newindex = IndexForPosition(Canvas.GetLeft(content), Canvas.GetTop(content));
+            var movement = newindex - PonyvilleDirectory.CloudIndex(cloudId);
+            PonyvilleDirectory.MoveItem(cloudId, movement);
+
+            Connection.CurrentCloudsdaleUser.clouds = Connection.CurrentCloudsdaleUser.clouds;
         }
 
         private void GestureListenerDragCompleted(object sender, DragCompletedGestureEventArgs e) {
@@ -123,32 +175,22 @@ namespace Cloudsdale.Controls {
                 return;
             }
 
+            isDragging = false;
+
             var tile = (DisablingHubTile)sender;
             var grid = (TiltGrid)tile.Parent;
             var content = tiles.First(presenter => presenter.DataContext == grid.DataContext);
 
             Canvas.SetZIndex(content, 0);
 
-            ItemSource = ItemSource;
-
             OnEvent(DragStop);
 
-            var cloudId = ((Cloud) grid.DataContext).id;
+            var cloudId = ((Cloud)grid.DataContext).id;
             var newindex = IndexForPosition(Canvas.GetLeft(content), Canvas.GetTop(content));
             var movement = newindex - PonyvilleDirectory.CloudIndex(cloudId);
             PonyvilleDirectory.MoveItem(cloudId, movement);
 
             Connection.CurrentCloudsdaleUser.clouds = Connection.CurrentCloudsdaleUser.clouds;
-        }
-
-        private void CreateTile(Cloud cloud, int index) {
-            var control = new ContentPresenter { ContentTemplate = ItemTemplate, Content = cloud};
-            Canvas.SetLeft(control, (index % 2 == 0) ? 5 : 185);
-            Canvas.SetTop(control, Math.Floor(index/2.0) * 180);
-            TileCanvas.Children.Add(control);
-            tiles.Add(control);
-
-            LayoutRoot.Height = Math.Ceiling(tiles.Count/2.0)*180;
         }
 
         private static void OnEvent(Action a) {
@@ -160,11 +202,16 @@ namespace Cloudsdale.Controls {
         private DispatcherTimer timer;
         private readonly DispatcherTimer timer2 = new DispatcherTimer();
 
+        private bool cancelGesture;
         private void GestureListenerGestureBegin(object sender, GestureEventArgs e) {
+            cancelGesture = false;
             timer = new DispatcherTimer();
             Pivot.IsHitTestVisible = false;
             timer.Tick += (o, args) => {
                 timer.Stop();
+                if (cancelGesture) {
+                    return;
+                }
                 Scroller.IsHitTestVisible = false;
             };
             timer.Interval = new TimeSpan(0, 0, 0, 0, 250);
@@ -172,6 +219,7 @@ namespace Cloudsdale.Controls {
         }
 
         private void GestureListenerGestureCompleted(object sender, GestureEventArgs e) {
+            cancelGesture = true;
             timer.Stop();
 
             draggingItem = null;
@@ -182,7 +230,7 @@ namespace Cloudsdale.Controls {
         }
 
         public int IndexForPosition(double x, double y) {
-            var index = (int) Math.Floor((y+90)/180.0) * 2;
+            var index = (int)Math.Floor((y + 90) / 180.0) * 2;
 
             if (x > 100) ++index;
 
@@ -190,9 +238,9 @@ namespace Cloudsdale.Controls {
         }
 
         private void GestureListenerTap(object sender, GestureEventArgs e) {
-            var tile = (DisablingHubTile) sender;
-            var cloud = (Cloud) tile.DataContext;
-            CloudClicked(this, new CloudEventArgs{Cloud = cloud});
+            var tile = (DisablingHubTile)sender;
+            var cloud = (Cloud)tile.DataContext;
+            CloudClicked(this, new CloudEventArgs { Cloud = cloud });
         }
 
         public class CloudEventArgs : EventArgs {
