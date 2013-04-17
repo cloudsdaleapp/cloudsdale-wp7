@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Cloudsdale.Models;
 using Cloudsdale.Settings;
 using Coding4Fun.Toolkit.Controls;
@@ -140,7 +141,7 @@ namespace Cloudsdale.Managers {
                                         var linebreak = new Regex(@"((\r|\n)(\n)?)");
                                         var msg = StringParser.ParseLiteral(message.content);
                                         msg = linebreak.Replace(msg, " ");
-                                        
+
                                         var toast = new ToastPrompt {
                                             Title = cloud.name + " - " + message.user.name,
                                             TextOrientation = Orientation.Vertical,
@@ -153,13 +154,16 @@ namespace Cloudsdale.Managers {
                                             var content = (Page)rootVis.Content;
                                             if (content is Clouds) {
                                                 (content as Clouds).NavigateCloud(cloud);
+                                            } else if (content is Home) {
+                                                Connection.CurrentCloud = cloud;
+                                                content.NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
                                             } else {
                                                 while (content.NavigationService.CanGoBack) {
                                                     content.NavigationService.GoBack();
                                                 }
 
                                                 Connection.CurrentCloud = cloud;
-                                                rootVis.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
+                                                content.NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
                                             }
                                         };
                                         toast.Show();

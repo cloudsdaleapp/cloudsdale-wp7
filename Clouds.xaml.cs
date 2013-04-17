@@ -37,6 +37,7 @@ namespace Cloudsdale {
         public DerpyHoovesMailCenter Controller { get; set; }
         public bool Leaving;
         private bool inUserPopup;
+        private Cloud datcloud;
 
         public static readonly Regex CloudsdaleUrl = new Regex("http\\:\\/\\/(www\\.)?cloudsdale\\.org\\/clouds\\/([a-zA-Z0-9]+)",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -140,6 +141,12 @@ namespace Cloudsdale {
             Leaving = true;
             Controller.Messages.CollectionChanged += ScrollDown;
             ScrollDown(null, null);
+
+            if (datcloud != null && datcloud != Connection.CurrentCloud) {
+                NavigateCloud(Connection.CurrentCloud);
+            }
+
+            datcloud = Connection.CurrentCloud;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e) {
@@ -466,6 +473,7 @@ namespace Cloudsdale {
 
                         Wasoncloud = true;
 
+                        cloudPivot.SelectedIndex = 0;
                     });
                 }).Start();
             });
