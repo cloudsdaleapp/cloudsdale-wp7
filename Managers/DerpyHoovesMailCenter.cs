@@ -7,9 +7,15 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Cloudsdale.Models;
+using Cloudsdale.Settings;
+using Coding4Fun.Toolkit.Controls;
+using Microsoft.Phone.Controls;
 using Newtonsoft.Json;
 using System.Threading;
 using Newtonsoft.Json.Linq;
@@ -122,6 +128,43 @@ namespace Cloudsdale.Managers {
                                     break;
                                 }
                                 cache.messages.AddToEnd(message);
+                                var cloud = PonyvilleDirectory.GetCloud(chansplit[1]);
+
+                                if (Connection.CurrentCloud == null || cloud.id != Connection.CurrentCloud.id) {
+                                    Deployment.Current.Dispatcher.BeginInvoke(() => {
+                                        var chromeColor = ((SolidColorBrush)Application.Current.Resources["PhoneChromeBrush"]).Color;
+                                        chromeColor.R = (byte)Math.Max(0x1A, chromeColor.R - 30);
+                                        chromeColor.G = (byte)Math.Max(0x1A, chromeColor.G - 30);
+                                        chromeColor.B = (byte)Math.Max(0x1A, chromeColor.B - 30);
+
+                                        var linebreak = new Regex(@"((\r|\n)(\n)?)");
+                                        var msg = StringParser.ParseLiteral(message.content);
+                                        msg = linebreak.Replace(msg, " ");
+                                        
+                                        var toast = new ToastPrompt {
+                                            Title = cloud.name + " - " + message.user.name,
+                                            TextOrientation = Orientation.Vertical,
+                                            Message = msg,
+                                            ImageSource = new BitmapImage(message.user.avatar.Mini),
+                                            Background = new SolidColorBrush(chromeColor)
+                                        };
+                                        toast.Tap += (sender, args) => {
+                                            var rootVis = (TransitionFrame)Application.Current.RootVisual;
+                                            var content = (Page)rootVis.Content;
+                                            if (content is Clouds) {
+                                                (content as Clouds).NavigateCloud(cloud);
+                                            } else {
+                                                while (content.NavigationService.CanGoBack) {
+                                                    content.NavigationService.GoBack();
+                                                }
+
+                                                Connection.CurrentCloud = cloud;
+                                                rootVis.Navigate(new Uri("/Clouds.xaml", UriKind.Relative));
+                                            }
+                                        };
+                                        toast.Show();
+                                    });
+                                }
                             }
                             cache.Unread++;
                             break;

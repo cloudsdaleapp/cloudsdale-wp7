@@ -54,6 +54,18 @@
     <Reference Include="BugSense">
       <HintPath>Lib\BugSense.dll</HintPath>
     </Reference>
+    <Reference Include="Coding4Fun.Toolkit.Audio">
+      <HintPath>packages\Coding4Fun.Toolkit.Audio.2.0.5\lib\wp71\Coding4Fun.Toolkit.Audio.dll</HintPath>
+    </Reference>
+    <Reference Include="Coding4Fun.Toolkit.Controls">
+      <HintPath>packages\Coding4Fun.Toolkit.Controls.2.0.5\lib\wp71\Coding4Fun.Toolkit.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Coding4Fun.Toolkit.Net">
+      <HintPath>packages\Coding4Fun.Toolkit.Net.2.0.5\lib\wp71\Coding4Fun.Toolkit.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Coding4Fun.Toolkit.Storage">
+      <HintPath>packages\Coding4Fun.Toolkit.Storage.2.0.5\lib\wp71\Coding4Fun.Toolkit.Storage.dll</HintPath>
+    </Reference>
     <Reference Include="Facebook">
       <HintPath>Lib\Facebook.dll</HintPath>
     </Reference>
@@ -307,6 +319,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml">
       <SubType>Designer</SubType>
@@ -326,6 +339,7 @@
     <Content Include="Images\Icons\send.png" />
     <Content Include="Images\Icons\back.png" />
     <Content Include="Images\appbar.minus.rest.png" />
+    <Content Include="ReadMe.Coding4Fun.Toolkit.txt" />
     <Content Include="Sound\harlem-shake.mp3" />
     <Content Include="Todo.txt" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
