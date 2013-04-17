@@ -54,7 +54,7 @@ namespace Wp7Faye {
         }
 
         public bool IsSubscribed(string channel) {
-            return subscriptions.Any(subscription => SubscriptionMatches(subscription, channel));
+            return subscriptions.ToList().Any(subscription => SubscriptionMatches(subscription, channel));
         }
 
         private static bool SubscriptionMatches(string match, string sub) {
