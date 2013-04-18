@@ -321,6 +321,9 @@ namespace Cloudsdale {
         }
 
         public static void LeaveCloud(string id) {
+            Faye.Unsubscribe("/clouds/" + id + "/chat/messages");
+            Faye.Unsubscribe("/clouds/" + id + "/users/**");
+
             var jObj = new JObject();
             var dataString = jObj.ToString();
             var data = Encoding.UTF8.GetBytes(dataString);
