@@ -750,9 +750,9 @@ namespace Cloudsdale {
 
         private void ChatLinkClicked(object sender, LinkClickedEventArgs eargs) {
             Uri linkuri;
-            try {
-                linkuri = new Uri(eargs.LinkValue);
-            } catch {
+
+            if (!Uri.TryCreate(eargs.LinkValue, UriKind.Absolute, out linkuri) &&
+                !Uri.TryCreate("http://" + eargs.LinkValue, UriKind.Absolute, out linkuri)) {
                 return;
             }
 
