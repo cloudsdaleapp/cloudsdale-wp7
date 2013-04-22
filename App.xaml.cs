@@ -3,6 +3,8 @@
 using System.Diagnostics;
 #endif
 using System.IO.IsolatedStorage;
+using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -11,6 +13,7 @@ using BugSense;
 using Cloudsdale.Managers;
 using Cloudsdale.Settings;
 using Microsoft.Phone.Controls;
+using Microsoft.Phone.Info;
 using Microsoft.Phone.Shell;
 using Res = Cloudsdale.Resources;
 
@@ -31,6 +34,7 @@ namespace Cloudsdale {
             Color.FromArgb(0xFF, 0x3A, 0x3A, 0x3A),
             Color.FromArgb(0xFF, 0xF0, 0x96, 0x08),
         };
+        public static string DeviceId;
 
         /// <summary>
         /// Constructor for the Application object.
@@ -44,6 +48,12 @@ namespace Cloudsdale {
 
             // Phone-specific initialization
             InitializePhoneApplication();
+
+            object devIdObj;
+            if (DeviceExtendedProperties.TryGetValue("DeviceUniqueId", out devIdObj)) {
+                var id = (byte[])devIdObj;
+                DeviceId = id.Aggregate(new StringBuilder(), (builder, b) => builder.Append(b.ToString("x2"))).ToString();
+            }
 
             var psettings = IsolatedStorageSettings.ApplicationSettings;
             FontFamily font;
