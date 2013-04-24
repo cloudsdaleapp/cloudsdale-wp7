@@ -13,19 +13,19 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Cloudsdale.Account {
-    public partial class SetName {
-        public SetName() {
+    public partial class SetPassword {
+        public SetPassword() {
             InitializeComponent();
         }
 
         private void DoneClick(object sender, RoutedEventArgs e) {
-            Username.IsEnabled = false;
-            PostData(Username.Text);
+            Password.IsEnabled = false;
+            PostData(Password.Password);
         }
 
-        private void PostData(string name) {
+        private void PostData(string password) {
             var data = Encoding.UTF8.GetBytes(JObject.FromObject(new {
-                user = new { name }
+                user = new { password }
             }).ToString());
 
             var request = WebRequest.CreateHttp("http://www.cloudsdale.org/v1/users/" +
@@ -107,7 +107,7 @@ namespace Cloudsdale.Account {
                 } else {
                     MessageBox.Show("An unknown error occurred trying to register.");
                 }
-                Username.IsEnabled = true;
+                Password.IsEnabled = true;
             });
         }
 

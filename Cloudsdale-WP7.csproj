@@ -112,6 +112,9 @@
     <Compile Include="Account\SetName.xaml.cs">
       <DependentUpon>SetName.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Account\SetPassword.xaml.cs">
+      <DependentUpon>SetPassword.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Account\TermsAndConditions.xaml.cs">
       <DependentUpon>TermsAndConditions.xaml</DependentUpon>
     </Compile>
@@ -219,11 +222,16 @@
     </Compile>
     <Compile Include="Settings\ForceTheme.cs" />
     <Compile Include="Settings\StringParser.cs" />
+    <Compile Include="Toasts.cs" />
     <Page Include="Account\Register.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Account\SetName.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Account\SetPassword.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

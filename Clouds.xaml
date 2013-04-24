@@ -64,7 +64,7 @@
             <DataTemplate x:Key="SlashMeTemplate">
                 <Grid Margin="0,3,0,5" DataContext="{Binding}">
                     <toolkit:ContextMenuService.ContextMenu>
-                        <toolkit:ContextMenu>
+                        <toolkit:ContextMenu Background="{StaticResource PhoneChromeBrush}">
                             <toolkit:MenuItem Header="Copy" Click="CopyClick" />
                             <toolkit:MenuItem Header="Screenshot" Click="ScreenshotClick" />
                         </toolkit:ContextMenu>
@@ -90,7 +90,7 @@
             <DataTemplate x:Key="StandardChatTemplate">
                 <Grid Margin="0,3,0,5" DataContext="{Binding}">
                     <toolkit:ContextMenuService.ContextMenu>
-                        <toolkit:ContextMenu>
+                        <toolkit:ContextMenu Background="{StaticResource PhoneChromeBrush}">
                             <toolkit:MenuItem Header="Copy" Click="CopyClick" />
                             <toolkit:MenuItem Header="Screenshot" Click="ScreenshotClick" />
                         </toolkit:ContextMenu>

@@ -67,6 +67,17 @@ namespace Cloudsdale {
                         });
                         return;
                     }
+                    if (CurrentCloudsdaleUser.needs_password_change ?? false) {
+                        Deployment.Current.Dispatcher.BeginInvoke(() => {
+                            var settings = IsolatedStorageSettings.ApplicationSettings;
+                            settings.Remove("lastuser");
+                            settings.Save();
+                            MainPage.reconstruction = true;
+                            ((PhoneApplicationFrame)Application.Current.RootVisual)
+                                .Navigate(new Uri("/Account/SetPassword.xaml", UriKind.Relative));
+                        });
+                        return;
+                    }
                     if (!(CurrentCloudsdaleUser.has_read_tnc ?? false)) {
                         Deployment.Current.Dispatcher.BeginInvoke(() => {
                             var settings = IsolatedStorageSettings.ApplicationSettings;
