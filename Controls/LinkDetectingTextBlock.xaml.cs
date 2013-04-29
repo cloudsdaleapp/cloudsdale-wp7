@@ -22,7 +22,7 @@ namespace Cloudsdale.Controls {
     public partial class LinkDetectingTextBlock {
         public LinkDetectingTextBlock() {
             EffectHandlers = new List<EffectHandler> {
-                Hyperlink, Redacted, Cursive
+                Hyperlink, Redacted, Italics
             };
             InitializeComponent();
             RootBlock.DataContext = this;
@@ -98,8 +98,8 @@ namespace Cloudsdale.Controls {
             yield return new TextGroup { Text = input.Substring(lastIndex) };
         }
 
-        static IEnumerable<TextGroup> Cursive(string input) {
-            var matches = Helpers.CursiveRegex.Matches(input);
+        static IEnumerable<TextGroup> Italics(string input) {
+            var matches = Helpers.ItalicsRegex.Matches(input);
             var lastIndex = 0;
 
             foreach (Match match in matches) {
