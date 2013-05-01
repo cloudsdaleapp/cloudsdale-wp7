@@ -99,7 +99,7 @@ namespace Cloudsdale.Managers {
         #region Implementation of IValueConverter
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            return (value ?? "").ToString().Trim();
+            return (value ?? "").ToString().ReplaceRegex(@"\r\n", "\n").ReplaceRegex(@"[\n]{2,255}", "\n\n").Trim();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

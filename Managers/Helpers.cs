@@ -62,5 +62,21 @@ namespace Cloudsdale.Managers {
 
             return controller.messages.cache.Count -1;
         }
+
+        public static string ReplaceRegex(this string input, string regex, string replacement, RegexOptions options = RegexOptions.None) {
+            return input.Replace(new Regex(regex, options), replacement);
+        }
+
+        public static string ReplaceRegex(this string input, string regex, MatchEvaluator matcher, RegexOptions options = RegexOptions.None) {
+            return input.Replace(new Regex(regex, options), matcher);
+        }
+
+        public static string Replace(this string input, Regex regex, string replacement) {
+            return regex.Replace(input, replacement);
+        }
+
+        public static string Replace(this string input, Regex regex, MatchEvaluator matcher) {
+            return regex.Replace(input, matcher);
+        }
     }
 }
