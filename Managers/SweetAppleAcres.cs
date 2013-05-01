@@ -29,7 +29,7 @@ namespace Cloudsdale.Managers {
 
             if (cache.Count > 0 && !item.IsSlashMe) {
                 var last = cache[cache.Count - 1];
-                if (last.user.id == item.user.id) {
+                if (last.user.id == item.user.id && !last.IsSlashMe) {
                     last.AddSub(item);
                     cache.Trigger(cache.Count - 1);
                 } else {
