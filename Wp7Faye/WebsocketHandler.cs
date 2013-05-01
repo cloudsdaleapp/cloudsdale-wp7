@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using Newtonsoft.Json.Linq;
 using WebSocket4Net;
 
 namespace Wp7Faye {
     internal class WebsocketHandler : MessageHandler {
+
         // Fields
         private SessionState state;
 

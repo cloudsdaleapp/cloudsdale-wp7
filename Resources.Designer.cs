@@ -277,7 +277,7 @@ namespace Cloudsdale {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ws://push.cloudsdale.org/push.
+        ///   Looks up a localized string similar to wss://push.cloudsdale.org/push.
         /// </summary>
         internal static string pushUrl {
             get {
