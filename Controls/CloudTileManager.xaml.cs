@@ -19,8 +19,8 @@ namespace Cloudsdale.Controls {
         public CloudTileManager() {
             InitializeComponent();
 
-            timer2.Interval = new TimeSpan(0, 0, 0, 0, 40);
-            timer2.Tick += (sender, args) => {
+            scrollTimer.Interval = new TimeSpan(0, 0, 0, 0, 40);
+            scrollTimer.Tick += (sender, args) => {
                 if (!isDragging || draggingItem == null) return;
                 var y = Canvas.GetTop(draggingItem);
                 if (y < Scroller.VerticalOffset && Scroller.VerticalOffset > 0) {
@@ -33,7 +33,7 @@ namespace Cloudsdale.Controls {
                     Canvas.SetTop(draggingItem, y);
                 }
             };
-            timer2.Start();
+            scrollTimer.Start();
         }
 
         public Pivot Pivot { get; set; }
@@ -117,10 +117,11 @@ namespace Cloudsdale.Controls {
 
         private bool isDragging;
         private ContentPresenter draggingItem;
+        private bool readyToDrag;
 
         private void GestureListenerDragStarted(object sender, DragStartedGestureEventArgs e) {
 
-            isDragging = !Scroller.IsHitTestVisible;
+            isDragging = readyToDrag;
 
             if (!isDragging) {
                 Scroller.IsHitTestVisible = true;
@@ -201,34 +202,21 @@ namespace Cloudsdale.Controls {
             }
         }
 
-        private DispatcherTimer timer;
-        private readonly DispatcherTimer timer2 = new DispatcherTimer();
+        private readonly DispatcherTimer scrollTimer = new DispatcherTimer();
 
-        private bool cancelGesture;
         private void GestureListenerGestureBegin(object sender, GestureEventArgs e) {
-            cancelGesture = false;
-            timer = new DispatcherTimer();
-            Pivot.IsHitTestVisible = false;
-            timer.Tick += (o, args) => {
-                timer.Stop();
-                if (cancelGesture) {
-                    return;
-                }
-                Scroller.IsHitTestVisible = false;
-            };
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 250);
-            timer.Start();
+            readyToDrag = false;
         }
 
         private void GestureListenerGestureCompleted(object sender, GestureEventArgs e) {
-            cancelGesture = true;
-            timer.Stop();
-
             draggingItem = null;
             isDragging = false;
+            readyToDrag = false;
 
             Scroller.IsHitTestVisible = true;
             Pivot.IsHitTestVisible = true;
+
+            ((HubTile)sender).Opacity = 1;
         }
 
         public int IndexForPosition(double x, double y) {
@@ -252,6 +240,14 @@ namespace Cloudsdale.Controls {
         private void OnMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
             Scroller.IsHitTestVisible = true;
             Pivot.IsHitTestVisible = true;
+        }
+
+        private void GestureListenerHold(object sender, GestureEventArgs e) {
+            readyToDrag = true;
+
+            Scroller.IsHitTestVisible = false;
+            Pivot.IsHitTestVisible = false;
+            ((HubTile)sender).Opacity = .5;
         }
     }
 }

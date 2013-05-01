@@ -29,7 +29,8 @@
                                                      DragCompleted="GestureListenerDragCompleted"
                                                      GestureBegin="GestureListenerGestureBegin"
                                                      GestureCompleted="GestureListenerGestureCompleted"
-                                                     Tap="GestureListenerTap"/>
+                                                     Tap="GestureListenerTap"
+                                                     Hold="GestureListenerHold"/>
                         </toolkit:GestureService.GestureListener>
                     </my:DisablingHubTile>
                     <my:CountDisplay HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10, 10"
