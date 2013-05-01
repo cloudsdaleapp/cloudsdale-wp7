@@ -142,7 +142,7 @@ namespace Cloudsdale {
             Faye = Wp7Faye.Faye.Connect(Resources.pushUrl);
             Faye.ConnectTimeout += () => FinishConnectingLongPoll(page, dispatcher);
 
-            Faye.Timeout = 10000;
+            Faye.Timeout = 30000;
             Faye.MessageExt = JObject.FromObject(new { CurrentCloudsdaleUser.auth_token });
             Faye.HandshakeResponse += response => {
 
