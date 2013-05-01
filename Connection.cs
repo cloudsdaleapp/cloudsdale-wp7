@@ -106,7 +106,8 @@ namespace Cloudsdale {
                     }
 
                     CurrentCloudsdaleUser.PropertyChanged += (sender, args) => {
-                        if (args.PropertyName != "bans") return;
+                        if (args.PropertyName != "bans")
+                            return;
 
                         foreach (var diff in BanDifferentiation.DifferentiateBans
                             (CurrentCloudsdaleUser.old_bans, CurrentCloudsdaleUser.bans)) {
@@ -160,13 +161,18 @@ namespace Cloudsdale {
                     if (dispatcher != null) {
                         dispatcher.BeginInvoke(() => {
                             var phoneApplicationFrame = Application.Current.RootVisual as PhoneApplicationFrame;
-                            if (phoneApplicationFrame != null)
+                            if (phoneApplicationFrame != null) {
                                 phoneApplicationFrame.Navigate(new Uri("/Home.xaml", UriKind.Relative));
+                                LoginState.Message = "Loading home...";
+                            }
                         });
                     }
                 } else {
                     page.Dispatcher.BeginInvoke(
-                        () => page.NavigationService.Navigate(new Uri("/Home.xaml", UriKind.Relative)));
+                        () => {
+                            page.NavigationService.Navigate(new Uri("/Home.xaml", UriKind.Relative));
+                            LoginState.Message = "Loading home...";
+                        });
                 }
             };
 
@@ -174,7 +180,8 @@ namespace Cloudsdale {
         }
 
         public static void FinishConnectingLongPoll(Page page, Dispatcher dispatcher) {
-            if (Resources.DevMessages == "true") LoginState.Message = "Falling back to long polling...";
+            if (Resources.DevMessages == "true")
+                LoginState.Message = "Falling back to long polling...";
             Faye = Wp7Faye.Faye.Connect(Resources.longPollingUrl);
 
             Faye.Timeout = 10000;
@@ -291,7 +298,8 @@ namespace Cloudsdale {
                         responseData = responseReader.ReadToEnd();
                     }
 
-                    if (callback != null) callback(JObject.Parse(responseData));
+                    if (callback != null)
+                        callback(JObject.Parse(responseData));
                 }, null);
             }, null);
         }
@@ -386,7 +394,8 @@ namespace Cloudsdale {
 
         public static bool IsMemberOfCloud(string cloud) {
             foreach (var c in CurrentCloudsdaleUser.clouds) {
-                if (c.id == cloud) return true;
+                if (c.id == cloud)
+                    return true;
             }
             return false;
         }
@@ -417,10 +426,12 @@ namespace Cloudsdale {
                 request.BeginGetResponse(ai => {
                     try {
                         using (request.EndGetResponse(ai)) {
-                            if (success != null) Deployment.Current.Dispatcher.BeginInvoke(success);
+                            if (success != null)
+                                Deployment.Current.Dispatcher.BeginInvoke(success);
                         }
                     } catch (WebException ex) {
-                        if (onError != null) onError(ex);
+                        if (onError != null)
+                            onError(ex);
                     }
                 }, null);
             }, null);
