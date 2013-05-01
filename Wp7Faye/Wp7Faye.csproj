@@ -41,7 +41,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="BouncyCastle.Crypto, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\Lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="CodeTitans.Bayeux">
       <HintPath>..\Lib\CodeTitans.Bayeux.dll</HintPath>
     </Reference>
@@ -72,7 +74,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Net" />
     <Reference Include="mscorlib.extensions" />
-    <Reference Include="WebSocket4Net, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="WebSocket4Net, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\Lib\WebSocket4Net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Faye.cs" />
