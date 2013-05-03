@@ -52,8 +52,8 @@
                                VerticalAlignment="Top"/>
                         <StackPanel Width="400">
                             <TextBlock Text="{Binding name}" Foreground="Black" FontSize="30" FontFamily="Segoe WP" />
-                            <TextBlock Text="{Binding description, Converter={StaticResource Trim}}" Foreground="#f777" FontSize="26" FontFamily="Segoe WP"
-                                       TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding description, Converter={StaticResource Trim}}" 
+                                       Foreground="#f777" FontSize="26" FontFamily="Segoe WP" TextWrapping="Wrap"/>
                         </StackPanel>
                     </StackPanel>
                 </Button>

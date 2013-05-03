@@ -183,14 +183,15 @@
 
     <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackgroundChat}" Margin="0,0,0,0">
         <MediaElement Name="mediaPlayer" MediaOpened="HarlemShakeReady" />
-        <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot" Margin="0,10,0,0">
+        <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot"
+                        Margin="0,10,0,0" Foreground="{StaticResource PhoneChromeBrush}">
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" FontFamily="Segoe WP Bold" FontSize="48" 
                                Foreground="{StaticResource PhoneChromeBrush}"/>
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
-            <controls:PivotItem x:Name="chatTab" Header="Chat">
+            <controls:PivotItem x:Name="chatTab" Header="chat">
                 <Grid Margin="0,-26,0,0">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -213,7 +214,7 @@
                     </Grid>
                 </Grid>
             </controls:PivotItem>
-            <controls:PivotItem x:Name="mediaTab" Header="Drops">
+            <controls:PivotItem x:Name="mediaTab" Header="drops">
                 <Grid Margin="-12,-26,-12,0">
                     <ScrollViewer>
                         <StackPanel>
@@ -235,7 +236,7 @@
                     </ScrollViewer>
                 </Grid>
             </controls:PivotItem>
-            <controls:PivotItem x:Name="peopleTab" Header="Ponies">
+            <controls:PivotItem x:Name="peopleTab" Header="users">
                 <Grid Margin="0,-26,0,0">
                     <ScrollViewer>
                         <ItemsControl x:Name="Ponies" ItemTemplate="{StaticResource UserlistTemplate}" ItemsSource="{Binding Path=Users}" />
