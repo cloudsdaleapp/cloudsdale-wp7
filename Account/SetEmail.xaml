@@ -25,7 +25,7 @@
                    HorizontalAlignment="Center">Enter your email</TextBlock>
 
         <StackPanel Grid.Row="1">
-            <TextBox Height="75" VerticalAlignment="Top" Margin="0,175,0,0" Name="Email" InputScope="Email" />
+            <TextBox Height="75" VerticalAlignment="Top" Margin="0,175,0,0" Name="Email" InputScope="EmailSmtpAddress" />
             <Button Margin="50" Click="DoneClick">Done</Button>
         </StackPanel>
     </Grid>
