@@ -25,7 +25,7 @@ namespace Cloudsdale.Account {
 
         private void PostData(string email) {
             var data = Encoding.UTF8.GetBytes(JObject.FromObject(new {
-                user = new { password = email }
+                user = new { email }
             }).ToString());
 
             var request = WebRequest.CreateHttp("http://www.cloudsdale.org/v1/users/" +
