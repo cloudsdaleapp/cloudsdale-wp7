@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -75,6 +74,17 @@ namespace Cloudsdale {
                             MainPage.reconstruction = true;
                             ((PhoneApplicationFrame)Application.Current.RootVisual)
                                 .Navigate(new Uri("/Account/SetPassword.xaml", UriKind.Relative));
+                        });
+                        return;
+                    }
+                    if (CurrentCloudsdaleUser.needs_email_change ?? false) {
+                        Deployment.Current.Dispatcher.BeginInvoke(() => {
+                            var settings = IsolatedStorageSettings.ApplicationSettings;
+                            settings.Remove("lastuser");
+                            settings.Save();
+                            MainPage.reconstruction = true;
+                            ((PhoneApplicationFrame)Application.Current.RootVisual)
+                                .Navigate(new Uri("/Account/SetEmail.xaml", UriKind.Relative));
                         });
                         return;
                     }

@@ -254,6 +254,8 @@ namespace Cloudsdale.Models {
         public bool? needs_password_change;
         [JsonProperty]
         public bool? needs_name_change;
+        [JsonProperty]
+        public bool? needs_email_change;
         [JsonProperty("preferred_status")]
         public string status;
 

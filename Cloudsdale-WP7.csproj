@@ -102,6 +102,9 @@
     <Reference Include="WebSocket4Net, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Account\SetEmail.xaml.cs">
+      <DependentUpon>SetEmail.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Account\Register.xaml.cs">
       <DependentUpon>Register.xaml</DependentUpon>
     </Compile>
@@ -219,6 +222,10 @@
     <Compile Include="Settings\ForceTheme.cs" />
     <Compile Include="Settings\StringParser.cs" />
     <Compile Include="Toasts.cs" />
+    <Page Include="Account\SetEmail.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Account\Register.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
