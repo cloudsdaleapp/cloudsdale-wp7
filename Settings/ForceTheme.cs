@@ -34,9 +34,9 @@ namespace Cloudsdale.Settings {
         }
 
         static public void ForceDarkTheme(this Application application) {
-            ((SolidColorBrush)application.Resources["PhoneForegroundBrush"]).Color = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
-            ((SolidColorBrush)application.Resources["PhoneBackgroundBrush"]).Color = Color.FromArgb(0xFF, 0x00, 0x00, 0x00);
-            ((SolidColorBrush)application.Resources["PhoneContrastForegroundBrush"]).Color = Color.FromArgb(0xFF, 0x00, 0x00, 0x00);
+            ((SolidColorBrush)application.Resources["PhoneForegroundBrush"]).Color = Color.FromArgb(0xFF, 0x0F, 0x0F, 0x0F);
+            ((SolidColorBrush)application.Resources["PhoneBackgroundBrush"]).Color = Color.FromArgb(0xFF, 0xF0, 0xF0, 0xF0);
+            ((SolidColorBrush)application.Resources["PhoneContrastForegroundBrush"]).Color = Color.FromArgb(0xFF, 0xF0, 0xF0, 0xF0);
             ((SolidColorBrush)application.Resources["PhoneContrastBackgroundBrush"]).Color = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
             ((SolidColorBrush)application.Resources["PhoneDisabledBrush"]).Color = Color.FromArgb(0x66, 0xFF, 0xFF, 0xFF);
             ((SolidColorBrush)application.Resources["PhoneTextCaretBrush"]).Color = Color.FromArgb(0xFF, 0x00, 0x00, 0x00);
