@@ -21,6 +21,7 @@ using Cloudsdale.Controls;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Cloudsdale.Screenshot;
+using Cloudsdale.Settings;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Newtonsoft.Json;
@@ -560,18 +561,20 @@ namespace Cloudsdale {
                 return;
             }
 
+            var text = StringParser.EscapeLiteral(SendBox.Text.Replace('\r', '\n'));
+
             var controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);
             var cmessages = controller.messages;
             var message = new Message {
                 id = Guid.NewGuid().ToString(),
                 device = "mobile",
-                content = SendBox.Text.Replace("\n", "\\n"),
+                content = text,
                 timestamp = DateTime.Now,
                 user = PonyvilleCensus.GetUser(Connection.CurrentCloudsdaleUser.id)
             };
             cmessages.AddToEnd(message);
 
-            Connection.SendMessage(Connection.CurrentCloud.id, SendBox.Text.Replace("\n", "\\n"), response => {
+            Connection.SendMessage(Connection.CurrentCloud.id, text, response => {
                 var result = response["result"];
                 message.id = (string)result["id"];
                 message.drops = result["drops"].Select(jdrop => jdrop.ToObject<Drop>()).ToArray();
