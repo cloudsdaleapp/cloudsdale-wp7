@@ -151,9 +151,7 @@ namespace Cloudsdale {
         public static void FinishConnecting(Page page = null, Dispatcher dispatcher = null) {
             LoginState.Message = "Connecting...";
             Faye = Wp7Faye.Faye.Connect(Resources.pushUrl);
-            Faye.ConnectTimeout += () => FinishConnectingLongPoll(page, dispatcher);
 
-            Faye.Timeout = 30000;
             Faye.MessageExt = JObject.FromObject(new { CurrentCloudsdaleUser.auth_token });
             Faye.HandshakeResponse += response => {
 
@@ -183,42 +181,6 @@ namespace Cloudsdale {
                             page.NavigationService.Navigate(new Uri("/Home.xaml", UriKind.Relative));
                             LoginState.Message = "Loading home...";
                         });
-                }
-            };
-
-            Faye.Connect();
-        }
-
-        public static void FinishConnectingLongPoll(Page page, Dispatcher dispatcher) {
-            if (Resources.DevMessages == "true")
-                LoginState.Message = "Falling back to long polling...";
-            Faye = Wp7Faye.Faye.Connect(Resources.longPollingUrl);
-
-            Faye.Timeout = 10000;
-            Faye.MessageExt = JObject.FromObject(new { CurrentCloudsdaleUser.auth_token });
-            Faye.HandshakeResponse += response => {
-
-                CurrentCloudsdaleUser.clouds = (from cloud in CurrentCloudsdaleUser.clouds
-                                                select PonyvilleDirectory.RegisterCloud(cloud)).ToArray();
-
-                if (dispatcher == null)
-                    foreach (var cloud in CurrentCloudsdaleUser.clouds) {
-                        DerpyHoovesMailCenter.Subscribe(cloud);
-                    }
-
-                DerpyHoovesMailCenter.Init();
-
-                if (page == null) {
-                    if (dispatcher != null) {
-                        dispatcher.BeginInvoke(() => {
-                            var phoneApplicationFrame = Application.Current.RootVisual as PhoneApplicationFrame;
-                            if (phoneApplicationFrame != null)
-                                phoneApplicationFrame.Navigate(new Uri("/Home.xaml", UriKind.Relative));
-                        });
-                    }
-                } else {
-                    page.Dispatcher.BeginInvoke(
-                        () => page.NavigationService.Navigate(new Uri("/Home.xaml", UriKind.Relative)));
                 }
             };
 

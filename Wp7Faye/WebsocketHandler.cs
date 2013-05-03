@@ -145,6 +145,9 @@ namespace Wp7Faye {
         }
 
         private void WaitForTimeout() {
+            if (Timeout <= 0) {
+                return;
+            }
             Thread.Sleep(Timeout);
             if (!EstablishedConnection) {
                 OnConnectTimeout();
