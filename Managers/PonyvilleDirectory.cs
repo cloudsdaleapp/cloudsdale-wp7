@@ -119,7 +119,7 @@ namespace Cloudsdale.Managers {
             }
 
             private static bool ActiveCloud(string id) {
-                return Connection.CurrentCloudsdaleUser == null || Connection.CurrentCloudsdaleUser.clouds.Any(cloud => cloud.id == id);
+                return Connection.CurrentCloudsdaleUser == null || Connection.CurrentCloudsdaleUser.clouds.Where(cloud => cloud != null).Any(cloud => cloud.id == id);
             }
 
             #endregion
