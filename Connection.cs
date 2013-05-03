@@ -77,7 +77,7 @@ namespace Cloudsdale {
                         });
                         return;
                     }
-                    if (CurrentCloudsdaleUser.needs_email_change ?? false) {
+                    if (CurrentCloudsdaleUser.force_email_change ?? false) {
                         Deployment.Current.Dispatcher.BeginInvoke(() => {
                             var settings = IsolatedStorageSettings.ApplicationSettings;
                             settings.Remove("lastuser");

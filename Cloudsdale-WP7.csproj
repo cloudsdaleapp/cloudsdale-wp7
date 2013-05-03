@@ -133,6 +133,9 @@
     </Compile>
     <Compile Include="Avatars\Mlfw\FaceQuery.cs" />
     <Compile Include="Avatars\Mlfw\MlfwImage.cs" />
+    <Compile Include="BannedCloud.xaml.cs">
+      <DependentUpon>BannedCloud.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BCrypt.Net\BCrypt.cs.cs" />
     <Compile Include="BCrypt.Net\SaltParseException.cs" />
     <Compile Include="Clouds.xaml.cs">
@@ -251,6 +254,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Avatars\MLFWConfirm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BannedCloud.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

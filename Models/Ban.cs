@@ -1,4 +1,6 @@
 ﻿using System;
+using Cloudsdale.Managers;
+using Newtonsoft.Json;
 
 namespace Cloudsdale.Models {
     public class Ban {
@@ -15,5 +17,10 @@ namespace Cloudsdale.Models {
         public bool? has_expired;
         public bool? is_active;
         public bool? is_transient;
+
+        [JsonIgnore]
+        public Cloud Cloud {
+            get { return PonyvilleDirectory.GetCloud(jurisdiction_id); }
+        }
     }
 }
