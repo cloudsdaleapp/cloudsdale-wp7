@@ -15,7 +15,8 @@
     Foreground="Black"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True"
-    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="White" shell:SystemTray.BackgroundColor="Black">
+    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="Black" 
+    shell:SystemTray.BackgroundColor="Black">
 
     <toolkit:TransitionService.NavigationInTransition>
         <toolkit:NavigationInTransition>
@@ -61,13 +62,13 @@
     </phone:PhoneApplicationPage.Resources>
 
     <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackground}" Margin="0,0,0,0">
-        <controls:Pivot Title="Cloudsdale" Name="pivotView" Margin="0,10,0,0">
+        <controls:Pivot Title="Cloudsdale" Name="pivotView" Margin="0,10,0,0" Foreground="{StaticResource PhoneChromeBrush}">
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" FontFamily="Segoe WP Bold" FontSize="48"/>
+                    <TextBlock Text="{Binding}" FontFamily="Segoe WP Bold" FontSize="48" Foreground="{StaticResource PhoneChromeBrush}"/>
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
-            <controls:PivotItem Header="Home" Foreground="#FF2A81DB">
+            <controls:PivotItem Header="home" Foreground="#FF2A81DB">
                 <Grid x:Name="UserInfoPane" Margin="0,-20,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -88,7 +89,7 @@
                                                  CloudClicked="CloudClicked"/>
                 </Grid>
             </controls:PivotItem>
-            <controls:PivotItem Header="Explore" Foreground="Black">
+            <controls:PivotItem Header="explore" Foreground="Black">
                 <Grid>
                     <Grid Margin="-12,-26,-12,-30" Height="110" VerticalAlignment="Top">
                         <TextBox VerticalAlignment="Top" Margin="0,0,75,0" BorderBrush="#888888" Name="SearchQuery" />
@@ -110,7 +111,7 @@
                             Click="RecentClick" />
                 </Grid>
             </controls:PivotItem>
-            <controls:PivotItem Header="Settings">
+            <controls:PivotItem Header="settings">
                 <Grid>
                     <ScrollViewer Foreground="#3a3a3a">
                         <StackPanel Name="SettingsPanel">

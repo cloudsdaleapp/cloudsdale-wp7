@@ -16,7 +16,7 @@
     Background="#FFF0F0F0"
     SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True" OrientationChanged="PhoneApplicationPageOrientationChanged"
-    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="White" shell:SystemTray.BackgroundColor="Black">
+    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="Black" shell:SystemTray.BackgroundColor="Black">
 
     <toolkit:TransitionService.NavigationInTransition>
         <toolkit:NavigationInTransition>
@@ -43,21 +43,14 @@
         <ResourceDictionary>
             <DataTemplate x:Name="UserlistTemplate">
                 <Button BorderBrush="Transparent" Padding="-12"
-                                            Style="{StaticResource XTiltButtonStyle}"
-                                            Click="UserListClick" Margin="0"
-                                            HorizontalAlignment="Left">
+                        Style="{StaticResource XTiltButtonStyle}"
+                        Click="UserListClick" Margin="0"
+                        HorizontalAlignment="Left">
                     <Grid Height="50" Margin="0,0,0,10" HorizontalAlignment="Left">
-                        <Image Source="{Binding Path=avatar.Normal}"
-                                               Stretch="Fill"
-                                               HorizontalAlignment="Left"
-                                               Width="50" Height="50">
-                            <!--<Image.Clip>
-                                <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,50,50" />
-                            </Image.Clip>-->
-                        </Image>
-                        <TextBlock Text="{Binding Path=name}"
-                                                   FontSize="34" Foreground="{Binding Path=CloudColor}"
-                                                   Margin="60,0,0,0"/>
+                        <Image Source="{Binding Path=avatar.Normal}" Stretch="Fill" 
+                               HorizontalAlignment="Left" Width="50" Height="50" />
+                        <TextBlock Text="{Binding Path=name}" FontSize="34"
+                                   Foreground="{Binding Path=CloudColor}" Margin="60,0,0,0"/>
                     </Grid>
                 </Button>
             </DataTemplate>
@@ -193,7 +186,8 @@
         <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot" Margin="0,10,0,0">
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" FontFamily="Segoe WP Bold" FontSize="48"/>
+                    <TextBlock Text="{Binding}" FontFamily="Segoe WP Bold" FontSize="48" 
+                               Foreground="{StaticResource PhoneChromeBrush}"/>
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem x:Name="chatTab" Header="Chat">
