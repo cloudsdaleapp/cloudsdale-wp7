@@ -123,10 +123,7 @@
                                 <toolkit:ListPickerItem>My Phone's Color</toolkit:ListPickerItem>
                                 <toolkit:ListPickerItem>Blue</toolkit:ListPickerItem>
                                 <toolkit:ListPickerItem>Dark Blue</toolkit:ListPickerItem>
-                                <toolkit:ListPickerItem>Red</toolkit:ListPickerItem>
-                                <toolkit:ListPickerItem>Green</toolkit:ListPickerItem>
                                 <toolkit:ListPickerItem>Black</toolkit:ListPickerItem>
-                                <toolkit:ListPickerItem>Mango</toolkit:ListPickerItem>
                             </toolkit:ListPicker>
                             <TextBlock>Status</TextBlock>
                             <toolkit:ListPicker Name="StatusBox" SelectionChanged="StatusSelectionChanged">
