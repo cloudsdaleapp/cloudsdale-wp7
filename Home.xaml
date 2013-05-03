@@ -15,7 +15,7 @@
     Foreground="Black"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True"
-    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="Black" 
+    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="#FF1A91DB" 
     shell:SystemTray.BackgroundColor="Black">
 
     <toolkit:TransitionService.NavigationInTransition>

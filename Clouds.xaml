@@ -16,7 +16,7 @@
     Background="#FFF0F0F0"
     SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True" OrientationChanged="PhoneApplicationPageOrientationChanged"
-    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="Black" shell:SystemTray.BackgroundColor="Black">
+    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="#FF1A91DB" shell:SystemTray.BackgroundColor="Black">
 
     <toolkit:TransitionService.NavigationInTransition>
         <toolkit:NavigationInTransition>
