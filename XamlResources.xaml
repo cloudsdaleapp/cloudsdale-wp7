@@ -5,8 +5,8 @@
     xmlns:my="clr-namespace:Cloudsdale.Controls">
     <Managers:Translucent x:Key="Translucent" />
     <LinearGradientBrush x:Key="PortraitBackground" StartPoint="0,0" EndPoint="0,1">
-        <!--<GradientStop Color="{Binding Source={StaticResource PhoneChromeBrush}, Path=Color}" Offset="0.1425" />
-        <GradientStop Color="#FFF0F0F0" Offset="0.1425" />-->
+        <GradientStop Color="{Binding Source={StaticResource PhoneChromeBrush}, Path=Color}" Offset="0.1425" />
+        <GradientStop Color="#FFF0F0F0" Offset="0.1425" />
         <GradientStop Color="#FFF0F0F0" Offset="1" />
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="PortraitBackgroundChat" StartPoint="0,0" EndPoint="0,1">
