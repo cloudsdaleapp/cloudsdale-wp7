@@ -169,6 +169,8 @@ namespace Cloudsdale {
 
         #region Logout
         private void LogoutClick(object sender, RoutedEventArgs e) {
+            Connection.Faye.Disconnect();
+
             var settings = IsolatedStorageSettings.ApplicationSettings;
             settings.Remove("lastuser");
             settings.Save();

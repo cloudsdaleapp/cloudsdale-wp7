@@ -1,36 +1,73 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using Cloudsdale.Models;
-using Cloudsdale.Managers;
+using System.IO.IsolatedStorage;
+using Newtonsoft.Json.Linq;
 
 namespace Cloudsdale.Managers {
     public static class PonyvilleAccounting {
-        private static readonly ObservableCollection<ListUser> _users = new ObservableCollection<ListUser>();
-        public static ReadOnlyObservableCollection<ListUser> Users {
-            get { return new ReadOnlyObservableCollection<ListUser>(_users); }
+        static PonyvilleAccounting() {
+            Load();
         }
 
-        public static void AddUser(ListUser user) {
-            if (_users.Any(cachedUser => cachedUser.id == user.id)) {
-                _users[_users.IndexOf(cachedUser => cachedUser.id == user.id)] = user.AsListUser;
-            } else {
-                _users.Add(user.AsListUser);
+        private static readonly ObservableCollection<LoggedInUser> _users = new ObservableCollection<LoggedInUser>();
+        public static ReadOnlyObservableCollection<LoggedInUser> Users {
+            get { return new ReadOnlyObservableCollection<LoggedInUser>(_users); }
+        }
+
+        public static void AddUser(LoggedInUser user) {
+            if (!Deployment.Current.Dispatcher.CheckAccess()) {
+                Deployment.Current.Dispatcher.BeginInvoke(() => AddUser(user));
+                return;
             }
+            if (_users.Any(cachedUser => cachedUser.id == user.id)) {
+                _users.Remove(_users.First(cachedUser => cachedUser.id == user.id));
+            }
+            _users.Insert(0, user);
+
+            Save();
+        }
+
+        public static void ForgetUser(UserReference user) {
+            if (!Deployment.Current.Dispatcher.CheckAccess()) {
+                Deployment.Current.Dispatcher.BeginInvoke(() => ForgetUser(user));
+                return;
+            }
+
+            if (_users.Any(cachedUser => cachedUser.id == user.id)) {
+                _users.Remove(_users.First(cachedUser => cachedUser.id == user.id));
+            }
+
+            Save();
         }
 
         public static void Save() {
-            var data = 
+            var data = _users.Serialize(array: true);
+            var storage = IsolatedStorageFile.GetUserStoreForApplication();
+
+            using (var file = storage.OpenFile("accounts.json", FileMode.Create)) {
+                file.Write(data, 0, data.Length);
+            }
+        }
+
+        public static void Load() {
+            var storage = IsolatedStorageFile.GetUserStoreForApplication();
+
+            JArray items;
+            if (storage.FileExists("accounts.json")) {
+                using (var file = storage.OpenFile("accounts.json", FileMode.Open))
+                using (var reader = new StreamReader(file, Encoding.UTF8)) {
+                    items = JArray.Parse(reader.ReadToEnd());
+                }
+            } else {
+                items = new JArray();
+            }
+
+            _users.Clear();
+            items.Select(token => token.ToObject<LoggedInUser>()).CopyTo(_users);
         }
     }
 }

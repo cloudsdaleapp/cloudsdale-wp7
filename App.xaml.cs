@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -37,6 +38,8 @@ namespace Cloudsdale {
         /// Constructor for the Application object.
         /// </summary>
         public App() {
+            Thread.CurrentThread.Name = "Herpderp";
+
             BugSenseHandler.Instance.Init(this, Res.BugsenseApiKey);
             BugSenseHandler.Instance.UnhandledException += ApplicationUnhandledException;
 

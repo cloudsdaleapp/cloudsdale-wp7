@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -151,6 +152,8 @@ namespace Cloudsdale {
         }
 
         public static void FinishConnecting(Page page = null, Dispatcher dispatcher = null) {
+            PonyvilleAccounting.AddUser(CurrentCloudsdaleUser);
+
             LoginState.Message = "Connecting...";
             Faye = Wp7Faye.Faye.Connect(Resources.pushUrl);
 
@@ -214,15 +217,24 @@ namespace Cloudsdale {
                         LoginType = 0;
                         var settings = new JsonSerializerSettings {
                             DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                            Error = (sender, args) => Deployment.Current.Dispatcher.BeginInvoke(() => {
-                                MessageBox.Show("Error receiving data from the server");
-                                var isettings = IsolatedStorageSettings.ApplicationSettings;
-                                isettings.Remove("lastuser");
-                                isettings.Save();
-                                MainPage.reconstruction = true;
-                                ((PhoneApplicationFrame)Application.Current.RootVisual)
-                                    .Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
-                            })
+                            Error = (sender, args) => {
+                                if (args.ErrorContext.OriginalObject is Ban) {
+                                    var property = args.ErrorContext.OriginalObject.GetType().GetField((string)args.ErrorContext.Member);
+                                    if (property.FieldType == typeof(DateTime?)) {
+                                        property.SetValue(args.ErrorContext.OriginalObject, (DateTime?)DateTime.Now.AddDays(2));
+                                        args.ErrorContext.Handled = true;
+                                        return;
+                                    }
+                                }
+                                Deployment.Current.Dispatcher.BeginInvoke(() => {
+                                    MessageBox.Show("Error receiving data from the server");
+                                    var isettings = IsolatedStorageSettings.ApplicationSettings;
+                                    isettings.Remove("lastuser");
+                                    isettings.Save();
+                                    MainPage.reconstruction = true;
+                                    ((PhoneApplicationFrame)Application.Current.RootVisual).Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                                });
+                            }
                         };
                         LoginResult = JsonConvert.DeserializeObject<LoginResponse>(json, settings);
                         CloudsdaleClientId = LoginResult.result.client_id;

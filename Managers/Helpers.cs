@@ -61,7 +61,7 @@ namespace Cloudsdale.Managers {
                 }
             }
 
-            return controller.messages.cache.Count -1;
+            return controller.messages.cache.Count - 1;
         }
 
         public static int IndexOf<T>(this IEnumerable<T> enumerable, Func<T, bool> matcher) {
@@ -75,8 +75,14 @@ namespace Cloudsdale.Managers {
             return -1;
         }
 
-        public static byte[] Serialize(this object o) {
-            return Encoding.UTF8.GetBytes(JObject.FromObject(o).ToString());
+        public static void CopyTo<T>(this IEnumerable<T> enumerable, IList<T> list) {
+            foreach (var item in enumerable) {
+                list.Add(item);
+            }
+        }
+
+        public static byte[] Serialize(this object o, bool array = false) {
+            return Encoding.UTF8.GetBytes(array ? JArray.FromObject(o).ToString() : JObject.FromObject(o).ToString());
         }
 
         public static string ReplaceRegex(this string input, string regex, string replacement, RegexOptions options = RegexOptions.None) {

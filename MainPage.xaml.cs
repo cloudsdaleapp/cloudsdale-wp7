@@ -1,6 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Device.Location;
+using System.Linq;
 using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -9,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Newtonsoft.Json;
@@ -16,6 +16,8 @@ using Newtonsoft.Json;
 namespace Cloudsdale {
     public partial class MainPage {
         public static bool reconstruction = false;
+
+        private bool? isSavedLogin;
 
         // Constructor
         public MainPage() {
@@ -39,34 +41,30 @@ namespace Cloudsdale {
                     settings.Remove("lastuser");
                 }
             }
-            if (settings.Contains("email")) {
-                UserBox.Text = (string)settings["email"];
-            }
             ContentPanel.Visibility = Visibility.Visible;
+
+            isSavedLogin = false;
         }
 
         private void LoginClick(object sender, RoutedEventArgs e) {
             reconstruction = true;
             Home.comingfromhome = false;
-            fbbtn.IsEnabled = false;
-            emailbtn.IsEnabled = false;
-            createbtn.IsEnabled = false;
+            LockButtons();
+
+            if (isSavedLogin == true) {
+                Connection.CurrentCloudsdaleUser = PonyvilleAccounting.Users.First(account => account.email == UserBox.Text);
+                Connection.LoginType = 0;
+
+                NavigationService.Navigate(new Uri("/Connecting.xaml", UriKind.Relative));
+                Connection.Connect((Page)((PhoneApplicationFrame)Application.Current.RootVisual).Content, pulluserclouds: true);
+
+                return;
+            }
+
             EmailLogin();
             var settings = IsolatedStorageSettings.ApplicationSettings;
             settings["email"] = UserBox.Text;
             settings.Save();
-        }
-
-        private void FacebookClick(object sender, RoutedEventArgs e) {
-            reconstruction = true;
-            Home.comingfromhome = false;
-            FacebookLogin();
-        }
-
-        private void TwitterClick(object sender, RoutedEventArgs e) {
-            reconstruction = true;
-            Home.comingfromhome = false;
-            TwitterLogin();
         }
 
         private void CreateClick(object sender, RoutedEventArgs e) {
@@ -109,25 +107,31 @@ namespace Cloudsdale {
                         Debug.WriteLine(ex);
                         Dispatcher.BeginInvoke(() => MessageBox.Show("Unkown error connecting to the server"));
                     }
-                    Dispatcher.BeginInvoke(() => fbbtn.IsEnabled = true);
-                    Dispatcher.BeginInvoke(() => emailbtn.IsEnabled = true);
-                    Dispatcher.BeginInvoke(() => createbtn.IsEnabled = true);
+                    UnlockButtons();
                     return;
                 } catch (Exception ex) {
                     Debug.WriteLine(ex);
                     Dispatcher.BeginInvoke(() => MessageBox.Show("Unkown error connecting to the server"));
-                    Dispatcher.BeginInvoke(() => fbbtn.IsEnabled = true);
-                    Dispatcher.BeginInvoke(() => emailbtn.IsEnabled = true);
-                    Dispatcher.BeginInvoke(() => createbtn.IsEnabled = true);
+                    UnlockButtons();
                     return;
                 }
                 Connection.LoginType = 0;
                 var settings = new JsonSerializerSettings {
                     DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                    Error = (sender, args) => Dispatcher.BeginInvoke(() => {
-                        MessageBox.Show("Error receiving data from the server");
-                        NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
-                    })
+                    Error = (sender, args) => {
+                        if (args.ErrorContext.OriginalObject is Ban) {
+                            var property = args.ErrorContext.OriginalObject.GetType().GetField((string)args.ErrorContext.Member);
+                            if (property.FieldType == typeof(DateTime?)) {
+                                property.SetValue(args.ErrorContext.OriginalObject, (DateTime?)DateTime.Now.AddDays(2));
+                                args.ErrorContext.Handled = true;
+                                return;
+                            }
+                        }
+                        Dispatcher.BeginInvoke(() => {
+                            MessageBox.Show("Error receiving data from the server");
+                            NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                        });
+                    }
                 };
                 Connection.LoginResult = JsonConvert.DeserializeObject<LoginResponse>(responseData, settings);
                 Connection.CloudsdaleClientId = Connection.LoginResult.result.client_id;
@@ -139,17 +143,11 @@ namespace Cloudsdale {
             }, null);
         }
 
-        private void FacebookLogin() {
-            NavigationService.Navigate(new Uri("/FacebookAuth/Login.xaml", UriKind.Relative));
-        }
-
-        private void TwitterLogin() {
-
-        }
-
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
-            fbbtn.IsEnabled = true;
-            emailbtn.IsEnabled = true;
+            UnlockButtons();
+
+            AccountsBox.ItemsSource = PonyvilleAccounting.Users;
+            isSavedLogin = false;
 
             try {
                 while (NavigationService.CanGoBack) {
@@ -166,6 +164,74 @@ namespace Cloudsdale {
             reconstruction = false;
 
             base.OnNavigatedTo(e);
+        }
+
+        private void AccountsBoxSelectionChanged(object sender, SelectionChangedEventArgs e) {
+            isSavedLogin = false;
+
+            var user = (LoggedInUser)((ListBox)sender).SelectedItem;
+            if (user == null) return;
+            UserBox.Text = user.email;
+            PassBox.Password = "DUMMY_PASS";
+
+            isSavedLogin = null;
+        }
+
+        public void LockButtons() {
+            if (!Dispatcher.CheckAccess()) {
+                Dispatcher.BeginInvoke(LockButtons);
+                return;
+            }
+
+            UserBox.IsEnabled = false;
+            PassBox.IsEnabled = false;
+            emailbtn.IsEnabled = false;
+            createbtn.IsEnabled = false;
+            AccountsBox.IsEnabled = false;
+        }
+
+        public void UnlockButtons() {
+            if (!Dispatcher.CheckAccess()) {
+                Dispatcher.BeginInvoke(UnlockButtons);
+                return;
+            }
+
+            UserBox.IsEnabled = true;
+            PassBox.IsEnabled = true;
+            emailbtn.IsEnabled = true;
+            createbtn.IsEnabled = true;
+            AccountsBox.IsEnabled = true;
+        }
+
+        private void UserBoxTextChanged(object sender, TextChangedEventArgs e) {
+            switch (isSavedLogin) {
+                case null:
+                    Dispatcher.BeginInvoke(() => isSavedLogin = true);
+                    return;
+                case false:
+                    return;
+            }
+            isSavedLogin = false;
+            UserBox.Text = "";
+            PassBox.Password = "";
+            AccountsBox.SelectedIndex = -1;
+        }
+
+        private void PassBoxPasswordChanged(object sender, RoutedEventArgs e) {
+            if (isSavedLogin != true) return;
+            isSavedLogin = false;
+            UserBox.Text = "";
+            PassBox.Password = "";
+            AccountsBox.SelectedIndex = -1;
+        }
+
+        private void ForgetClick(object sender, RoutedEventArgs e) {
+            isSavedLogin = false;
+            UserBox.Text = "";
+            PassBox.Password = "";
+            AccountsBox.SelectedIndex = -1;
+
+            PonyvilleAccounting.ForgetUser((UserReference)((FrameworkElement)sender).DataContext);
         }
     }
 
