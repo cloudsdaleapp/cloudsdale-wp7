@@ -195,6 +195,7 @@
     <Compile Include="Managers\DerpyHoovesMailCenter.cs" />
     <Compile Include="Managers\Helpers.cs" />
     <Compile Include="Managers\PinkiePieEntertainmentDojo.cs" />
+    <Compile Include="Managers\PonyvilleAccounting.cs" />
     <Compile Include="Managers\PonyvilleCensus.cs" />
     <Compile Include="Managers\PonyvilleDirectory.cs" />
     <Compile Include="Managers\SweetAppleAcres.cs" />

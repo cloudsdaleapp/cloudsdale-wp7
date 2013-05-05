@@ -53,99 +53,101 @@ namespace Cloudsdale {
             }
 
             if (pulluserclouds) {
-                PullUserClouds(() => {
-                    if ((CurrentCloudsdaleUser.needs_name_change ?? false)
-                        || string.IsNullOrWhiteSpace(CurrentCloudsdaleUser.name)) {
-                        Deployment.Current.Dispatcher.BeginInvoke(() => {
-                            var settings = IsolatedStorageSettings.ApplicationSettings;
-                            settings.Remove("lastuser");
-                            settings.Save();
-                            MainPage.reconstruction = true;
-                            ((PhoneApplicationFrame)Application.Current.RootVisual)
-                                .Navigate(new Uri("/Account/SetName.xaml", UriKind.Relative));
-                        });
-                        return;
-                    }
-                    if (CurrentCloudsdaleUser.needs_password_change ?? false) {
-                        Deployment.Current.Dispatcher.BeginInvoke(() => {
-                            var settings = IsolatedStorageSettings.ApplicationSettings;
-                            settings.Remove("lastuser");
-                            settings.Save();
-                            MainPage.reconstruction = true;
-                            ((PhoneApplicationFrame)Application.Current.RootVisual)
-                                .Navigate(new Uri("/Account/SetPassword.xaml", UriKind.Relative));
-                        });
-                        return;
-                    }
-                    if (CurrentCloudsdaleUser.needs_email_change ?? false) {
-                        Deployment.Current.Dispatcher.BeginInvoke(() => {
-                            var settings = IsolatedStorageSettings.ApplicationSettings;
-                            settings.Remove("lastuser");
-                            settings.Save();
-                            MainPage.reconstruction = true;
-                            ((PhoneApplicationFrame)Application.Current.RootVisual)
-                                .Navigate(new Uri("/Account/SetEmail.xaml", UriKind.Relative));
-                        });
-                        return;
-                    }
-                    if (!(CurrentCloudsdaleUser.has_read_tnc ?? false)) {
-                        Deployment.Current.Dispatcher.BeginInvoke(() => {
-                            var settings = IsolatedStorageSettings.ApplicationSettings;
-                            settings.Remove("lastuser");
-                            settings.Save();
-                            MainPage.reconstruction = true;
-                            ((PhoneApplicationFrame)Application.Current.RootVisual)
-                                .Navigate(new Uri("/Account/TermsAndConditions.xaml", UriKind.Relative));
-                        });
-                        return;
-                    }
-                    if ((CurrentCloudsdaleUser.suspended_until ?? new DateTime(0)) > DateTime.Now) {
-                        Deployment.Current.Dispatcher.BeginInvoke(() => {
-                            MessageBox.Show("You are banned until" + CurrentCloudsdaleUser.suspended_until +
-                                "\n" + CurrentCloudsdaleUser.reason_for_suspension);
-                            Deployment.Current.Dispatcher.BeginInvoke(() => {
-                                var settings = IsolatedStorageSettings.ApplicationSettings;
-                                settings.Remove("lastuser");
-                                settings.Save();
-                                MainPage.reconstruction = true;
-                                ((PhoneApplicationFrame)Application.Current.RootVisual)
-                                    .Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
-                            });
-                        });
-                        return;
-                    }
-
-                    CurrentCloudsdaleUser.PropertyChanged += (sender, args) => {
-                        if (args.PropertyName != "bans")
-                            return;
-
-                        foreach (var diff in BanDifferentiation.DifferentiateBans
-                            (CurrentCloudsdaleUser.old_bans, CurrentCloudsdaleUser.bans)) {
-                            if (diff.isnew && diff.active == true) {
-                                MessageBox.Show("You have been banned from " +
-                                                PonyvilleDirectory.GetCloud(diff.cloud).name +
-                                                " for \"" + diff.reason + "\" until " + diff.due,
-                                                "Banned!", MessageBoxButton.OK);
-                                if (CurrentCloud.id == diff.cloud) {
-                                    while (((TransitionFrame)Application.Current.RootVisual).CanGoBack) {
-                                        ((TransitionFrame)Application.Current.RootVisual).GoBack();
-                                    }
-                                }
-                            } else if ((diff.due != null && diff.due < DateTime.Now) ||
-                                (diff.active == false || diff.revoked == true)) {
-                                MessageBox.Show("You are no longer banned from " +
-                                                PonyvilleDirectory.GetCloud(diff.cloud).name +
-                                                "!", "No longer banned!", MessageBoxButton.OK);
-                            }
-                        }
-                    };
-
-                    FinishConnecting(page, dispatcher);
-                });
+                PullUserClouds(() => FinishLogin(page, dispatcher));
             } else {
                 SaveUser();
                 FinishConnecting(page, dispatcher);
             }
+        }
+
+        public static void FinishLogin(Page page, Dispatcher dispatcher) {
+            if ((CurrentCloudsdaleUser.needs_name_change ?? false)
+                || string.IsNullOrWhiteSpace(CurrentCloudsdaleUser.name)) {
+                Deployment.Current.Dispatcher.BeginInvoke(() => {
+                    var settings = IsolatedStorageSettings.ApplicationSettings;
+                    settings.Remove("lastuser");
+                    settings.Save();
+                    MainPage.reconstruction = true;
+                    ((PhoneApplicationFrame)Application.Current.RootVisual)
+                        .Navigate(new Uri("/Account/SetName.xaml", UriKind.Relative));
+                });
+                return;
+            }
+            if (CurrentCloudsdaleUser.needs_password_change ?? false) {
+                Deployment.Current.Dispatcher.BeginInvoke(() => {
+                    var settings = IsolatedStorageSettings.ApplicationSettings;
+                    settings.Remove("lastuser");
+                    settings.Save();
+                    MainPage.reconstruction = true;
+                    ((PhoneApplicationFrame)Application.Current.RootVisual)
+                        .Navigate(new Uri("/Account/SetPassword.xaml", UriKind.Relative));
+                });
+                return;
+            }
+            if (CurrentCloudsdaleUser.needs_email_change ?? false) {
+                Deployment.Current.Dispatcher.BeginInvoke(() => {
+                    var settings = IsolatedStorageSettings.ApplicationSettings;
+                    settings.Remove("lastuser");
+                    settings.Save();
+                    MainPage.reconstruction = true;
+                    ((PhoneApplicationFrame)Application.Current.RootVisual)
+                        .Navigate(new Uri("/Account/SetEmail.xaml", UriKind.Relative));
+                });
+                return;
+            }
+            if (!(CurrentCloudsdaleUser.has_read_tnc ?? false)) {
+                Deployment.Current.Dispatcher.BeginInvoke(() => {
+                    var settings = IsolatedStorageSettings.ApplicationSettings;
+                    settings.Remove("lastuser");
+                    settings.Save();
+                    MainPage.reconstruction = true;
+                    ((PhoneApplicationFrame)Application.Current.RootVisual)
+                        .Navigate(new Uri("/Account/TermsAndConditions.xaml", UriKind.Relative));
+                });
+                return;
+            }
+            if ((CurrentCloudsdaleUser.suspended_until ?? new DateTime(0)) > DateTime.Now) {
+                Deployment.Current.Dispatcher.BeginInvoke(() => {
+                    MessageBox.Show("You are banned until" + CurrentCloudsdaleUser.suspended_until +
+                        "\n" + CurrentCloudsdaleUser.reason_for_suspension);
+                    Deployment.Current.Dispatcher.BeginInvoke(() => {
+                        var settings = IsolatedStorageSettings.ApplicationSettings;
+                        settings.Remove("lastuser");
+                        settings.Save();
+                        MainPage.reconstruction = true;
+                        ((PhoneApplicationFrame)Application.Current.RootVisual)
+                            .Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
+                    });
+                });
+                return;
+            }
+
+            CurrentCloudsdaleUser.PropertyChanged += (sender, args) => {
+                if (args.PropertyName != "bans")
+                    return;
+
+                foreach (var diff in BanDifferentiation.DifferentiateBans
+                    (CurrentCloudsdaleUser.old_bans, CurrentCloudsdaleUser.bans)) {
+                    if (diff.isnew && diff.active == true) {
+                        MessageBox.Show("You have been banned from " +
+                                        PonyvilleDirectory.GetCloud(diff.cloud).name +
+                                        " for \"" + diff.reason + "\" until " + diff.due,
+                                        "Banned!", MessageBoxButton.OK);
+                        if (CurrentCloud.id == diff.cloud) {
+                            while (((TransitionFrame)Application.Current.RootVisual).CanGoBack) {
+                                ((TransitionFrame)Application.Current.RootVisual).GoBack();
+                            }
+                        }
+                    } else if ((diff.due != null && diff.due < DateTime.Now) ||
+                        (diff.active == false || diff.revoked == true)) {
+                        MessageBox.Show("You are no longer banned from " +
+                                        PonyvilleDirectory.GetCloud(diff.cloud).name +
+                                        "!", "No longer banned!", MessageBoxButton.OK);
+                    }
+                }
+            };
+
+            FinishConnecting(page, dispatcher);
         }
 
         public static void FinishConnecting(Page page = null, Dispatcher dispatcher = null) {
@@ -158,12 +160,12 @@ namespace Cloudsdale {
                 CurrentCloudsdaleUser.clouds = (from cloud in CurrentCloudsdaleUser.clouds
                                                 select PonyvilleDirectory.RegisterCloud(cloud)).ToArray();
 
+                DerpyHoovesMailCenter.Init();
+
                 if (dispatcher == null)
                     foreach (var cloud in CurrentCloudsdaleUser.clouds) {
                         DerpyHoovesMailCenter.Subscribe(cloud);
                     }
-
-                DerpyHoovesMailCenter.Init();
 
                 if (page == null) {
                     if (dispatcher != null) {

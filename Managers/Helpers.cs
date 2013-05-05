@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 using Cloudsdale.Models;
+using Newtonsoft.Json.Linq;
 
 namespace Cloudsdale.Managers {
     public static class Helpers {
@@ -61,6 +62,21 @@ namespace Cloudsdale.Managers {
             }
 
             return controller.messages.cache.Count -1;
+        }
+
+        public static int IndexOf<T>(this IEnumerable<T> enumerable, Func<T, bool> matcher) {
+            var i = 0;
+            foreach (var item in enumerable) {
+                if (matcher(item)) {
+                    return i;
+                }
+                ++i;
+            }
+            return -1;
+        }
+
+        public static byte[] Serialize(this object o) {
+            return Encoding.UTF8.GetBytes(JObject.FromObject(o).ToString());
         }
 
         public static string ReplaceRegex(this string input, string regex, string replacement, RegexOptions options = RegexOptions.None) {
