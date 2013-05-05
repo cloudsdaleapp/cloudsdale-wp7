@@ -141,7 +141,7 @@ namespace Wp7Faye {
             if (addClientId) {
                 jobj["clientId"] = ClientID;
             }
-            state.socket.Send(jobj.ToString());
+            new Thread(() => state.socket.Send(jobj.ToString())).Start();
         }
 
         private void WaitForTimeout() {
