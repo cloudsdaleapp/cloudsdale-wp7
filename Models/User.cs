@@ -44,6 +44,7 @@ namespace Cloudsdale.Models {
                     case "verified":
                     case "associate":
                     case "legacy":
+                    case "admin":
                         return role.ToLower();
                     case "developer":
                         return "dev";
@@ -79,6 +80,9 @@ namespace Cloudsdale.Models {
                         break;
                     case "developer":
                         color = Color.FromArgb(0xFF, 0x5C, 0x33, 0x99);
+                        break;
+                    case "admin":
+                        color = Color.FromArgb(0xFF, 0x50, 0xAF, 0x60);
                         break;
                 }
                 return new SolidColorBrush(color);
