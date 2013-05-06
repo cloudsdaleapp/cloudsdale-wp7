@@ -151,11 +151,19 @@ namespace Cloudsdale {
             FinishConnecting(page, dispatcher);
         }
 
-        public static void FinishConnecting(Page page = null, Dispatcher dispatcher = null) {
+        public static void FinishConnecting(Page page = null, Dispatcher dispatcher = null, bool wss = false) {
             PonyvilleAccounting.AddUser(CurrentCloudsdaleUser);
 
             LoginState.Message = "Connecting...";
-            Faye = Wp7Faye.Faye.Connect(Resources.pushUrl);
+
+            if (wss) {
+                Faye = Wp7Faye.Faye.Connect(Resources.pushUrlSSL);
+            } else {
+                Faye = Wp7Faye.Faye.Connect(Resources.pushUrl);
+                Faye.Timeout = 10 * 1000;
+
+                Faye.ConnectTimeout += () => FinishConnecting(page, dispatcher, true);
+            }
 
             Faye.MessageExt = JObject.FromObject(new { CurrentCloudsdaleUser.auth_token });
             Faye.HandshakeResponse += response => {

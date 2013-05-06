@@ -128,7 +128,7 @@
     <value>{{"oauth":{{"client_type":"wp7","provider":"{0}","token":"{1}","uid":"{2}"}}}}</value>
   </data>
   <data name="pushUrl" xml:space="preserve">
-    <value>wss://push.cloudsdale.org/push</value>
+    <value>ws://push.cloudsdale.org/push</value>
   </data>
   <data name="loginUrl" xml:space="preserve">
     <value>http://www.cloudsdale.org/v1/sessions</value>
@@ -204,5 +204,8 @@
   </data>
   <data name="DevMessages" xml:space="preserve">
     <value>false</value>
+  </data>
+  <data name="pushUrlSSL" xml:space="preserve">
+    <value>wss://push.cloudsdale.org/push</value>
   </data>
 </root>
