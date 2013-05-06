@@ -38,7 +38,7 @@ namespace Cloudsdale {
         /// Constructor for the Application object.
         /// </summary>
         public App() {
-            Thread.CurrentThread.Name = "Herpderp";
+            Thread.CurrentThread.Name = "Main Thead";
 
             BugSenseHandler.Instance.Init(this, Res.BugsenseApiKey);
             BugSenseHandler.Instance.UnhandledException += ApplicationUnhandledException;
