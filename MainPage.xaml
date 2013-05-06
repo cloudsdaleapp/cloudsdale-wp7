@@ -125,11 +125,11 @@
 
             <TextBlock FontSize="36" Grid.Row="0">Email</TextBlock>
             <TextBox Name="UserBox" InputScope="EmailNameOrAddress" BorderBrush="#888888" Grid.Row="1"
-                     TextChanged="UserBoxTextChanged" Text="administration@connorcpu.net" />
+                     TextChanged="UserBoxTextChanged"/>
 
             <TextBlock FontSize="36" Grid.Row="2">Password</TextBlock>
             <PasswordBox Name="PassBox" BorderBrush="#888888" Grid.Row="3"
-                         PasswordChanged="PassBoxPasswordChanged" Password="12ltfromwil1"/>
+                         PasswordChanged="PassBoxPasswordChanged"/>
 
             <Grid Grid.Row="4">
                 <Grid.ColumnDefinitions>
