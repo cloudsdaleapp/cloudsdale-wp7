@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,6 +30,7 @@ namespace Cloudsdale.Managers {
             foreach (var header in item.headers) {
                 wc.Headers[header.Key] = header.Value;
             }
+            wc.Encoding = Encoding.UTF8;
             wc.DownloadStringCompleted += (sender, args) => item.callback(args);
             wc.DownloadStringAsync(item.uri);
         }
@@ -41,6 +43,7 @@ namespace Cloudsdale.Managers {
             foreach (var header in item.headers) {
                 wc.Headers[header.Key] = header.Value;
             }
+            wc.Encoding = Encoding.UTF8;
             wc.DownloadStringCompleted += (sender, args) => item.callback(args);
             wc.DownloadStringAsync(item.uri);
         }
@@ -53,6 +56,7 @@ namespace Cloudsdale.Managers {
             foreach (var header in item.headers) {
                 wc.Headers[header.Key] = header.Value;
             }
+            wc.Encoding = Encoding.UTF8;
             wc.DownloadStringCompleted += (sender, args) => item.callback(args);
             wc.DownloadStringAsync(item.uri);
         }
