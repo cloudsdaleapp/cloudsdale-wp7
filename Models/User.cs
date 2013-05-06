@@ -156,6 +156,11 @@ namespace Cloudsdale.Models {
             }
         }
 
+        [JsonIgnore]
+        private readonly ObservableCollection<Ban> _bans = new ObservableCollection<Ban>();
+        [JsonIgnore]
+        public ObservableCollection<Ban> Bans { get { return _bans; } }
+
         public void CopyTo(User user) {
             if (id != null)
                 user.id = id;

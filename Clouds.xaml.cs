@@ -383,6 +383,8 @@ namespace Cloudsdale {
             userpopup.DataContext = user;
             userpopup.IsOpen = true;
             inUserPopup = true;
+
+            UpdateBans(user);
         }
 
         private void AvatarMouseUp(object sender, MouseButtonEventArgs e) {
@@ -395,9 +397,13 @@ namespace Cloudsdale {
             if (!(image.DataContext is Message)) return;
             var message = image.DataContext as Message;
 
+            var user = PonyvilleCensus.GetUser(message.user.id);
+
             userpopup.DataContext = message.user;
             userpopup.IsOpen = true;
             inUserPopup = true;
+
+            UpdateBans(user);
         }
 
         private void AvatarMouseDown(object sender, MouseButtonEventArgs e) {
@@ -529,7 +535,7 @@ namespace Cloudsdale {
                 return;
             }
 
-            user.Ban(BanReason.Text, time, Connection.CurrentCloud.id);
+            user.Ban(BanReason.Text, time, Connection.CurrentCloud.id, () => UpdateBans(user));
             BanReason.Text = "";
             DontBanBanBan(sender, e);
         }
@@ -846,5 +852,22 @@ namespace Cloudsdale {
             NavigationService.Navigate(new Uri("/Screenshot/ViewShot.xaml", UriKind.Relative));
         }
 
+        public void UpdateBans(User user) {
+            if (Connection.CurrentCloud.IsModerator) {
+                WebPriorityManager.BeginLowPriorityRequest(new Uri("http://www.cloudsdale.org/v1/clouds/" + Connection.CurrentCloud.id + "/bans.json?offender_id=" + user.id),
+                    args => Dispatcher.BeginInvoke(() => {
+                        user.Bans.Clear();
+                        JObject.Parse(args.Result)["result"].Select(token => token.ToObject<Ban>())
+                                                            .CopyTo(user.Bans);
+                    }),
+                    new KeyValuePair<string, string>("X-Auth-Token", Connection.CurrentCloudsdaleUser.auth_token),
+                    new KeyValuePair<string, string>("Accept", "application/json"));
+            }
+        }
+
+        private void RevokeBanClick(object sender, RoutedEventArgs e) {
+            var ban = (Ban) ((FrameworkElement) sender).DataContext;
+            ban.Revoke(() => UpdateBans(ban.User));
+        }
     }
 }

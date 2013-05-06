@@ -226,7 +226,7 @@ namespace Cloudsdale.Managers {
             get { return from cloud in _extClouds where !(cloud.hidden ?? false) select cloud; }
         }
 
-        public void Ban(string reason, DateTime due, string cloudid) {
+        public void Ban(string reason, DateTime due, string cloudid, Action complete) {
             var data = new JObject();
             data["offender_id"] = id;
             data["ban"] = new JObject();
@@ -253,6 +253,8 @@ namespace Cloudsdale.Managers {
                     using (var responseStream = response.GetResponseStream()) {
                         responseStream.Close();
                     }
+
+                    complete();
                 }, null);
             }, null);
         }

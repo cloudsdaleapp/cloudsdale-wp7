@@ -38,7 +38,7 @@
             </toolkit:NavigationOutTransition.Forward>
         </toolkit:NavigationOutTransition>
     </toolkit:TransitionService.NavigationOutTransition>
-    
+
     <phone:PhoneApplicationPage.Resources>
         <ResourceDictionary>
             <DataTemplate x:Name="UserlistTemplate">
@@ -301,6 +301,34 @@
                                             <toolkit:DatePicker Name="BanDate" />
                                             <Button Click="DoTheBanBanBan">Ban</Button>
                                         </StackPanel>
+                                        <TextBlock Foreground="#FF444444" Visibility="{Binding Path=CurrentUser.OwnerOfCurrent, 
+                                                                                               Converter={StaticResource BoolToVis}}">
+                                            Permanent Record
+                                        </TextBlock>
+                                        <ItemsControl ItemsSource="{Binding Path=Bans}" Visibility="{Binding Path=CurrentUser.OwnerOfCurrent, 
+                                                                                                             Converter={StaticResource BoolToVis}}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border BorderBrush="Gray" Background="LightGray" Margin="5">
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="Auto" />
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Grid.Row="0" TextWrapping="Wrap" FontSize="16">
+                                                                <Run Text="{Binding Path=reason}" /><LineBreak/>
+                                                                Issued by <Run Text="{Binding Path=Issuer.name}" /><LineBreak/>
+                                                                At <Run Text="{Binding Path=Issued}" /><LineBreak/>
+                                                                Until <Run Text="{Binding Path=Due}" /><LineBreak/>
+                                                                Status: <Run Text="{Binding Path=Status}" />
+                                                            </TextBlock>
+                                                            <Button Visibility="{Binding Path=Active, Converter={StaticResource BoolToVis}}" 
+                                                                    Click="RevokeBanClick" Grid.Row="1">Revoke</Button>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                     </StackPanel>
                                 </StackPanel>
                             </ScrollViewer>
