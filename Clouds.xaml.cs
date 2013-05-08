@@ -853,7 +853,8 @@ namespace Cloudsdale {
         }
 
         public void UpdateBans(User user) {
-            if (Connection.CurrentCloud.IsModerator) {
+            if (Connection.CurrentCloud.IsModerator || Connection.CurrentCloudsdaleUser.role == "admin"
+                || Connection.CurrentCloudsdaleUser.role == "developer" || Connection.CurrentCloudsdaleUser.role == "founder") {
                 WebPriorityManager.BeginLowPriorityRequest(new Uri("http://www.cloudsdale.org/v1/clouds/" + Connection.CurrentCloud.id + "/bans.json?offender_id=" + user.id),
                     args => Dispatcher.BeginInvoke(() => {
                         user.Bans.Clear();
