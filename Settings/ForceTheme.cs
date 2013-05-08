@@ -48,11 +48,11 @@ namespace Cloudsdale.Settings {
             ((SolidColorBrush)application.Resources["PhoneSubtleBrush"]).Color = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
             ((SolidColorBrush)application.Resources["PhoneTextBoxSelectionForegroundBrush"]).Color = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
             ((SolidColorBrush)application.Resources["PhoneRadioCheckBoxBrush"]).Color = Color.FromArgb(0xBF, 0xFF, 0xFF, 0xFF);
-            ((SolidColorBrush)application.Resources["PhoneRadioCheckBoxDisabledBrush"]).Color = Color.FromArgb(0x66, 0x00, 0x00, 0x00);
+            //((SolidColorBrush)application.Resources["PhoneRadioCheckBoxDisabledBrush"]).Color = Color.FromArgb(0x66, 0x00, 0x00, 0x00);
             ((SolidColorBrush)application.Resources["PhoneRadioCheckBoxCheckBrush"]).Color = Color.FromArgb(0xFF, 0x00, 0x00, 0x00);
-            ((SolidColorBrush)application.Resources["PhoneRadioCheckBoxCheckDisabledBrush"]).Color = Color.FromArgb(0x66, 0x00, 0x00, 0x00);
+            //((SolidColorBrush)application.Resources["PhoneRadioCheckBoxCheckDisabledBrush"]).Color = Color.FromArgb(0x66, 0x00, 0x00, 0x00);
             ((SolidColorBrush)application.Resources["PhoneRadioCheckBoxPressedBrush"]).Color = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
-            ((SolidColorBrush)application.Resources["PhoneRadioCheckBoxPressedBorderBrush"]).Color = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
+            //((SolidColorBrush)application.Resources["PhoneRadioCheckBoxPressedBorderBrush"]).Color = Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
             ((SolidColorBrush)application.Resources["PhoneSemitransparentBrush"]).Color = Color.FromArgb(0xAA, 0x00, 0x00, 0x00);
             ((SolidColorBrush)application.Resources["PhoneChromeBrush"]).Color = Color.FromArgb(0xFF, 0x1A, 0x91, 0xDB); //Color.FromArgb(0xFF, 0x00, 0x55, 0x80); Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
             ((SolidColorBrush)application.Resources["PhoneInactiveBrush"]).Color = Color.FromArgb(0x33, 0xFF, 0xFF, 0xFF);
