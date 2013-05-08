@@ -80,6 +80,8 @@ namespace Cloudsdale {
             ThemePicker.SetValue(ListPicker.ItemCountThresholdProperty, 8);
             ThemePicker.SelectedIndex = Math.Max(Array.IndexOf(App.ThemeColors,
                 ((SolidColorBrush)Application.Current.Resources["PhoneChromeBrush"]).Color), 0);
+
+            ExplorePanel.DataContext = Connection.CurrentCloudsdaleUser;
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
@@ -371,6 +373,10 @@ namespace Cloudsdale {
             });
         }
         #endregion
+
+        private void CreateCloudClick(object sender, RoutedEventArgs e) {
+            NavigationService.Navigate(new Uri("/CreateCloud.xaml", UriKind.Relative));
+        }
 
     }
 }

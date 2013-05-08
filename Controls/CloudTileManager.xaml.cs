@@ -51,7 +51,7 @@ namespace Cloudsdale.Controls {
                 _source = value;
                 _source.CollectionChanged += SourceOnCollectionChanged;
                 foreach (var control in tiles) {
-                    if (_source.All(cloud => cloud.id != ((Cloud)control.DataContext).id)) TileCanvas.Children.Remove(control);
+                    if (_source.All(cloud => cloud.id != ((Cloud)control.Content).id)) TileCanvas.Children.Remove(control);
                 }
                 for (var i = 0; i < _source.Count; i++) {
                     CreateTile(_source[i], i);

@@ -101,7 +101,10 @@
                         </Button>
                     </Grid>
                     <ScrollViewer Margin="0,54,0,50">
-                        <ItemsControl x:Name="searchResults" ItemTemplate="{StaticResource CloudsTemplate}" />
+                        <StackPanel Name="ExplorePanel">
+                            <Button Visibility="{Binding Path=CanCreateCloud, Converter={StaticResource BoolToVis}}" Click="CreateCloudClick">Create Cloud</Button>
+                            <ItemsControl x:Name="searchResults" ItemTemplate="{StaticResource CloudsTemplate}" />
+                        </StackPanel>
                     </ScrollViewer>
                     <Button VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Popular" 
                             Width="175" Margin="50,-8" 

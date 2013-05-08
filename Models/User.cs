@@ -39,18 +39,20 @@ namespace Cloudsdale.Models {
         public string RoleTag {
             get {
                 switch (role) {
-                    case "founder":
-                    case "donor":
-                    case "verified":
-                    case "associate":
-                    case "legacy":
-                    case "admin":
-                        return role.ToLower();
+                    case "normal":
+                        break;
                     case "developer":
                         return "dev";
+                    default:
+                        return role;
                 }
                 return "";
             }
+        }
+
+        [JsonIgnore]
+        public bool IsAdmin {
+            get { return role == "developer" || role == "admin" || role == "founder"; }
         }
 
         [JsonIgnore]
@@ -63,6 +65,8 @@ namespace Cloudsdale.Models {
             get {
                 var color = Colors.Transparent;
                 switch (role) {
+                    case "normal":
+                        break;
                     case "founder":
                         color = Color.FromArgb(0xFF, 0xFF, 0x33, 0x99);
                         break;
@@ -75,14 +79,14 @@ namespace Cloudsdale.Models {
                     case "associate":
                         color = Color.FromArgb(0xFF, 0x33, 0x66, 0x99);
                         break;
-                    case "legacy":
-                        color = Color.FromArgb(0xFF, 0xAA, 0xAA, 0xAA);
-                        break;
                     case "developer":
                         color = Color.FromArgb(0xFF, 0x5C, 0x33, 0x99);
                         break;
                     case "admin":
                         color = Color.FromArgb(0xFF, 0x50, 0xAF, 0x60);
+                        break;
+                    default:
+                        color = Color.FromArgb(0xFF, 0xAA, 0xAA, 0xAA);
                         break;
                 }
                 return new SolidColorBrush(color);
@@ -297,6 +301,11 @@ namespace Cloudsdale.Models {
         [JsonIgnore]
         public ObservableCollection<Cloud> Clouds {
             get { return _cloudCol; }
+        }
+
+        [JsonIgnore]
+        public bool CanCreateCloud {
+            get { return (!clouds.Any(cloud => cloud.IsOwner) || IsAdmin) && (member_since ?? DateTime.Now) < DateTime.Now - TimeSpan.FromDays(10); }
         }
 
         void PopulateClouds() {
