@@ -100,5 +100,29 @@ namespace Cloudsdale.Managers {
         public static string Replace(this string input, Regex regex, MatchEvaluator matcher) {
             return regex.Replace(input, matcher);
         }
+
+        public static void Shuffle<T>(this IList<T> list) {
+            var rng = new Random();
+            var n = list.Count;
+            while (n > 1) {
+                n--;
+                var k = rng.Next(n + 1);
+                var value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+
+        public static string WordJumble(this string input) {
+            var i = 0;
+            return input.ReplaceRegex(@"[\w]+", match => {
+                if (match.Value.Length < 3) return match.Value;
+                ++i;
+                var substr = match.Value.Substring(1, match.Value.Length - 2);
+                var list = new List<char>(substr);
+                list.Shuffle();
+                return match.Value.First() + new string(list.ToArray()) + match.Value.Last();
+            });
+        }
     }
 }

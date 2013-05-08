@@ -126,6 +126,10 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
+            while (NavigationService.BackStack.Count() > 1) {
+                NavigationService.RemoveBackEntry();
+            }
+
             if (inUserPopup) {
                 userpopup.IsOpen = true;
                 inUserPopup = true;
@@ -545,6 +549,7 @@ namespace Cloudsdale {
             image.Source = new BitmapImage(new Uri("http://assets.cloudsdale.org/assets/fallback/avatar_preview_user.png"));
         }
 
+        private static readonly Random AprilFoolsRandom = new Random();
         private void SendTextClick(object sender, EventArgs e) {
             if (cloudPivot.SelectedIndex != 0 || userpopup.IsOpen || CloudInfoPopup.IsOpen) {
                 userpopup.IsOpen = false;
@@ -568,6 +573,10 @@ namespace Cloudsdale {
             }
 
             var text = StringParser.EscapeLiteral(SendBox.Text.Replace('\r', '\n'));
+
+            if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1 && AprilFoolsRandom.NextDouble() > 0.5) {
+                text = text.WordJumble();
+            }
 
             var controller = DerpyHoovesMailCenter.GetCloud(Connection.CurrentCloud);
             var cmessages = controller.messages;
