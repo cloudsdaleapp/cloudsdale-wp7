@@ -1,0 +1,40 @@
+﻿<Application 
+    x:Class="Cloudsdale.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"       
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:Controls="clr-namespace:Cloudsdale.Controls" 
+    xmlns:Managers="clr-namespace:Cloudsdale.Managers">
+
+    <!--Application Resources-->
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="XamlResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Managers:BoolToVis x:Key="BTV" />
+            <Controls:StatusColorConverter x:Key="SCC" />
+            <Managers:ArrayHasAnyVis x:Key="AHAV" />
+            <Managers:PromoOrDemo x:Key="POD" />
+            <Managers:JUri x:Key="JURI" />
+            <Managers:StringTrim x:Key="Trim" />
+
+            <Style TargetType="Controls:LinkDetectingTextBlock" x:Key="ChatStyle">
+                <Setter Property="FontFamily" Value="Verdana" />
+                <Setter Property="FontSize" Value="10" />
+            </Style>
+            <Style TargetType="RichTextBox" x:Key="RichChatStyle">
+                <Setter Property="FontFamily" Value="Verdana" />
+                <Setter Property="FontSize" Value="10" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.ApplicationLifetimeObjects>
+        <!--Required object that handles lifetime events for the application-->
+        <shell:PhoneApplicationService 
+            Launching="ApplicationLaunching" Closing="ApplicationClosing" 
+            Activated="ApplicationActivated" Deactivated="ApplicationDeactivated"/>
+    </Application.ApplicationLifetimeObjects>
+
+</Application>

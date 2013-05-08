@@ -1,0 +1,91 @@
+﻿<phone:PhoneApplicationPage 
+    x:Class="Cloudsdale.Avatars.MLFW"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    FontFamily="Segoe WP Bold"
+    FontSize="32"
+    Foreground="#3a3a3a"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
+    shell:SystemTray.IsVisible="True"
+    shell:SystemTray.Opacity="0">
+
+    <toolkit:TransitionService.NavigationInTransition>
+        <toolkit:NavigationInTransition>
+            <toolkit:NavigationInTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardIn"/>
+            </toolkit:NavigationInTransition.Backward>
+            <toolkit:NavigationInTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardIn"/>
+            </toolkit:NavigationInTransition.Forward>
+        </toolkit:NavigationInTransition>
+    </toolkit:TransitionService.NavigationInTransition>
+    <toolkit:TransitionService.NavigationOutTransition>
+        <toolkit:NavigationOutTransition>
+            <toolkit:NavigationOutTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardOut"/>
+            </toolkit:NavigationOutTransition.Backward>
+            <toolkit:NavigationOutTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardOut"/>
+            </toolkit:NavigationOutTransition.Forward>
+        </toolkit:NavigationOutTransition>
+    </toolkit:TransitionService.NavigationOutTransition>
+
+    <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Foreground="White" HorizontalAlignment="Center" FontSize="72" Margin="0,15">MLFW</TextBlock>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="12">
+                <TextBlock Visibility="Collapsed">Order by</TextBlock>
+                <toolkit:ListPicker SelectionChanged="OrderByChanged" Visibility="Collapsed">
+                    <toolkit:ListPickerItem>Default</toolkit:ListPickerItem>
+                    <toolkit:ListPickerItem>Random</toolkit:ListPickerItem>
+                    <toolkit:ListPickerItem>Views</toolkit:ListPickerItem>
+                    <toolkit:ListPickerItem>Hotness</toolkit:ListPickerItem>
+                </toolkit:ListPicker>
+                <TextBlock>
+                    Tags<LineBreak/>
+                    <Run FontSize="20">Separate by comma</Run>
+                </TextBlock>
+                <TextBox TextChanged="TagsTextChanged" />
+                <toolkit:ListPicker SelectionChanged="TagModeChanged">
+                    <toolkit:ListPickerItem>Images with all of these tags</toolkit:ListPickerItem>
+                    <toolkit:ListPickerItem>Images with any of these tag</toolkit:ListPickerItem>
+                </toolkit:ListPicker>
+                <Button Click="SearchClick">Search</Button>
+
+                <ItemsControl Name="Results">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource XTiltButtonStyle}" BorderBrush="Transparent"
+                                    HorizontalAlignment="Left" Margin="0,5" Foreground="#3a3a3a" Padding="-12"
+                                    Click="FaceClicked">
+                                <Grid HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="{Binding Path=Preview}" 
+                                       Height="150" Width="150" Stretch="Fill" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Path=Title}"
+                                           TextWrapping="Wrap" FontSize="26"/>
+                                </Grid>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+
+</phone:PhoneApplicationPage>
