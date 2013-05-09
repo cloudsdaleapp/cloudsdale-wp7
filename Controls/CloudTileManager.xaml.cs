@@ -124,8 +124,7 @@ namespace Cloudsdale.Controls {
             isDragging = readyToDrag;
 
             if (!isDragging) {
-                Scroller.IsHitTestVisible = true;
-                Pivot.IsHitTestVisible = true;
+                EnableScroll();
                 return;
             }
 
@@ -138,17 +137,16 @@ namespace Cloudsdale.Controls {
             Canvas.SetZIndex(content, 5);
 
             OnEvent(DragStart);
-            Scroller.IsHitTestVisible = false;
+            DisableScroll();
         }
 
         private void GestureListenerDragDelta(object sender, DragDeltaGestureEventArgs e) {
             if (!isDragging) {
-                Scroller.IsHitTestVisible = true;
-                Pivot.IsHitTestVisible = true;
+                EnableScroll();
                 return;
             }
 
-            Scroller.IsHitTestVisible = false;
+            DisableScroll();
 
             var tile = (DisablingHubTile)sender;
             var grid = (TiltGrid)tile.Parent;
@@ -173,8 +171,7 @@ namespace Cloudsdale.Controls {
 
         private void GestureListenerDragCompleted(object sender, DragCompletedGestureEventArgs e) {
             if (!isDragging) {
-                Scroller.IsHitTestVisible = true;
-                Pivot.IsHitTestVisible = true;
+                EnableScroll();
                 return;
             }
 
@@ -213,8 +210,7 @@ namespace Cloudsdale.Controls {
             isDragging = false;
             readyToDrag = false;
 
-            Scroller.IsHitTestVisible = true;
-            Pivot.IsHitTestVisible = true;
+            EnableScroll();
 
             ((HubTile)sender).Opacity = 1;
         }
@@ -238,16 +234,24 @@ namespace Cloudsdale.Controls {
         }
 
         private void OnMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
-            Scroller.IsHitTestVisible = true;
-            Pivot.IsHitTestVisible = true;
+            EnableScroll();
         }
 
         private void GestureListenerHold(object sender, GestureEventArgs e) {
             readyToDrag = true;
 
+            DisableScroll();
+            ((HubTile)sender).Opacity = .5;
+        }
+
+        private void DisableScroll() {
             Scroller.IsHitTestVisible = false;
             Pivot.IsHitTestVisible = false;
-            ((HubTile)sender).Opacity = .5;
+        }
+
+        private void EnableScroll() {
+            Scroller.IsHitTestVisible = true;
+            Pivot.IsHitTestVisible = true;
         }
     }
 }

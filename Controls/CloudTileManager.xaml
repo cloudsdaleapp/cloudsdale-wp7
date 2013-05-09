@@ -40,7 +40,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <ScrollViewer x:Name="Scroller">
+    <ScrollViewer x:Name="Scroller" ManipulationMode="Control">
         <Grid x:Name="LayoutRoot" VerticalAlignment="Top">
             <Canvas x:Name="TileCanvas">
 
