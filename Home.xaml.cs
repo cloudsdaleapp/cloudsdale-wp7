@@ -83,8 +83,6 @@ namespace Cloudsdale {
             ThemePicker.SelectedIndex = Math.Max(Array.IndexOf(App.ThemeColors,
                 ((SolidColorBrush)Application.Current.Resources["PhoneChromeBrush"]).Color), 0);
 
-            ExplorePanel.DataContext = Connection.CurrentCloudsdaleUser;
-
             if (Connection.LaunchedUri != null) {
                 var cloudUrl = new Uri(CloudsdaleApiBase, "clouds" + Connection.LaunchedUri.AbsolutePath);
                 Connection.LaunchedUri = null;
@@ -98,6 +96,8 @@ namespace Cloudsdale {
                     }
                 });
             }
+
+            ExplorePanel.DataContext = Connection.CurrentCloudsdaleUser;
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
