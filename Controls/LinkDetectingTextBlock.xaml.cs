@@ -22,7 +22,7 @@ namespace Cloudsdale.Controls {
     public partial class LinkDetectingTextBlock {
         public LinkDetectingTextBlock() {
             EffectHandlers = new List<EffectHandler> {
-                Hyperlink, Redacted, Italics
+                Hyperlink, Redacted, Italics, NonAscii
             };
             InitializeComponent();
             RootBlock.DataContext = this;
@@ -122,6 +122,21 @@ namespace Cloudsdale.Controls {
                         Inlines = { new Run { Text = "[REDACTED]" } },
                         Foreground = new SolidColorBrush(Colors.Red),
                     }
+                };
+                lastIndex = match.Index + match.Length;
+            }
+
+            yield return new TextGroup { Text = input.Substring(lastIndex) };
+        }
+
+        static IEnumerable<TextGroup> NonAscii(string input) {
+            var matches = Helpers.NonStandardCharRegex.Matches(input);
+            var lastIndex = 0;
+
+            foreach (Match match in matches) {
+                yield return new TextGroup { Text = input.Substring(lastIndex, match.Index - lastIndex) };
+                yield return new TextGroup {
+                    Inline = new Run { FontFamily = new FontFamily("Segoe WP"), Text = match.Value }
                 };
                 lastIndex = match.Index + match.Length;
             }

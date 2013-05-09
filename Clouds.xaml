@@ -16,7 +16,7 @@
     Background="#FFF0F0F0"
     SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True" OrientationChanged="PhoneApplicationPageOrientationChanged"
-    shell:SystemTray.Opacity="1" shell:SystemTray.ForegroundColor="#FF1A91DB" shell:SystemTray.BackgroundColor="Black">
+    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="#FF1A91DB" shell:SystemTray.BackgroundColor="Black">
 
     <toolkit:TransitionService.NavigationInTransition>
         <toolkit:NavigationInTransition>
@@ -103,7 +103,7 @@
                         </Border>
                     </StackPanel>
                     <StackPanel Margin="60,0,0,0" VerticalAlignment="Top">
-                        <RichTextBox DataContext="{Binding Path=user}" FontFamily="Segoe WP"
+                        <RichTextBox DataContext="{Binding Path=user}" FontFamily="Segoe WP Bold"
                                    FontSize="18" Foreground="{Binding Path=CloudColor}" Margin="-10,0">
                             <Paragraph>
                                 <Run Text="●" Foreground="{Binding Path=Status, Converter={StaticResource SCC}}" />
