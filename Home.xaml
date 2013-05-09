@@ -10,12 +10,12 @@
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:mycontrols="clr-namespace:Cloudsdale.Controls"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
-    FontFamily="Segoe WP Bold"
+    FontFamily="Segoe WP"
     FontSize="28"
     Foreground="Black"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True"
-    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="#FF1A91DB" 
+    shell:SystemTray.Opacity="1" shell:SystemTray.ForegroundColor="#FF1A91DB" 
     shell:SystemTray.BackgroundColor="Black">
 
     <toolkit:TransitionService.NavigationInTransition>
@@ -65,7 +65,7 @@
         <controls:Pivot Title="Cloudsdale" Name="pivotView" Margin="0,10,0,0" Foreground="{StaticResource PhoneChromeBrush}">
             <controls:Pivot.HeaderTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" FontFamily="Segoe WP Bold" FontSize="48" Foreground="{StaticResource PhoneChromeBrush}"/>
+                    <TextBlock Text="{Binding}" FontFamily="Segoe WP" FontSize="48" Foreground="{StaticResource PhoneChromeBrush}"/>
                 </DataTemplate>
             </controls:Pivot.HeaderTemplate>
             <controls:PivotItem Header="home" Foreground="#FF2A81DB">

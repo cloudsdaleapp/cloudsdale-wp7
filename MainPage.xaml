@@ -9,7 +9,7 @@
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:c4f="clr-namespace:Coding4Fun.Toolkit.Controls.Converters;assembly=Coding4Fun.Toolkit.Controls"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
-    FontFamily="Segoe WP Bold"
+    FontFamily="Segoe WP"
     FontSize="28"
     Foreground="#FF404040"
     SupportedOrientations="Portrait" Orientation="Portrait"

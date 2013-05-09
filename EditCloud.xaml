@@ -7,7 +7,7 @@
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    FontFamily="Segoe WP Bold"
+    FontFamily="Segoe WP"
     FontSize="26"
     Foreground="Black"
     SupportedOrientations="Portrait" Orientation="Portrait"
