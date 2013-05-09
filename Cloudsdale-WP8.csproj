@@ -22,7 +22,7 @@
     </SupportedCultures>
     <XapOutputs>true</XapOutputs>
     <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
-    <XapFilename>Cloudsdale-WP7_$(Configuration)_$(Platform).xap</XapFilename>
+    <XapFilename>Cloudsdale-WP8-1.4_Release_AnyCPU.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <SilverlightAppEntry>Cloudsdale.App</SilverlightAppEntry>
     <ValidateXaml>true</ValidateXaml>
@@ -233,6 +233,7 @@
     <Compile Include="Managers\AppleFarm.cs" />
     <Compile Include="Managers\BanDiff.cs" />
     <Compile Include="Managers\BoolToVis.cs" />
+    <Compile Include="Managers\CloudsdaleUriMapper.cs" />
     <Compile Include="Managers\GenericBinding.cs" />
     <Compile Include="Managers\DerpyHoovesMailCenter.cs" />
     <Compile Include="Managers\Helpers.cs" />

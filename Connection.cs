@@ -30,6 +30,7 @@ namespace Cloudsdale {
         public static LoggedInUser CurrentCloudsdaleUser;
         public static bool TransProxWorkaround;
         public static readonly LoginState LoginState = new LoginState();
+        public static Uri LaunchedUri = null;
 
         public static MessageHandler Faye;
 

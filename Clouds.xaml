@@ -275,9 +275,7 @@
                                         <TextBlock Text="{Binding Path=SuspendedReason}" FontSize="18" 
                                                    Width="430" TextWrapping="Wrap" />
                                     </StackPanel>
-                                    <TextBlock Foreground="#FF444444">
-                                        Skype: <Run Text="{Binding Path=skype_name}" />
-                                    </TextBlock>
+                                    <Button Click="AddOnSkype">Add on Skype</Button>
                                     <StackPanel Visibility="{Binding Path=AKA, Converter={StaticResource AHAV}}">
                                         <TextBlock FontSize="32" Foreground="#FF888888">Also Known As</TextBlock>
                                         <ItemsControl ItemsSource="{Binding Path=AKA}" FontSize="16" />

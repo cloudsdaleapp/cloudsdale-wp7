@@ -26,6 +26,7 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Windows.System;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 using Res = Cloudsdale.Resources;
 using System.Linq;
@@ -876,8 +877,13 @@ namespace Cloudsdale {
         }
 
         private void RevokeBanClick(object sender, RoutedEventArgs e) {
-            var ban = (Ban) ((FrameworkElement) sender).DataContext;
+            var ban = (Ban)((FrameworkElement)sender).DataContext;
             ban.Revoke(() => UpdateBans(ban.User));
+        }
+
+        private void AddOnSkype(object sender, RoutedEventArgs e) {
+            var user = (User)((FrameworkElement)sender).DataContext;
+            Launcher.LaunchUriAsync(new Uri("skype:" + user.skype_name));
         }
     }
 }

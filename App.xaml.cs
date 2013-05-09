@@ -223,6 +223,8 @@ namespace Cloudsdale {
             RootFrame = new TransitionFrame();
             RootFrame.Navigated += CompleteInitializePhoneApplication;
 
+            RootFrame.UriMapper = new CloudsdaleUriMapper();
+
             // Handle navigation failures
             RootFrame.NavigationFailed += RootFrameNavigationFailed;
 

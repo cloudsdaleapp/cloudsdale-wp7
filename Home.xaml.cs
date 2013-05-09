@@ -14,6 +14,7 @@ using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
 using Newtonsoft.Json.Linq;
+using Windows.System;
 using Res = Cloudsdale.Resources;
 
 namespace Cloudsdale {
@@ -30,6 +31,7 @@ namespace Cloudsdale {
         };
 
         public static readonly ObservableCollection<Cloud> ExploreClouds = new ObservableCollection<Cloud>();
+        public static readonly Uri CloudsdaleApiBase = new Uri("http://www.cloudsdale.org/v1/");
 
         #region Page stuffs
         public Home() {
@@ -82,6 +84,20 @@ namespace Cloudsdale {
                 ((SolidColorBrush)Application.Current.Resources["PhoneChromeBrush"]).Color), 0);
 
             ExplorePanel.DataContext = Connection.CurrentCloudsdaleUser;
+
+            if (Connection.LaunchedUri != null) {
+                var cloudUrl = new Uri(CloudsdaleApiBase, "clouds" + Connection.LaunchedUri.AbsolutePath);
+                Connection.LaunchedUri = null;
+                WebPriorityManager.BeginHighPriorityRequest(cloudUrl, args => {
+                    try {
+                        var cloud = PonyvilleDirectory.RegisterCloud(JObject.Parse(args.Result)["result"].ToObject<Cloud>());
+                        Connection.CurrentCloud = cloud;
+                        Dispatcher.BeginInvoke(() => NavigationService.Navigate(new Uri("/Clouds.xaml", UriKind.Relative)));
+                    } catch {
+                        Dispatcher.BeginInvoke(() => MessageBox.Show("Couldn't open cloud! (does it exist?)"));
+                    }
+                });
+            }
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
