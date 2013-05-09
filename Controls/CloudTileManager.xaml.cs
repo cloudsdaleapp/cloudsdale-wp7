@@ -19,7 +19,7 @@ namespace Cloudsdale.Controls {
         public CloudTileManager() {
             InitializeComponent();
 
-            scrollTimer.Interval = new TimeSpan(0, 0, 0, 0, 40);
+            scrollTimer.Interval = new TimeSpan(0, 0, 0, 0, 16.666);
             scrollTimer.Tick += (sender, args) => {
                 if (!isDragging || draggingItem == null) return;
                 var y = Canvas.GetTop(draggingItem);
