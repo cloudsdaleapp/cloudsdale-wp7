@@ -17,20 +17,20 @@
     <toolkit:TransitionService.NavigationInTransition>
         <toolkit:NavigationInTransition>
             <toolkit:NavigationInTransition.Backward>
-                <toolkit:SlideTransition Mode="SlideLeftFadeIn" />
+                <toolkit:SlideTransition Mode="SlideRightFadeIn" />
             </toolkit:NavigationInTransition.Backward>
             <toolkit:NavigationInTransition.Forward>
-                <toolkit:SlideTransition Mode="SlideRightFadeIn" />
+                <toolkit:SlideTransition Mode="SlideLeftFadeIn" />
             </toolkit:NavigationInTransition.Forward>
         </toolkit:NavigationInTransition>
     </toolkit:TransitionService.NavigationInTransition>
     <toolkit:TransitionService.NavigationOutTransition>
         <toolkit:NavigationOutTransition>
             <toolkit:NavigationOutTransition.Backward>
-                <toolkit:SlideTransition Mode="SlideLeftFadeOut" />
+                <toolkit:SlideTransition Mode="SlideRightFadeOut" />
             </toolkit:NavigationOutTransition.Backward>
             <toolkit:NavigationOutTransition.Forward>
-                <toolkit:SlideTransition Mode="SlideRightFadeOut" />
+                <toolkit:SlideTransition Mode="SlideLeftFadeOut" />
             </toolkit:NavigationOutTransition.Forward>
         </toolkit:NavigationOutTransition>
     </toolkit:TransitionService.NavigationOutTransition>

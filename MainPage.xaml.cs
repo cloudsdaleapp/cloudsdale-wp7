@@ -164,6 +164,8 @@ namespace Cloudsdale {
             reconstruction = false;
 
             base.OnNavigatedTo(e);
+
+            AccountsBox.SelectedIndex = -1;
         }
 
         private void AccountsBoxSelectionChanged(object sender, SelectionChangedEventArgs e) {

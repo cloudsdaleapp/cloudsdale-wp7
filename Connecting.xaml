@@ -18,10 +18,10 @@
     <toolkit:TransitionService.NavigationInTransition>
         <toolkit:NavigationInTransition>
             <toolkit:NavigationInTransition.Backward>
-                <toolkit:SlideTransition Mode="SlideLeftFadeIn" />
+                <toolkit:SlideTransition Mode="SlideRightFadeIn" />
             </toolkit:NavigationInTransition.Backward>
             <toolkit:NavigationInTransition.Forward>
-                <toolkit:SlideTransition Mode="SlideRightFadeIn" />
+                <toolkit:SlideTransition Mode="SlideLeftFadeIn" />
             </toolkit:NavigationInTransition.Forward>
         </toolkit:NavigationInTransition>
     </toolkit:TransitionService.NavigationInTransition>
