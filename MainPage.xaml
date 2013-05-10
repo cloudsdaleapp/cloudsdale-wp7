@@ -20,13 +20,23 @@
     <toolkit:TransitionService.NavigationInTransition>
         <toolkit:NavigationInTransition>
             <toolkit:NavigationInTransition.Backward>
-                <toolkit:TurnstileTransition Mode="BackwardIn"/>
+                <toolkit:SlideTransition Mode="SlideLeftFadeIn" />
             </toolkit:NavigationInTransition.Backward>
             <toolkit:NavigationInTransition.Forward>
-                <toolkit:TurnstileTransition Mode="ForwardIn"/>
+                <toolkit:SlideTransition Mode="SlideRightFadeIn" />
             </toolkit:NavigationInTransition.Forward>
         </toolkit:NavigationInTransition>
     </toolkit:TransitionService.NavigationInTransition>
+    <toolkit:TransitionService.NavigationOutTransition>
+        <toolkit:NavigationOutTransition>
+            <toolkit:NavigationOutTransition.Backward>
+                <toolkit:SlideTransition Mode="SlideLeftFadeOut" />
+            </toolkit:NavigationOutTransition.Backward>
+            <toolkit:NavigationOutTransition.Forward>
+                <toolkit:SlideTransition Mode="SlideRightFadeOut" />
+            </toolkit:NavigationOutTransition.Forward>
+        </toolkit:NavigationOutTransition>
+    </toolkit:TransitionService.NavigationOutTransition>
     
     <phone:PhoneApplicationPage.Resources>
         <c4f:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -121,6 +131,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <TextBlock FontSize="36" Grid.Row="0">Email</TextBlock>
@@ -164,6 +175,8 @@
                     </ItemsControl.ItemTemplate>
                 </ListBox>
             </Border>
+
+            <Button Grid.Row="6" Click="AboutClick">About</Button>
         </Grid>
     </Grid>
 

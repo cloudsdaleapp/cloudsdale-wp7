@@ -18,7 +18,7 @@ namespace Cloudsdale.Managers {
         #region Implementation of IValueConverter
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            return (value is string ? !string.IsNullOrWhiteSpace(value.ToString()) : (bool)value) ? Visibility.Visible : Visibility.Collapsed;
+            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
@@ -100,6 +100,20 @@ namespace Cloudsdale.Managers {
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             return (value ?? "").ToString().ReplaceRegex(@"\r\n", "\n").ReplaceRegex(@"[\n]{2,255}", "\n\n").Trim();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+
+    public class StringExistsBVis : IValueConverter {
+        #region Implementation of IValueConverter
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+            return string.IsNullOrWhiteSpace((string) value) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

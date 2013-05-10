@@ -18,6 +18,7 @@
             <Managers:PromoOrDemo x:Key="POD" />
             <Managers:JUri x:Key="JURI" />
             <Managers:StringTrim x:Key="Trim" />
+            <Managers:StringExistsBVis x:Key="SEBV" />
 
             <Style TargetType="Controls:LinkDetectingTextBlock" x:Key="ChatStyle">
                 <Setter Property="FontFamily" Value="Verdana" />

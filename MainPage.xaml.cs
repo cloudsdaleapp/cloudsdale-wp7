@@ -233,6 +233,10 @@ namespace Cloudsdale {
 
             PonyvilleAccounting.ForgetUser((UserReference)((FrameworkElement)sender).DataContext);
         }
+
+        private void AboutClick(object sender, RoutedEventArgs e) {
+            NavigationService.Navigate(new Uri("/Information/About.xaml", UriKind.Relative));
+        }
     }
 
     [JsonObject]
