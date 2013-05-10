@@ -39,7 +39,7 @@
  
     <!--Sample code showing usage of ApplicationBar-->
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True" BackgroundColor="#3F7F7F7F" ForegroundColor="White">
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True" BackgroundColor="#7F7F7F7F" ForegroundColor="White">
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="Back" Click="BackClick" />
                 <shell:ApplicationBarMenuItem Text="View in browser" Click="OpenClick"/>
