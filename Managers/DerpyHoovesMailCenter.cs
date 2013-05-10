@@ -20,6 +20,7 @@ using Microsoft.Phone.Controls;
 using Newtonsoft.Json;
 using System.Threading;
 using Newtonsoft.Json.Linq;
+using Windows.Phone.Speech.Synthesis;
 
 namespace Cloudsdale.Managers {
     /// <summary>
@@ -133,6 +134,9 @@ namespace Cloudsdale.Managers {
 
                                 if (Connection.CurrentCloud == null || cloud.id != Connection.CurrentCloud.id) {
                                     Deployment.Current.Dispatcher.BeginInvoke(() => {
+                                        //var synth = new SpeechSynthesizer();
+                                        //synth.SpeakTextAsync(message.content);
+
                                         var chromeColor = ((SolidColorBrush)Application.Current.Resources["PhoneChromeBrush"]).Color;
                                         chromeColor.R = (byte)Math.Max(0x1A, chromeColor.R - 30);
                                         chromeColor.G = (byte)Math.Max(0x1A, chromeColor.G - 30);
