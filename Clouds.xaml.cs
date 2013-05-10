@@ -885,5 +885,46 @@ namespace Cloudsdale {
             var user = (User)((FrameworkElement)sender).DataContext;
             Launcher.LaunchUriAsync(new Uri("skype:" + user.skype_name));
         }
+
+        private void PinToStart(object sender, EventArgs e) {
+            var thisTile = ShellTile.ActiveTiles.FirstOrDefault(tile => {
+                var cloudUri = CloudsdaleUriMapper.GetCloudsdaleUri(new Uri("cloudsdale://cloudsdale" + tile.NavigationUri));
+
+                return cloudUri != null &&
+                       (cloudUri.AbsolutePath == "/" + Connection.CurrentCloud.id ||
+                        cloudUri.AbsolutePath == "/" + Connection.CurrentCloud.short_name);
+            });
+
+            DownloadImage(Connection.CurrentCloud.avatar.Normal, stream => {
+
+                using (stream)
+                using (var storage = IsolatedStorageFile.GetUserStoreForApplication())
+                using (var fs = storage.OpenFile("/Shared/ShellContent/clouds_" + Connection.CurrentCloud.id + "_avatar.png", FileMode.Create)) {
+                    stream.CopyTo(fs);
+                }
+
+                var tileData = new StandardTileData {
+                    Title = Connection.CurrentCloud.name,
+                    BackgroundImage = new Uri("isostore:/Shared/ShellContent/clouds_" + Connection.CurrentCloud.id + "_avatar.png", UriKind.Absolute),
+                };
+
+                if (thisTile != null) {
+                    thisTile.Update(tileData);
+                } else {
+                    ShellTile.Create(new Uri("/CloudTile?cloudUri=" + HttpUtility.UrlEncode("cloudsdale://clouds/"
+                                        + Connection.CurrentCloud.id), UriKind.Relative), tileData);
+                }
+            });
+        }
+
+        void DownloadImage(Uri remote, Action<Stream> callback) {
+            var request = WebRequest.CreateHttp(remote);
+            request.Accept = "image/png";
+            request.BeginGetResponse(ar => {
+                using (var response = request.EndGetResponse(ar)) {
+                    callback(response.GetResponseStream());
+                }
+            }, null);
+        }
     }
 }

@@ -275,7 +275,7 @@
                                         <TextBlock Text="{Binding Path=SuspendedReason}" FontSize="18" 
                                                    Width="430" TextWrapping="Wrap" />
                                     </StackPanel>
-                                    <Button Click="AddOnSkype">Add on Skype</Button>
+                                    <Button Click="AddOnSkype" Visibility="{Binding Path=skype_name, Converter={StaticResource BoolToVis}}">Add on Skype</Button>
                                     <StackPanel Visibility="{Binding Path=AKA, Converter={StaticResource AHAV}}">
                                         <TextBlock FontSize="32" Foreground="#FF888888">Also Known As</TextBlock>
                                         <ItemsControl ItemsSource="{Binding Path=AKA}" FontSize="16" />
@@ -440,6 +440,7 @@
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="Leave cloud" Click="RemoveThisCloud" />
                 <shell:ApplicationBarMenuItem Text="Screenshot" Click="ScreenshotChat" />
+                <shell:ApplicationBarMenuItem Text="Pin to start" Click="PinToStart" />
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>

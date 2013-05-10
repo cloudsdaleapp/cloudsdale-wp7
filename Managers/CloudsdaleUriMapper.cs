@@ -11,12 +11,15 @@ namespace Cloudsdale.Managers {
     class CloudsdaleUriMapper : UriMapperBase {
         public override Uri MapUri(Uri uri) {
             var aUri = uri.IsAbsoluteUri ? uri : new Uri("cloudsdale://cloudsdale" + uri.OriginalString);
-            if (aUri.AbsolutePath == "/Protocol") {
-                var cloudUri = new Uri(HttpUtility.UrlDecode(aUri.Query.Substring(aUri.Query.IndexOf("=", StringComparison.Ordinal) + 1)));
-                Connection.LaunchedUri = cloudUri;
+            if (aUri.AbsolutePath == "/Protocol" || aUri.AbsolutePath == "/CloudTile") {
+                Connection.LaunchedUri = GetCloudsdaleUri(aUri);
                 return new Uri("/MainPage.xaml", UriKind.Relative);
             }
             return uri;
+        }
+
+        public static Uri GetCloudsdaleUri(Uri uri) {
+            return uri.Query.IndexOf("=", StringComparison.Ordinal) != -1 ? new Uri(HttpUtility.UrlDecode(uri.Query.Substring(uri.Query.IndexOf("=", StringComparison.Ordinal) + 1))) : null;
         }
     }
 }
