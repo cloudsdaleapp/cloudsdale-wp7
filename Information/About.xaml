@@ -7,9 +7,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="clr-namespace:Cloudsdale.Controls"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
-    FontSize="{StaticResource PhoneFontSizeNormal}"
-    Foreground="{StaticResource PhoneForegroundBrush}"
+    Foreground="#3a3a3a"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
     shell:SystemTray.IsVisible="True">
@@ -53,6 +53,8 @@
                 <Button Click="MeetTheCrewClick">Meet the Crew</Button>
                 <Button Click="TnCClick">Terms and Conditions</Button>
                 <Button Click="PrivacyClick">Privacy Policy</Button>
+                <TextBlock FontSize="36">App Settings</TextBlock>
+                <controls:SettingBoundToggle SettingBinding="connection.always_ssl" Label="Always use SSL" />
             </StackPanel>
         </Grid>
     </Grid>

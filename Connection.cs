@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using Cloudsdale.Controls;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
@@ -154,6 +155,8 @@ namespace Cloudsdale {
 
         public static void FinishConnecting(Page page = null, Dispatcher dispatcher = null, bool wss = false) {
             PonyvilleAccounting.AddUser(CurrentCloudsdaleUser);
+
+            wss |= SettingBoundToggle.IsSet("connection.always_ssl");
 
             LoginState.Message = "Connecting...";
 

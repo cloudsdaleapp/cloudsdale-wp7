@@ -187,6 +187,9 @@
     <Compile Include="Controls\LinkDetectingTextBlock.xaml.cs">
       <DependentUpon>LinkDetectingTextBlock.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SettingBoundToggle.xaml.cs">
+      <DependentUpon>SettingBoundToggle.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\StatusColorConverter.cs" />
     <Compile Include="Controls\TiltEffect.cs" />
     <Compile Include="Controls\TiltGrid.cs" />
@@ -305,6 +308,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\LinkDetectingTextBlock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SettingBoundToggle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
