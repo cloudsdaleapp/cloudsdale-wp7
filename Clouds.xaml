@@ -442,6 +442,7 @@
                 <shell:ApplicationBarMenuItem Text="Leave cloud" Click="RemoveThisCloud" />
                 <shell:ApplicationBarMenuItem Text="Screenshot" Click="ScreenshotChat" />
                 <shell:ApplicationBarMenuItem Text="Pin to start" Click="PinToStart" />
+                <shell:ApplicationBarMenuItem Text="Tap + Send" Click="TapAndSendClick" IsEnabled="False" />
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>

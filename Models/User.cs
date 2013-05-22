@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Media;
 using Cloudsdale.Avatars;
@@ -13,6 +14,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Cloudsdale.Models {
 
@@ -27,6 +29,22 @@ namespace Cloudsdale.Models {
         [JsonIgnore]
         public ListUser AsListUser {
             get { return new ListUser { id = id, name = name, avatar = avatar }; }
+        }
+
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext) {
+            var model = errorContext.OriginalObject;
+            var modelType = model.GetType();
+            var memberName = errorContext.Member.ToString();
+            var field = modelType.GetField(memberName);
+            if (field.FieldType == typeof(DateTime?)) {
+                field.SetValue(model, DateTime.MaxValue);
+            } else if (field.FieldType == typeof(string)) {
+                field.SetValue(model, "");
+            } else {
+                field.SetValue(model, null);
+            }
+            errorContext.Handled = true;
         }
     }
 
@@ -383,6 +401,22 @@ namespace Cloudsdale.Models {
 
         public Uri CurrentAvatar { get { return avatar.Normal; } }
         public Uri DefaultAvatar { get { return new Uri("https://c776950.ssl.cf2.rackcdn.com/assets/fallback/avatar_user.png"); } }
+
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext) {
+            var model = errorContext.OriginalObject;
+            var modelType = model.GetType();
+            var memberName = errorContext.Member.ToString();
+            var field = modelType.GetField(memberName);
+            if (field.FieldType == typeof(DateTime?)) {
+                field.SetValue(model, DateTime.MaxValue);
+            } else if (field.FieldType == typeof(string)) {
+                field.SetValue(model, "");
+            } else {
+                field.SetValue(model, null);
+            }
+            errorContext.Handled = true;
+        }
     }
 
     public enum Status {

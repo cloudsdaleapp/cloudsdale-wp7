@@ -26,6 +26,7 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Windows.Networking.Proximity;
 using Windows.Phone.Speech.Recognition;
 using Windows.System;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
@@ -128,6 +129,11 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
+            if (ProximityDevice.GetDefault() != null) {
+                var menuItems = ApplicationBar.MenuItems.Cast<ApplicationBarMenuItem>();
+                menuItems.First(item => item.Text == "Tap + Send").IsEnabled = true;
+            }
+
             while (NavigationService.BackStack.Count() > 1) {
                 NavigationService.RemoveBackEntry();
             }
@@ -938,6 +944,10 @@ namespace Cloudsdale {
                 SendBox.Text = result.RecognitionResult.Text;
                 SendTextClick(recorder, e);
             }
+        }
+
+        private void TapAndSendClick(object sender, EventArgs e) {
+            NavigationService.Navigate(new Uri("/NFC/Share.xaml", UriKind.Relative));
         }
     }
 }

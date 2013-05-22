@@ -36,6 +36,10 @@ namespace Cloudsdale.Managers {
         }
 
         public void Heartbeat(JToken user, bool update = true) {
+            if (!Deployment.Current.Dispatcher.CheckAccess()) {
+                Deployment.Current.Dispatcher.BeginInvoke(() => Heartbeat(user, update));
+                return;
+            }
             var uid = (string)user["id"];
             var status = user["status"].ToObject<Status>();
 
@@ -50,9 +54,9 @@ namespace Cloudsdale.Managers {
             }
 
             userStatus[uid] = status;
-            Deployment.Current.Dispatcher.BeginInvoke(() => PonyvilleCensus.GetUser(uid).OnPropertyChanged("Status"));
+            PonyvilleCensus.GetUser(uid).OnPropertyChanged("Status");
             if (update) {
-                Deployment.Current.Dispatcher.BeginInvoke(() => OnPropertyChanged("Users"));
+                OnPropertyChanged("Users");
             }
         }
 
