@@ -26,6 +26,7 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Windows.Phone.Speech.Recognition;
 using Windows.System;
 using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 using Res = Cloudsdale.Resources;
@@ -599,7 +600,10 @@ namespace Cloudsdale {
                 cmessages.cache.Trigger(controller.IndexOf(message));
             });
             SendBox.Text = "";
-            SendBox.Focus();
+
+            if (!(sender is SpeechRecognizerUI)) {
+                SendBox.Focus();
+            }
         }
 
         private void SendBoxSizeChanged(object sender, SizeChangedEventArgs e) {
@@ -925,6 +929,15 @@ namespace Cloudsdale {
                     callback(response.GetResponseStream());
                 }
             }, null);
+        }
+
+        private async void RecordVoiceClick(object sender, EventArgs e) {
+            var recorder = new SpeechRecognizerUI();
+            var result = await recorder.RecognizeWithUIAsync();
+            if (result.ResultStatus == SpeechRecognitionUIStatus.Succeeded) {
+                SendBox.Text = result.RecognitionResult.Text;
+                SendTextClick(recorder, e);
+            }
         }
     }
 }

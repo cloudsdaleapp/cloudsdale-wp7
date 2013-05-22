@@ -437,6 +437,7 @@
         <shell:ApplicationBar IsVisible="True" ForegroundColor="White">
             <shell:ApplicationBarIconButton Text="Send" IconUri="/Images/appbar.send.text.rest.png" Click="SendTextClick" />
             <shell:ApplicationBarIconButton Text="Info" IconUri="/Images/appbar.info.rest.png" Click="CloudInfoClick" />
+            <shell:ApplicationBarIconButton Text="Voice" IconUri="/Images/appbar.microphone.png" Click="RecordVoiceClick"/>
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="Leave cloud" Click="RemoveThisCloud" />
                 <shell:ApplicationBarMenuItem Text="Screenshot" Click="ScreenshotChat" />
