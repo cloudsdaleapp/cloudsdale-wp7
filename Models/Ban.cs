@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Text;
 using Cloudsdale.Managers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Cloudsdale.Models {
     public class Ban {
@@ -79,6 +82,22 @@ namespace Cloudsdale.Models {
                     complete();
                 }, null);
             }, null);
+        }
+
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext) {
+            var model = errorContext.OriginalObject;
+            var modelType = model.GetType();
+            var memberName = errorContext.Member.ToString();
+            var field = modelType.GetField(memberName);
+            if (field.FieldType == typeof(DateTime?)) {
+                field.SetValue(model, DateTime.MaxValue);
+            } else if (field.FieldType == typeof (string)) {
+                field.SetValue(model, "");
+            } else {
+                field.SetValue(model, null);
+            }
+            errorContext.Handled = true;
         }
     }
 }
