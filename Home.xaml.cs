@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -13,7 +14,9 @@ using Cloudsdale.Controls;
 using Cloudsdale.Managers;
 using Cloudsdale.Models;
 using Microsoft.Phone.Controls;
+using NdefLibrary.Ndef;
 using Newtonsoft.Json.Linq;
+using Windows.Networking.Proximity;
 using Windows.System;
 using Res = Cloudsdale.Resources;
 
@@ -98,6 +101,27 @@ namespace Cloudsdale {
             }
 
             ExplorePanel.DataContext = Connection.CurrentCloudsdaleUser;
+
+            SetupNdef();
+        }
+
+        void SetupNdef() {
+            var device = ProximityDevice.GetDefault();
+            if (device == null) return;
+            device.SubscribeForMessage("NDEF", (sender, message) => {
+                var data = NdefMessage.FromByteArray(message.Data.ToArray());
+                foreach (var record in data) {
+                    Uri uri;
+                    try {
+                        var poster = new NdefSpRecord(record);
+                        uri = new Uri(poster.Uri);
+                    } catch {
+                        continue;
+                    }
+                    if (uri.Scheme != "cloudsdale") continue;
+                    Launcher.LaunchUriAsync(uri);
+                }
+            });
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
