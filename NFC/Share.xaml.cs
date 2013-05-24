@@ -15,7 +15,7 @@ using Windows.Networking.Proximity;
 namespace Cloudsdale.NFC {
     public partial class Share {
         private readonly Cloud cloud;
-        private List<long> messageIds = new List<long>();
+        private readonly List<long> messageIds = new List<long>();
 
         public Share() {
             InitializeComponent();

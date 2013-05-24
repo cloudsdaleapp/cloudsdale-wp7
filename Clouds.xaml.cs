@@ -43,7 +43,7 @@ namespace Cloudsdale {
         private bool inUserPopup;
         private Cloud datcloud;
 
-        public static readonly Regex CloudsdaleUrl = new Regex("http\\:\\/\\/(www\\.)?cloudsdale\\.org\\/clouds\\/([a-zA-Z0-9]+)",
+        public static readonly Regex CloudsdaleUrl = new Regex("http\\:\\/\\/(www\\.)?cloudsdale\\.org\\/(\\#)?clouds\\/([a-zA-Z0-9]+)",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static bool DoARemove;
@@ -607,7 +607,7 @@ namespace Cloudsdale {
             });
             SendBox.Text = "";
 
-            if (!(sender is SpeechRecognizerUI)) {
+            if (!(sender is SpeechRecognizerUI || sender is SpeechRecognizer)) {
                 SendBox.Focus();
             }
         }
@@ -939,15 +939,33 @@ namespace Cloudsdale {
 
         private async void RecordVoiceClick(object sender, EventArgs e) {
             var recorder = new SpeechRecognizerUI();
+
+            recorder.Recognizer.Grammars.AddGrammarFromPredefinedType("default", SpeechPredefinedGrammar.Dictation);
+            //recorder.Recognizer.Grammars.AddGrammarFromList("ponyshit", ReadGrammarFile());
+
             var result = await recorder.RecognizeWithUIAsync();
-            if (result.ResultStatus == SpeechRecognitionUIStatus.Succeeded) {
-                SendBox.Text = result.RecognitionResult.Text;
-                SendTextClick(recorder, e);
+            if (result.ResultStatus != SpeechRecognitionUIStatus.Succeeded) return;
+            SendBox.Text = GetSpeech(result.RecognitionResult);
+            SendTextClick(recorder, e);
+        }
+
+        private IEnumerable<string> ReadGrammarFile() {
+            using (var fs = Application.GetResourceStream(new Uri("Settings/CloudsdaleGrammars.txt", UriKind.Relative)).Stream)
+            using (var reader = new StreamReader(fs)) {
+                yield return reader.ReadLine();
             }
+        } 
+
+        static string GetSpeech(SpeechRecognitionResult result) {
+            return new Regex(@"\<profanity\>(.*?)\<\/profanity\>").Replace(result.Text, match => match.Groups[1].Value);
         }
 
         private void TapAndSendClick(object sender, EventArgs e) {
             NavigationService.Navigate(new Uri("/NFC/Share.xaml", UriKind.Relative));
+        }
+
+        private void ZenModeClick(object sender, EventArgs e) {
+            NavigationService.Navigate(new Uri("/ZenMode.xaml", UriKind.Relative));
         }
     }
 }

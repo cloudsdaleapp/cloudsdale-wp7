@@ -269,6 +269,9 @@
     <Compile Include="Settings\ForceTheme.cs" />
     <Compile Include="Settings\StringParser.cs" />
     <Compile Include="Toasts.cs" />
+    <Compile Include="ZenMode.xaml.cs">
+      <DependentUpon>ZenMode.xaml</DependentUpon>
+    </Compile>
     <Page Include="Account\SetEmail.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -369,6 +372,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ZenMode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -417,6 +424,7 @@
     <Content Include="Images\appbar.minus.rest.png" />
     <Content Include="Images\nfc-tap-and-send.png" />
     <Content Include="ReadMe.Coding4Fun.Toolkit.txt" />
+    <Content Include="Settings\CloudsdaleGrammars.txt" />
     <Content Include="Sound\harlem-shake.mp3" />
     <Content Include="Todo.txt" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
