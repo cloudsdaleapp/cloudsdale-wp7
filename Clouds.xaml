@@ -443,6 +443,7 @@
                 <shell:ApplicationBarMenuItem Text="Screenshot" Click="ScreenshotChat" />
                 <shell:ApplicationBarMenuItem Text="Pin to start" Click="PinToStart" />
                 <shell:ApplicationBarMenuItem Text="Tap + Send" Click="TapAndSendClick" IsEnabled="False" />
+                <shell:ApplicationBarMenuItem Text="Speech Zen Mode" Click="ZenModeClick"/>
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
