@@ -129,10 +129,10 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
-            if (ProximityDevice.GetDefault() != null) {
-                var menuItems = ApplicationBar.MenuItems.Cast<ApplicationBarMenuItem>();
-                menuItems.First(item => item.Text == "Tap + Send").IsEnabled = true;
-            }
+            //if (ProximityDevice.GetDefault() != null) {
+            //    var menuItems = ApplicationBar.MenuItems.Cast<ApplicationBarMenuItem>();
+            //    menuItems.First(item => item.Text == "Tap + Send").IsEnabled = true;
+            //}
 
             while (NavigationService.BackStack.Count() > 1) {
                 NavigationService.RemoveBackEntry();

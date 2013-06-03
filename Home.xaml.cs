@@ -106,22 +106,22 @@ namespace Cloudsdale {
         }
 
         void SetupNdef() {
-            var device = ProximityDevice.GetDefault();
-            if (device == null) return;
-            device.SubscribeForMessage("NDEF", (sender, message) => {
-                var data = NdefMessage.FromByteArray(message.Data.ToArray());
-                foreach (var record in data) {
-                    Uri uri;
-                    try {
-                        var poster = new NdefSpRecord(record);
-                        uri = new Uri(poster.Uri);
-                    } catch {
-                        continue;
-                    }
-                    if (uri.Scheme != "cloudsdale") continue;
-                    Launcher.LaunchUriAsync(uri);
-                }
-            });
+            //var device = ProximityDevice.GetDefault();
+            //if (device == null) return;
+            //device.SubscribeForMessage("NDEF", (sender, message) => {
+            //    var data = NdefMessage.FromByteArray(message.Data.ToArray());
+            //    foreach (var record in data) {
+            //        Uri uri;
+            //        try {
+            //            var poster = new NdefSpRecord(record);
+            //            uri = new Uri(poster.Uri);
+            //        } catch {
+            //            continue;
+            //        }
+            //        if (uri.Scheme != "cloudsdale") continue;
+            //        Launcher.LaunchUriAsync(uri);
+            //    }
+            //});
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {

@@ -299,11 +299,11 @@
                                             <toolkit:DatePicker Name="BanDate" />
                                             <Button Click="DoTheBanBanBan">Ban</Button>
                                         </StackPanel>
-                                        <TextBlock Foreground="#FF444444" Visibility="{Binding Path=CurrentUser.OwnerOfCurrent, 
+                                        <TextBlock Foreground="#FF444444" Visibility="{Binding Path=CurrentUser.ModOfCurrent, 
                                                                                                Converter={StaticResource BoolToVis}}">
                                             Permanent Record
                                         </TextBlock>
-                                        <ItemsControl ItemsSource="{Binding Path=Bans}" Visibility="{Binding Path=CurrentUser.OwnerOfCurrent, 
+                                        <ItemsControl ItemsSource="{Binding Path=Bans}" Visibility="{Binding Path=CurrentUser.ModOfCurrent, 
                                                                                                              Converter={StaticResource BoolToVis}}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
@@ -442,8 +442,8 @@
                 <shell:ApplicationBarMenuItem Text="Leave cloud" Click="RemoveThisCloud" />
                 <shell:ApplicationBarMenuItem Text="Screenshot" Click="ScreenshotChat" />
                 <shell:ApplicationBarMenuItem Text="Pin to start" Click="PinToStart" />
-                <shell:ApplicationBarMenuItem Text="Tap + Send" Click="TapAndSendClick" IsEnabled="False" />
-                <shell:ApplicationBarMenuItem Text="Speech Zen Mode" Click="ZenModeClick"/>
+                <!--<shell:ApplicationBarMenuItem Text="Tap + Send" Click="TapAndSendClick" IsEnabled="False" />
+                <shell:ApplicationBarMenuItem Text="Speech Zen Mode" Click="ZenModeClick"/>-->
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
