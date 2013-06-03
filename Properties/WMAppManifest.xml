@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US" />
+  <Languages xmlns="">
+    <Language code="en" />
+  </Languages>
   <App xmlns="" BitsPerPixel="16" ProductID="{8d910918-a1b0-4b4b-a3ad-d3ed940b6dd8}" Title="Cloudsdale" RuntimeType="Silverlight" Version="1.5.0.0" Genre="apps.normal" Author="Connorcpu" Description="A realtime chat service for bronies. More info can be found on your PC at www.cloudsdale.org" Publisher="Cloudsdale.org" PublisherID="{5b96f5e4-2552-4c71-8c20-5fb02b9da0ad}">
     <IconPath IsRelative="true" IsResource="false">ApplicationIcon.png</IconPath>
     <Capabilities>

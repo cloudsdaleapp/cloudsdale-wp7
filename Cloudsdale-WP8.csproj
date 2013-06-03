@@ -22,7 +22,7 @@
     </SupportedCultures>
     <XapOutputs>true</XapOutputs>
     <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
-    <XapFilename>Cloudsdale-WP8-1.4_Release_AnyCPU.xap</XapFilename>
+    <XapFilename>Cloudsdale-WP8-1.5_Release_AnyCPU.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <SilverlightAppEntry>Cloudsdale.App</SilverlightAppEntry>
     <ValidateXaml>true</ValidateXaml>
