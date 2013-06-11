@@ -116,6 +116,9 @@ namespace Cloudsdale.Models {
     public class User : SimpleUser, INotifyPropertyChanged {
 
         [JsonProperty]
+        public virtual string username { get; set; }
+
+        [JsonProperty]
         public virtual string skype_name { get; set; }
 
         public User CurrentUser {
@@ -229,6 +232,8 @@ namespace Cloudsdale.Models {
                 user.AKA = _aka;
             if (skype_name != null)
                 user.skype_name = skype_name;
+            if (username != null)
+                user.username = username;
 
             OnPropertyChanged("CurrentAvatar");
         }

@@ -138,6 +138,7 @@ namespace Cloudsdale {
         // Code to execute when the application is activated (brought to foreground)
         // This code will not execute when the application is first launched
         private void ApplicationActivated(object sender, ActivatedEventArgs e) {
+            DerpyHoovesMailCenter.ValidPreloadedData.Clear();
 
             if (Connection.CurrentCloud != null) {
                 if (RootFrame.Content is Clouds) {
@@ -151,7 +152,7 @@ namespace Cloudsdale {
             }
 
             try {
-                if (RootFrame.Content is MainPage || RootFrame.Content is FacebookAuth.Login) return;
+                if (Connection.CurrentCloudsdaleUser == null) return;
                 Connection.Connect();
             } catch {
                 MainPage.reconstruction = true;

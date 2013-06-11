@@ -220,6 +220,16 @@ namespace Cloudsdale.Managers {
             }
         }
 
+        public override string username {
+            get {
+                return base.username;
+            }
+            set {
+                base.username = value;
+                OnPropertyChanged("username");
+            }
+        }
+
         private IEnumerable<Cloud> _extClouds = new Cloud[0];
         [JsonIgnore]
         public IEnumerable<Cloud> ExtClouds {

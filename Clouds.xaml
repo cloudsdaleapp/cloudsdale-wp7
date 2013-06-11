@@ -110,6 +110,9 @@
                                 <Bold>
                                     <Run Text="{Binding Path=name}" />
                                 </Bold>
+                                <Span FontSize="16" Foreground="#666666">
+                                    <Run Text="{Binding Path=username}" />
+                                </Span>
                             </Paragraph>
                         </RichTextBox>
                     </StackPanel>

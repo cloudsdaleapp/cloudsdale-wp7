@@ -125,6 +125,7 @@ namespace Cloudsdale {
         }
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) {
+            Connection.CurrentCloud = null;
             StatusBox.SelectedIndex = StatusIndex(Connection.CurrentCloudsdaleUser.status);
 
             CloudList.ItemSource = Connection.CurrentCloudsdaleUser.Clouds;
@@ -212,6 +213,8 @@ namespace Cloudsdale {
         #region Logout
         private void LogoutClick(object sender, RoutedEventArgs e) {
             Connection.Faye.Disconnect();
+            Connection.Faye = null;
+            Connection.CurrentCloudsdaleUser = null;
 
             var settings = IsolatedStorageSettings.ApplicationSettings;
             settings.Remove("lastuser");
