@@ -28,6 +28,8 @@
     <ValidateXaml>true</ValidateXaml>
     <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
     <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -99,18 +101,31 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="BouncyCastle.Crypto, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>Lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="BugSense">
       <HintPath>Lib\BugSense.dll</HintPath>
     </Reference>
+    <Reference Include="CodeTitans.Bayeux">
+      <HintPath>Lib\CodeTitans.Bayeux.dll</HintPath>
+    </Reference>
+    <Reference Include="CodeTitans.JSon">
+      <HintPath>Lib\CodeTitans.JSon.dll</HintPath>
+    </Reference>
     <Reference Include="Coding4Fun.Toolkit.Controls">
-      <HintPath>packages\Coding4Fun.Toolkit.Controls.2.0.5\lib\wp71\Coding4Fun.Toolkit.Controls.dll</HintPath>
+      <HintPath>packages\Coding4Fun.Toolkit.Controls.2.0.7\lib\windowsphone8\Coding4Fun.Toolkit.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Facebook">
       <HintPath>Lib\Facebook.dll</HintPath>
     </Reference>
+    <Reference Include="IsolatedStorageExplorer">
+      <HintPath>Lib\IsolatedStorageExplorer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Phone.Controls, Version=8.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.Phone.Controls.Toolkit, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b772ad94eb9ca604, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Phone.Controls.Toolkit">
+      <HintPath>packages\WPtoolkit.4.2013.08.16\lib\wp8\Microsoft.Phone.Controls.Toolkit.dll</HintPath>
+    </Reference>
     <Reference Include="NdefLibrary">
       <HintPath>packages\NdefLibrary.1.0.0.0\lib\portable-win+net45+wp80\NdefLibrary.dll</HintPath>
     </Reference>
@@ -132,7 +147,9 @@
     <Reference Include="SuperSocket.ClientEngine.Proxy">
       <HintPath>Lib\SuperSocket.ClientEngine.Proxy.dll</HintPath>
     </Reference>
-    <Reference Include="WebSocket4Net, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="WebSocket4Net, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>Lib\WebSocket4Net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\SetEmail.xaml.cs">
@@ -424,11 +441,15 @@
     <Content Include="Images\appbar.minus.rest.png" />
     <Content Include="Images\nfc-tap-and-send.png" />
     <Content Include="ReadMe.Coding4Fun.Toolkit.txt" />
+    <Content Include="README_FIRST.txt" />
     <Content Include="Settings\CloudsdaleGrammars.txt" />
     <Content Include="Sound\harlem-shake.mp3" />
     <Content Include="Todo.txt" />
+    <Content Include="Toolkit.Content\ApplicationBar.Add.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
     <Resource Include="Images\Icons\i.png" />
     <Content Include="Images\Icons\back_white.png" />
     <Content Include="Images\Icons\edit.png" />
@@ -468,4 +489,5 @@
   </Target>
   -->
   <ProjectExtensions />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
