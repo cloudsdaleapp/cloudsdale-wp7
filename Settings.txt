@@ -1,6 +1,0 @@
-﻿email
-	[string] The last used email address
-ux.allowaltcodes
-	[EXISTENCE] Controls if double-clicking the send box brings up the alt code entry bar
-ux.recursivealtcodeentry
-	[EXISTENCE] Controls if pressing INS on the alt code entry reselects the entry or 
