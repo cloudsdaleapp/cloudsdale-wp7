@@ -1,0 +1,53 @@
+﻿<Application
+    x:Class="Cloudsdale_Metro.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Cloudsdale_Metro" xmlns:controls="using:Cloudsdale_Metro.Views.Controls"
+    xmlns:common="using:Cloudsdale_Metro.Common">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Common/StandardStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <SolidColorBrush x:Key="BackButtonForegroundThemeBrush" Color="White" />
+            <SolidColorBrush x:Key="BackButtonPressedForegroundThemeBrush" Color="Black" />
+            <SolidColorBrush x:Key="BackButtonPointerOverForegroundThemeBrush" Color="White" />
+
+            <common:BooleanNegationConverter x:Key="BoolNegate" />
+            <common:BooleanToVisibilityConverter x:Key="BoolVis" />
+            <common:DoubleToggleConverter x:Key="DoubleToggle" />
+            <common:NonZeroToVisibility x:Key="NonZeroVis" />
+
+            <Style TargetType="Button">
+                <Setter Property="Background" Value="#AFF0F0F0" />
+            </Style>
+            <Style TargetType="controls:RootGrid">
+                <Setter Property="Background" Value="#1A91DB" />
+            </Style>
+            <DataTemplate x:Key="CloudSnappedTemplate">
+                <Grid Height="70" Width="280" Background="#7FF0F0F0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Border Background="#A7E0E0E0">
+                        <Grid>
+                            <Image Source="{Binding Path=Avatar.Preview}" Width="70" Height="70" />
+                            <Border Height="24" MinWidth="24" CornerRadius="3" Background="Navy" 
+                                HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Visibility="{Binding Path=UIMetadata[CloudController].Value.UnreadMessages, 
+                                                Converter={StaticResource NonZeroVis}}">
+                                <TextBlock Text="{Binding Path=UIMetadata[CloudController].Value.UnreadMessages}" 
+                                   Foreground="White" FontWeight="ExtraBlack" FontSize="16"
+                                   HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8,0"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+                    <TextBlock Margin="5,0,0,0" Text="{Binding Path=Name}" FontSize="24" TextWrapping="Wrap" Grid.Column="1" />
+                </Grid>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

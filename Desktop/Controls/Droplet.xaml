@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="CloudsdaleWin7.Controls.Droplet"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="178" d:DesignWidth="121">
+    <Grid>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" CornerRadius="50">
+            <Image x:Name="DropPreview" Source="/Cloudsdale;component/Assets/tint.png" MouseDown="Launch">
+                <Image.Clip>
+                    <RectangleGeometry Rect="0,0,98,98" RadiusX="70" RadiusY="70"/>
+                </Image.Clip>
+            </Image>
+        </Border>
+        <TextBlock x:Name="DropTitle" HorizontalAlignment="Center" Margin="0,128,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" FontWeight="SemiBold"/>
+    </Grid>
+</UserControl>

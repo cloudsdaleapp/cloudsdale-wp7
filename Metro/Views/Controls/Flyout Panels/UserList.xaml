@@ -1,0 +1,88 @@
+﻿<flyoutPanels:CloudsdaleFlyout
+    x:Class="Cloudsdale_Metro.Views.Controls.UserList"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:chatConverters="using:Cloudsdale_Metro.Views.ChatConverters"
+    xmlns:flyoutPanels="using:Cloudsdale_Metro.Views.Controls.Flyout_Panels"
+    Loaded="UserList_OnLoaded"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <CollectionViewSource x:Name="OnlineModeratorList" Source="{Binding Path=OnlineModerators}" />
+        <CollectionViewSource x:Name="ModeratorList" Source="{Binding Path=AllModerators}" />
+        <CollectionViewSource x:Name="OnlineList" Source="{Binding Path=OnlineUsers}" />
+        <CollectionViewSource x:Name="AllUsersList" Source="{Binding Path=AllUsers}" />
+        <chatConverters:CloudNameColorConverter x:Key="UserNameColor" />
+
+        <DataTemplate x:Key="UserTemplate">
+            <Border>
+                <Grid Height="28" Width="300" Margin="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="28" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Image Source="{Binding Path=Avatar.Chat}" />
+                    </Grid>
+                    <TextBlock Grid.Column="1" Text="{Binding Path=Name}" FontSize="20"
+                               Foreground="{Binding Converter={StaticResource UserNameColor}}"
+                               FontWeight="Bold" 
+                               Opacity="{Binding Path=UIMetadata[IsOnline].Value,
+                                                 Converter={StaticResource DoubleToggle}, 
+                                                 ConverterParameter=1;0.3}"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+        <Style TargetType="ListViewItem" x:Key="UserContainerStyle">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+        <Style TargetType="ListView">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <ItemsPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemTemplate" Value="{StaticResource UserTemplate}" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource UserContainerStyle}" />
+            <Setter Property="SelectionMode" Value="None" />
+            <Setter Property="IsSwipeEnabled" Value="False" />
+            <Setter Property="IsItemClickEnabled" Value="True" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <ToggleButton Name="ShowAllModsToggle" Width="25" Height="25" />
+                <TextBlock FontSize="22">Moderators</TextBlock>
+            </StackPanel>
+            <ListView ItemsSource="{Binding Source={StaticResource OnlineModeratorList}}"
+                      ItemClick="UserClicked"
+                      Visibility="{Binding ElementName=ShowAllModsToggle, Path=IsChecked, 
+                                           Converter={StaticResource BoolVis}, 
+                                           ConverterParameter=Inverse}" />
+            <ListView ItemsSource="{Binding Source={StaticResource ModeratorList}}"
+                      ItemClick="UserClicked"
+                      Visibility="{Binding ElementName=ShowAllModsToggle, Path=IsChecked, 
+                                           Converter={StaticResource BoolVis}}" />
+            <StackPanel Orientation="Horizontal">
+                <ToggleButton Name="ShowAllToggle" Width="25" Height="25" />
+                <TextBlock FontSize="22">Users</TextBlock>
+            </StackPanel>
+            <ListView ItemsSource="{Binding Source={StaticResource OnlineList}}"
+                      ItemClick="UserClicked"
+                      Visibility="{Binding ElementName=ShowAllToggle, Path=IsChecked, 
+                                           Converter={StaticResource BoolVis}, 
+                                           ConverterParameter=Inverse}" />
+            <ListView ItemsSource="{Binding Source={StaticResource AllUsersList}}"
+                      ItemClick="UserClicked"
+                      Visibility="{Binding ElementName=ShowAllToggle, Path=IsChecked, 
+                                           Converter={StaticResource BoolVis}}" />
+        </StackPanel>
+    </Grid>
+</flyoutPanels:CloudsdaleFlyout>

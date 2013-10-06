@@ -1,0 +1,26 @@
+﻿<Page x:Class="CloudsdaleWin7.Views.ExploreViews.ExplorePopular"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ItemViews="clr-namespace:CloudsdaleWin7.Views.ExploreViews.ItemViews" mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="ExplorePopular">
+
+    <Grid>
+        <ScrollViewer Margin="0,0,0,27">
+            <WrapPanel x:Name="View" Margin="0,0,0,27"/>
+        </ScrollViewer>
+        <Button Content="Load Next Page" VerticalAlignment="Bottom" Height="27" FontSize="14" FontWeight="SemiBold" Click="LoadNext">
+            <Button.Foreground>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </Button.Foreground>
+            <Button.BorderBrush>
+                <SolidColorBrush Color="{DynamicResource PrimaryBlue}"/>
+            </Button.BorderBrush>
+            <Button.Background>
+                <SolidColorBrush Color="{DynamicResource PrimaryBlue}"/>
+            </Button.Background>
+        </Button>
+    </Grid>
+</Page>

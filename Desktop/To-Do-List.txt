@@ -1,0 +1,22 @@
+﻿Gameplan for the multicloud view:
+
+Instead of having the Frame for Views.Main be a frame, have it as a DockPanel. 
+
+For the object add (either CTRL + Select cloud or drag-and-drop to the Panel):
+
+private void CloudViewPanelItemsChange(){
+	foreach (var view in CloudViewPanel.Children){
+		if (CloudViewPanel.Children.Count > 1 && CloudViewPanel.Children.Count <= 5){
+			view.Width = CloudViewPanel.Width / (CloudViewPanel.Children.Count + 1);
+		}elseif (CloudViewPanel.Children.Count > 5){
+			view.Width = CloudViewPanel.Width / 5
+			CloudViewPanel.ScrollView.Horizontal.Visibility = Visibility.Visible;
+		}
+		CloudView.Instance.ToggleVisibility.Visibility = Visibility.True; //just a made up control to toggle visibility on
+																		  //the panel
+	}
+}
+private void AddCloud(object sender, EventArgs e){
+	//add the item to the Children list
+	CloudViewPanelItemChange();
+}

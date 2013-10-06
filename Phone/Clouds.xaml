@@ -1,0 +1,454 @@
+﻿<phone:PhoneApplicationPage 
+    x:Class="Cloudsdale.Clouds"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:my="clr-namespace:Cloudsdale.Controls" xmlns:Models="clr-namespace:Cloudsdale.Models" mc:Ignorable="d" 
+    d:DesignWidth="480" d:DesignHeight="696"
+    FontFamily="Segoe WP"
+    FontSize="28"
+    Foreground="Black"
+    Background="#FFF0F0F0"
+    SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
+    shell:SystemTray.IsVisible="True" OrientationChanged="PhoneApplicationPageOrientationChanged"
+    shell:SystemTray.Opacity="0" shell:SystemTray.ForegroundColor="#FF1A91DB" shell:SystemTray.BackgroundColor="Black">
+
+    <toolkit:TransitionService.NavigationInTransition>
+        <toolkit:NavigationInTransition>
+            <toolkit:NavigationInTransition.Backward>
+                <toolkit:SlideTransition Mode="SlideRightFadeIn" />
+            </toolkit:NavigationInTransition.Backward>
+            <toolkit:NavigationInTransition.Forward>
+                <toolkit:SlideTransition Mode="SlideLeftFadeIn" />
+            </toolkit:NavigationInTransition.Forward>
+        </toolkit:NavigationInTransition>
+    </toolkit:TransitionService.NavigationInTransition>
+    <toolkit:TransitionService.NavigationOutTransition>
+        <toolkit:NavigationOutTransition>
+            <toolkit:NavigationOutTransition.Backward>
+                <toolkit:SlideTransition Mode="SlideRightFadeOut" />
+            </toolkit:NavigationOutTransition.Backward>
+            <toolkit:NavigationOutTransition.Forward>
+                <toolkit:SlideTransition Mode="SlideLeftFadeOut" />
+            </toolkit:NavigationOutTransition.Forward>
+        </toolkit:NavigationOutTransition>
+    </toolkit:TransitionService.NavigationOutTransition>
+
+    <phone:PhoneApplicationPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Name="UserlistTemplate">
+                <Button BorderBrush="Transparent" Padding="-12"
+                        Style="{StaticResource XTiltButtonStyle}"
+                        Click="UserListClick" Margin="0"
+                        HorizontalAlignment="Left">
+                    <Grid Height="50" Margin="0,0,0,10" HorizontalAlignment="Left">
+                        <Image Source="{Binding Path=avatar.Normal}" Stretch="Fill" 
+                               HorizontalAlignment="Left" Width="50" Height="50" />
+                        <TextBlock Text="{Binding Path=name}" FontSize="34"
+                                   Foreground="{Binding Path=CloudColor}" Margin="60,0,0,0"/>
+                    </Grid>
+                </Button>
+            </DataTemplate>
+            <DataTemplate x:Key="SlashMeTemplate">
+                <Grid Margin="0,3,0,5" DataContext="{Binding}">
+                    <toolkit:ContextMenuService.ContextMenu>
+                        <toolkit:ContextMenu Background="{StaticResource PhoneChromeBrush}">
+                            <toolkit:MenuItem Header="Copy" Click="CopyClick" />
+                            <toolkit:MenuItem Header="Screenshot" Click="ScreenshotClick" />
+                        </toolkit:ContextMenu>
+                    </toolkit:ContextMenuService.ContextMenu>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock FontSize="16" Foreground="#ff6f8f8f"
+                               HorizontalAlignment="Center" 
+                               Text="{Binding Path=CorrectedTimestamp}" />
+                    <TextBlock FontSize="16" Foreground="#ff6f8f8f"
+                               HorizontalAlignment="Right" 
+                               Text="{Binding Path=DeviceStub}" />
+                    <RichTextBox Grid.Row="1" HorizontalAlignment="Center" TextWrapping="Wrap" 
+                                 FontSize="18" Style="{StaticResource RichChatStyle}" Foreground="Black">
+                        <Paragraph>
+                            <Run Text="{Binding Path=SlashMeForm}" />
+                        </Paragraph>
+                    </RichTextBox>
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:Key="StandardChatTemplate">
+                <Grid Margin="0,3,0,5" DataContext="{Binding}">
+                    <toolkit:ContextMenuService.ContextMenu>
+                        <toolkit:ContextMenu Background="{StaticResource PhoneChromeBrush}">
+                            <toolkit:MenuItem Header="Copy" Click="CopyClick" />
+                            <toolkit:MenuItem Header="Screenshot" Click="ScreenshotClick" />
+                        </toolkit:ContextMenu>
+                    </toolkit:ContextMenuService.ContextMenu>
+                    <StackPanel Width="50" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Border BorderBrush="#FF444444" Height="50" BorderThickness="1" Margin="0,0,0,2">
+                            <Image Source="{Binding Path=user.avatar.Preview}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" Width="48" Height="48"
+                               MouseLeftButtonUp="AvatarMouseUp" MouseLeftButtonDown="AvatarMouseDown"
+                               MouseLeave="AvatarMouseLeave" Stretch="UniformToFill" ImageFailed="AvatarImageFailed"/>
+                        </Border>
+                        <Border DataContext="{Binding Path=user}" Width="50" Height="15" 
+                                BorderBrush="Gray" BorderThickness="1" Background="{Binding Path=RoleBrush}"
+                                Visibility="{Binding Path=ShowTag}" CornerRadius="1">
+                            <TextBlock Text="{Binding Path=RoleTag}" HorizontalAlignment="Center"
+                                       Foreground="White" FontSize="10" Name="Username" />
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Margin="60,0,0,0" VerticalAlignment="Top">
+                        <RichTextBox DataContext="{Binding Path=user}" FontFamily="Segoe WP Bold"
+                                   FontSize="18" Foreground="{Binding Path=CloudColor}" Margin="-10,0">
+                            <Paragraph>
+                                <Run Text="●" Foreground="{Binding Path=Status, Converter={StaticResource SCC}}" />
+                                <Bold>
+                                    <Run Text="{Binding Path=name}" />
+                                </Bold>
+                                <Span FontSize="16" Foreground="#666666">
+                                    <Run Text="{Binding Path=username}" />
+                                </Span>
+                            </Paragraph>
+                        </RichTextBox>
+                    </StackPanel>
+                    <TextBlock DataContext="{Binding}"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Top" FontSize="16" Foreground="#ff6f8f8f">
+                        <Run Text="{Binding Path=CorrectedTimestamp}" />
+                        <Run Text="{Binding Path=DeviceStub}" FontSize="16" />
+                    </TextBlock>
+                    <Grid Margin="60,24,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <ItemsControl Grid.Row="1" DataContext="{Binding}" ItemsSource="{Binding Path=Split}" Margin="-10,0,-10,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <my:LinkDetectingTextBlock DataContext="{Binding}" LinkedText="{Binding Path=Text}" 
+                                                               Foreground="{Binding Path=Color}" FontSize="18" 
+                                                               LinkClicked="ChatLinkClicked" Style="{StaticResource ChatStyle}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl Grid.Row="0" ItemsSource="{Binding Path=Drops}" HorizontalAlignment="Left">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <toolkit:WrapPanel ItemWidth="110" ItemHeight="85" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <my:TiltGrid my:TiltEffect.IsTiltEnabled="True" Margin="3">
+                                        <Border BorderBrush="Black" BorderThickness="2">
+                                            <Image Width="100" Height="75" Source="{Binding Path=preview}" 
+                                                   ImageFailed="DropImageFailed" Stretch="UniformToFill" />
+                                        </Border>
+                                        <toolkit:GestureService.GestureListener>
+                                            <toolkit:GestureListener
+                                                Tap="InChatDropTap"/>
+                                        </toolkit:GestureService.GestureListener>
+                                    </my:TiltGrid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:Name="ChatsTemplate">
+                <my:AlternatableContent Content="{Binding}" 
+                                        PrimaryTemplate="{StaticResource StandardChatTemplate}" 
+                                        SecondaryTemplate="{StaticResource SlashMeTemplate}"
+                                        UseAlternate="{Binding Path=IsSlashMe}" />
+            </DataTemplate>
+            <DataTemplate x:Name="DropsTemplate">
+                <Button BorderBrush="Transparent" Padding="-12" 
+                                            Click="DropItemClick" DataContext="{Binding}" 
+                                            Style="{StaticResource XTiltButtonStyle}"
+                                            HorizontalAlignment="Left">
+                    <Grid>
+                        <Image DataContext="{Binding}" Source="{Binding Path=preview}"
+                                                   Width="120" Height="90" HorizontalAlignment="Left"
+                                                   VerticalAlignment="Top" ImageFailed="DropImageFailed" />
+                        <TextBlock DataContext="{Binding}" Text="{Binding Path=title}" 
+                                                       Margin="125,0,0,0" TextWrapping="Wrap" Foreground="Black" 
+                                                       FontSize="24" VerticalAlignment="Top" />
+                    </Grid>
+                </Button>
+            </DataTemplate>
+        </ResourceDictionary>
+    </phone:PhoneApplicationPage.Resources>
+
+    <Grid x:Name="LayoutRoot" Background="{StaticResource PortraitBackgroundChat}" Margin="0,0,0,0">
+        <MediaElement Name="mediaPlayer" MediaOpened="HarlemShakeReady" />
+        <controls:Pivot Title="&lt;Cloud name goes here&gt;" x:Name="cloudPivot"
+                        Margin="0,10,0,0" Foreground="{StaticResource PhoneChromeBrush}">
+            <controls:Pivot.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" FontFamily="Segoe WP" FontSize="48" 
+                               Foreground="{StaticResource PhoneChromeBrush}"/>
+                </DataTemplate>
+            </controls:Pivot.HeaderTemplate>
+            <controls:PivotItem x:Name="chatTab" Header="chat">
+                <Grid Margin="0,-26,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <ScrollViewer x:Name="ChatScroller" Tap="ChatScrollerTap">
+                            <ItemsControl x:Name="Chats" ItemTemplate="{StaticResource ChatsTemplate}" />
+                        </ScrollViewer>
+                        <Grid VerticalAlignment="Bottom" Margin="-12,0" Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox VerticalAlignment="Bottom" x:Name="SendBox" InputScope="Chat"
+                                     DoubleTap="SendBoxDoubleTap" Tap="SendBoxTap" BorderBrush="#888888"
+                                     TextWrapping="Wrap" AcceptsReturn="True" SizeChanged="SendBoxSizeChanged"
+                                     MaxHeight="200"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </controls:PivotItem>
+            <controls:PivotItem x:Name="mediaTab" Header="drops">
+                <Grid Margin="-12,-26,-12,0">
+                    <ScrollViewer>
+                        <StackPanel>
+                            <Image Name="TestImg" />
+                            <Grid Margin="0,0,0,-25" Height="100">
+                                <Grid Height="75" VerticalAlignment="Top" Margin="12,0,12,0">
+                                    <TextBox Margin="0,0,75,0" Name="SearchBar" BorderBrush="#888888"/>
+                                    <Button HorizontalAlignment="Right" Width="75" Style="{StaticResource XTiltButtonStyle}"
+                                        Padding="0" BorderBrush="Transparent" Click="SearchClick">
+                                        <Button.Content>
+                                            <Image Name="SearchButtonImage" Source="/Images/Icons/search.png"/>
+                                        </Button.Content>
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                            <ItemsControl x:Name="MediaList" Margin="12,0,12,0" ItemTemplate="{StaticResource DropsTemplate}" />
+                            <Button Width="200" Click="MoreDropsClick" Name="MoreDrops">Load More</Button>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </controls:PivotItem>
+            <controls:PivotItem x:Name="peopleTab" Header="users">
+                <Grid Margin="0,-26,0,0">
+                    <ScrollViewer>
+                        <ItemsControl x:Name="Ponies" ItemTemplate="{StaticResource UserlistTemplate}" ItemsSource="{Binding Path=Users}" />
+                    </ScrollViewer>
+                </Grid>
+            </controls:PivotItem>
+        </controls:Pivot>
+        <Popup Name="userpopup" HorizontalAlignment="Center" VerticalAlignment="Center" Width="800" Height="800">
+            <Border Background="#A0000000" MouseLeftButtonUp="UserPopupMouseUp" MouseLeftButtonDown="UserPopupMouseDown">
+                <Grid Width="800" Height="800">
+                    <Border BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                            Background="#E0E0E0" BorderBrush="#888888" Name="UserPopupBorder">
+                        <Grid Height="450" Width="450" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ScrollViewer Margin="10">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100"
+                                       HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,10,10"
+                                       Stretch="Fill"/>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Path=name}" TextWrapping="Wrap" 
+                                                       Width="320" Foreground="{Binding Path=CloudColor}" />
+                                            <Border Width="100" Height="30" BorderBrush="Gray" 
+                                                    BorderThickness="2" Margin="0,10,0,0"
+                                                    Background="{Binding Path=RoleBrush}"
+                                                    Visibility="{Binding Path=ShowTag}" CornerRadius="4"
+                                                    HorizontalAlignment="Left">
+                                                <TextBlock Text="{Binding Path=RoleTag}" HorizontalAlignment="Center"
+                                                           Foreground="White" FontSize="20" Name="Username" />
+                                            </Border>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Visibility="{Binding Path=ShowSuspended}">
+                                        <TextBlock Foreground="Red" Text="{Binding Path=SuspendedUntilMessage}"
+                                                   FontSize="18"/>
+                                        <TextBlock Text="{Binding Path=SuspendedReason}" FontSize="18" 
+                                                   Width="430" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <Button Click="AddOnSkype" Visibility="{Binding Path=skype_name, Converter={StaticResource SEBV}}">Add on Skype</Button>
+                                    <StackPanel Visibility="{Binding Path=AKA, Converter={StaticResource AHAV}}">
+                                        <TextBlock FontSize="32" Foreground="#FF888888">Also Known As</TextBlock>
+                                        <ItemsControl ItemsSource="{Binding Path=AKA}" FontSize="16" />
+                                    </StackPanel>
+                                    <StackPanel Name="ModTools" 
+                                                Visibility="{Binding Path=CurrentUser.ModOfCurrent,
+                                                                     Converter={StaticResource BoolToVis}}">
+                                        <StackPanel Orientation="Horizontal" Name="ModToolsButtons">
+                                            <Button Click="BanBanBan">Ban</Button>
+                                            <Button Visibility="{Binding Path=CurrentUser.OwnerOfCurrent, 
+                                                                         Converter={StaticResource BoolToVis}}"
+                                                    Name="PromoteDemote" Click="PromoteDemoteClick"
+                                                    Content="{Binding Path=ModOfCurrent, Converter={StaticResource POD}}"/>
+                                        </StackPanel>
+                                        <StackPanel Name="BanTools" Visibility="Collapsed">
+                                            <Button DataContext="{Binding}" Click="DontBanBanBan">Cancel</Button>
+                                            <TextBlock>Reason</TextBlock>
+                                            <TextBox Name="BanReason" />
+                                            <TextBlock>Ban Until</TextBlock>
+                                            <toolkit:TimePicker Name="BanTime" />
+                                            <toolkit:DatePicker Name="BanDate" />
+                                            <Button Click="DoTheBanBanBan">Ban</Button>
+                                        </StackPanel>
+                                        <TextBlock Foreground="#FF444444" Visibility="{Binding Path=CurrentUser.ModOfCurrent, 
+                                                                                               Converter={StaticResource BoolToVis}}">
+                                            Permanent Record
+                                        </TextBlock>
+                                        <ItemsControl ItemsSource="{Binding Path=Bans}" Visibility="{Binding Path=CurrentUser.ModOfCurrent, 
+                                                                                                             Converter={StaticResource BoolToVis}}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border BorderBrush="Gray" Background="LightGray" Margin="5">
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="Auto" />
+                                                            </Grid.RowDefinitions>
+                                                            <TextBlock Grid.Row="0" TextWrapping="Wrap" FontSize="16">
+                                                                <Run Text="{Binding Path=reason}" /><LineBreak/>
+                                                                Issued by <Run Text="{Binding Path=Issuer.name}" /><LineBreak/>
+                                                                At <Run Text="{Binding Path=Issued}" /><LineBreak/>
+                                                                Until <Run Text="{Binding Path=Due}" /><LineBreak/>
+                                                                Status: <Run Text="{Binding Path=Status}" />
+                                                            </TextBlock>
+                                                            <Button Visibility="{Binding Path=Active, Converter={StaticResource BoolToVis}}" 
+                                                                    Click="RevokeBanClick" Grid.Row="1">Revoke</Button>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Popup>
+        <Canvas Height="800" Width="800" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Popup Name="CloudInfoPopup" Margin="160" Canvas.Top="-800" d:DataContext="{d:DesignInstance Type=Models:Cloud}">
+                <Popup.Resources>
+                    <Storyboard x:Name="CloudInfoDown">
+                        <DoubleAnimation Storyboard.TargetName="CloudInfoPopup" 
+                                     Storyboard.TargetProperty="(Canvas.Top)"
+                                     From="-800" To="0" RepeatBehavior="1x"
+                                     Duration="0:0:.5"/>
+                        <DoubleAnimation Storyboard.TargetName="cloudinfoback"
+                                         Storyboard.TargetProperty="Opacity"
+                                         From="0" To="0.8" RepeatBehavior="1x"
+                                         Duration="0:0:.5"/>
+                    </Storyboard>
+                    <Storyboard x:Name="CloudInfoUp">
+                        <DoubleAnimation Storyboard.TargetName="CloudInfoPopup" 
+                                     Storyboard.TargetProperty="(Canvas.Top)"
+                                     From="0" To="-800" RepeatBehavior="1x"
+                                     Duration="0:0:.5"/>
+                        <DoubleAnimation Storyboard.TargetName="cloudinfoback"
+                                         Storyboard.TargetProperty="Opacity"
+                                         From="0.8" To="0" RepeatBehavior="1x"
+                                         Duration="0:0:.5"/>
+                    </Storyboard>
+                </Popup.Resources>
+                <Grid Width="480" Height="480">
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="{Binding Path=ShowEdit}"
+                            Style="{StaticResource XTiltButtonStyle}" Margin="0,-20,-20,0" Click="EditCloudClick"
+                            Canvas.ZIndex="1" Width="90" Height="90" Padding="0" BorderBrush="Transparent">
+                        <Border Background="#B0B0B0" Height="60" Width="60">
+                            <Border.Clip>
+                                <EllipseGeometry RadiusX="27" RadiusY="27" Center="30,30" />
+                            </Border.Clip>
+                            <Image Source="/Images/Icons/edit.png" Width="42" Height="42" />
+                        </Border>
+                    </Button>
+                    <Border BorderThickness="2" Width="450" Height="450" Background="#E0E0E0" BorderBrush="#888888">
+                        <ScrollViewer>
+                            <Grid>
+                                <StackPanel Margin="5">
+                                    <StackPanel Orientation="Horizontal" MaxWidth="440">
+                                        <Image Source="{Binding Path=avatar.Normal}" Width="100" Height="100" />
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Path=name}" Foreground="Black"
+                                               FontSize="30" TextWrapping="Wrap" Margin="10,5"
+                                               MaxWidth="300"/>
+                                            <Border CornerRadius="10" Background="#D0D0D0" Margin="5,0">
+                                                <TextBlock Width="290" Text="{Binding Path=description}" Margin="5"
+                                                   TextWrapping="Wrap" FontSize="16"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBlock FontSize="20">Sharing link</TextBlock>
+                                    <TextBox Text="{Binding Path=Link}" TextChanged="CloudLinkTextChanged" Tap="CloudLinkTap" />
+                                    <TextBlock FontSize="20" Visibility="{Binding Path=ShowRules}">Rules</TextBlock>
+                                    <Border CornerRadius="10" Background="#D0D0D0" Margin="5,0"
+                                            Visibility="{Binding Path=ShowRules}">
+                                        <TextBlock Width="420" Text="{Binding Path=rules}" Margin="5"
+                                                   TextWrapping="Wrap" FontSize="16"/>
+                                    </Border>
+                                    <TextBlock FontSize="20">Owner</TextBlock>
+                                    <StackPanel Orientation="Horizontal" Margin="5,0">
+                                        <Image Source="{Binding Path=FullOwner.avatar.Normal}" Width="50" />
+                                        <TextBlock Text="{Binding Path=FullOwner.name}" VerticalAlignment="Center" Margin="5" />
+                                    </StackPanel>
+                                    <TextBlock FontSize="20" Visibility="{Binding Path=ShowMods}">Moderators</TextBlock>
+                                    <ItemsControl ItemsSource="{Binding Path=FullMods}" Visibility="{Binding Path=ShowMods}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Margin="5,5">
+                                                    <Image Source="{Binding Path=avatar.Normal}" Width="50" />
+                                                    <TextBlock Text="{Binding Path=name}" VerticalAlignment="Center" Margin="5" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Grid>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </Popup>
+            <Grid Width="800" Height="800" Name="cloudinfoback" Visibility="Collapsed" Background="Black" />
+        </Canvas>
+        <Popup Width="800" Height="800" Name="LoadingPopup" 
+               HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border Width="800" Height="800" Background="#33000000" 
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid Width="480" Height="480"
+                      HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <toolkit:PerformanceProgressBar Foreground="#FF1A91DB" IsIndeterminate="True" />
+                </Grid>
+            </Border>
+        </Popup>
+        <Popup Height="800" Width="800" Name="YourCloudList" >
+
+        </Popup>
+    </Grid>
+
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True" ForegroundColor="White">
+            <shell:ApplicationBarIconButton Text="Send" IconUri="/Images/appbar.send.text.rest.png" Click="SendTextClick" />
+            <shell:ApplicationBarIconButton Text="Info" IconUri="/Images/appbar.info.rest.png" Click="CloudInfoClick" />
+            <shell:ApplicationBarIconButton Text="Voice" IconUri="/Images/appbar.microphone.png" Click="RecordVoiceClick"/>
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="Leave cloud" Click="RemoveThisCloud" />
+                <shell:ApplicationBarMenuItem Text="Screenshot" Click="ScreenshotChat" />
+                <shell:ApplicationBarMenuItem Text="Pin to start" Click="PinToStart" />
+                <!--<shell:ApplicationBarMenuItem Text="Tap + Send" Click="TapAndSendClick" IsEnabled="False" />
+                <shell:ApplicationBarMenuItem Text="Speech Zen Mode" Click="ZenModeClick"/>-->
+            </shell:ApplicationBar.MenuItems>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+
+</phone:PhoneApplicationPage>

@@ -1,0 +1,163 @@
+﻿<UserControl
+    x:Class="Cloudsdale_Metro.Views.Controls.StandardMessageView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Cloudsdale_Metro.Views.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:chatConverters="using:Cloudsdale_Metro.Views.ChatConverters"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    SizeChanged="StandardMessageView_OnSizeChanged">
+
+    <UserControl.Resources>
+        <chatConverters:CloudNameColorConverter x:Key="NameColor" />
+        <chatConverters:StatusColorConverter x:Key="StatusColor" />
+        <chatConverters:ShowTag x:Key="ShowTag" />
+        <chatConverters:TagText x:Key="TagText" />
+        <chatConverters:TagColor x:Key="TagColor" />
+        <chatConverters:TimestampConverter x:Key="TimestampConverter" />
+        <chatConverters:MessageDeviceConverter x:Key="MessageDevice" />
+
+        <DataTemplate x:Key="DropTemplate">
+            <Border Background="White" BorderBrush="Gray"
+                    BorderThickness="1" CornerRadius="1">
+                <Border BorderBrush="Gray" BorderThickness="1" Margin="4" 
+                        ToolTipService.ToolTip="{Binding Path=Title}">
+                    <Image Source="{Binding Path=Preview}" Width="120" Height="90" />
+                </Border>
+            </Border>
+        </DataTemplate>
+        <Style TargetType="GridView">
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <WrapGrid Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemTemplate" Value="{StaticResource DropTemplate}" />
+            <Setter Property="IsSwipeEnabled" Value="True" />
+            <Setter Property="IsItemClickEnabled" Value="True" />
+            <Setter Property="SelectionMode" Value="None" />
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="5,0,5,7">
+        <Border HorizontalAlignment="Stretch" Height="1" x:Name="Separator"
+                VerticalAlignment="Top">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Offset="0" Color="#E7E7E7" />
+                    <GradientStop Offset="0.5" Color="LightGray" />
+                    <GradientStop Offset="1" Color="#E7E7E7" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <Grid Margin="0,7,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="15" />
+            </Grid.ColumnDefinitions>
+            <Grid Margin="0,0,5,5" x:Name="TagGrid" Width="60">
+                <local:ViewboxPanel Orientation="Vertical">
+                    <Border BorderBrush="#3a3a3a" BorderThickness="1" VerticalAlignment="Top" Tapped="AvatarTapped">
+                        <Image Source="{Binding Path=User.Avatar.Normal}" Width="60" Height="60" />
+                    </Border>
+                    <Border DataContext="{Binding Path=User.Role}" BorderBrush="Gray"
+                            BorderThickness="1" CornerRadius="2" Height="16" Margin="0,5,0,0"
+                            Visibility="{Binding Converter={StaticResource ShowTag}}"
+                            Background="{Binding Converter={StaticResource TagColor}}">
+                        <TextBlock Text="{Binding Converter={StaticResource TagText}}"
+                                   FontSize="12" Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </Border>
+                </local:ViewboxPanel>
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid x:Name="NormalTitle">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <local:ViewboxPanel Height="32">
+                        <RichTextBlock Foreground="#4d4d4d" FontSize="16">
+                            <Paragraph>
+                                <Run Text="&#x25CF;" FontFamily="Segoe UI Symbol" FontSize="14"
+                                     Foreground="{Binding Path=User.UIMetadata[Status].Value, 
+                                     Converter={StaticResource StatusColor}}"/>
+                                <Hyperlink Click="OnNameClick">
+                                    <Run Text="{Binding Path=User.Name}" FontSize="20" FontWeight="SemiBold"
+                                         Foreground="{Binding Path=User, Converter={StaticResource NameColor}}"/>
+                                </Hyperlink>
+                                <Span Foreground="DarkGray">
+                                    @<Run Text="{Binding Path=User.Username}" />
+                                </Span>
+                            </Paragraph>
+                        </RichTextBlock>
+                    </local:ViewboxPanel>
+                    <TextBlock FontSize="18" Foreground="Gray" Margin="3" Grid.Column="1">
+                        <Run Text="{Binding Path=FinalTimestamp, Converter={StaticResource TimestampConverter}}" />
+                        <Run Text="{Binding Path=Device, Converter={StaticResource MessageDevice}}" />
+                    </TextBlock>
+                </Grid>
+                <Grid Grid.Row="0" x:Name="TinyTitle">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <local:ViewboxPanel Height="42" Orientation="Vertical">
+                        <RichTextBlock Foreground="#4d4d4d" FontSize="16">
+                            <Paragraph>
+                                <Run Text="&#x25CF;" FontFamily="Segoe UI Symbol" FontSize="14"
+                                     Foreground="{Binding Path=User.UIMetadata[Status].Value, 
+                                     Converter={StaticResource StatusColor}}"/>
+                                <Hyperlink Click="OnNameClick">
+                                    <Run Text="{Binding Path=User.Name}" FontSize="20" FontWeight="SemiBold"
+                                         Foreground="{Binding Path=User, Converter={StaticResource NameColor}}"/>
+                                </Hyperlink>
+                            </Paragraph>
+                        </RichTextBlock>
+                        <RichTextBlock Foreground="DarkGray" FontSize="16">
+                            <Paragraph>
+                                @<Run Text="{Binding Path=User.Username}" />
+                            </Paragraph>
+                        </RichTextBlock>
+                    </local:ViewboxPanel>
+                    <TextBlock FontSize="14" Foreground="Gray" Margin="3" Grid.Column="1">
+                        <Run Text="{Binding Path=FinalTimestamp, Converter={StaticResource TimestampConverter}}" />
+                        <Run Text="{Binding Path=Device, Converter={StaticResource MessageDevice}}" />
+                    </TextBlock>
+                </Grid>
+                <Grid Grid.Row="1" Name="AltDropGrid" Visibility="Collapsed">
+                    <GridView ItemsSource="{Binding Path=AllDrops}"
+                              FlowDirection="LeftToRight"
+                              ItemClick="DropClicked" />
+                </Grid>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <local:MessageTextControl x:Name="MessageControl" 
+                                              Messages="{Binding Path=Messages}" 
+                                              FontSize="20" FontFamily="Verdana" />
+                    <Grid Grid.Column="1" x:Name="DropGrid">
+                        <GridView ItemsSource="{Binding Path=AllDrops}"
+                                  FlowDirection="RightToLeft"
+                              ItemClick="DropClicked" />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

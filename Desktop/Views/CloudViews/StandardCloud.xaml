@@ -1,0 +1,41 @@
+﻿<Page x:Class="CloudsdaleWin7.Views.CloudViews.StandardCloud"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="553.759" Width="250"
+	Title="StandardCloud">
+
+    <Grid Margin="-1,0,1,0">
+        <TextBlock x:Name="CloudName" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Width="230" Height="35" FontSize="16">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+        <Image x:Name="CloudAvatar" Height="100" Margin="75,67,75,0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="Shortlink" HorizontalAlignment="Left" Margin="10,193,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Width="230" FontSize="14">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+        <Button Content="Leave this cloud..." Margin="34,0,33,10" FontSize="14" FontFamily="Nirmala UI" Click="Leave" Height="28" VerticalAlignment="Bottom"/>
+        <Separator HorizontalAlignment="Left" Height="52" Margin="10,212,0,0" VerticalAlignment="Top" Width="230">
+            <Separator.Background>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </Separator.Background>
+        </Separator>
+        <Button Content="X" HorizontalAlignment="Left" Margin="216,10,0,0" VerticalAlignment="Top" Width="24" Height="23" Background="{x:Null}" FontSize="16" FontWeight="SemiBold" Click="Button_Click_1"/>
+        <TextBox x:Name="Rules" HorizontalAlignment="Left" Margin="10,328,0,43" TextWrapping="Wrap" Text="TextBox" Width="230" FontSize="14" VerticalScrollBarVisibility="Auto" Background="{x:Null}" BorderBrush="{x:Null}" IsReadOnly="True" BorderThickness="0">
+            <TextBox.Foreground>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </TextBox.Foreground>
+        </TextBox>
+        <TextBlock x:Name="Description" HorizontalAlignment="Left" Margin="10,248,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="75" Width="230">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+
+    </Grid>
+</Page>

@@ -1,0 +1,5 @@
+﻿Todo list
+- Background on cloud info closing dialog
+
+Bugs
+- Swiping too quickly over drops hitting drop

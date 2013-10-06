@@ -1,0 +1,95 @@
+﻿<common:LayoutAwarePage
+    x:Class="Cloudsdale_Metro.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Cloudsdale_Metro.Views.Controls" xmlns:common="using:Cloudsdale_Metro.Common"
+    mc:Ignorable="d" Foreground="White" FontSize="36">
+
+    <controls:RootGrid>
+        <controls:CloudCanvas x:Name="CloudCanvas" CloudCount="10" BaseTime="10" RandomTime="110" />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image Source="/Assets/cloudsdale-thin-bright-logo.png" Height="100" 
+                   HorizontalAlignment="Center" Margin="20" MaxWidth="800" />
+
+            <Border Grid.Row="1" Background="#7F06B1EC">
+                <Grid MaxWidth="800">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Margin="5">Email</TextBlock>
+                    <TextBox Grid.Row="1" Height="60" FontSize="36" Text="{Binding Path=Email, Mode=TwoWay}"
+                             InputScope="EmailSmtpAddress" HorizontalAlignment="Stretch" Margin="5"
+                             IsEnabled="{Binding Path=IsAuto, Converter={StaticResource BoolNegate}}" />
+
+                    <TextBlock Grid.Row="2" Margin="5">Password</TextBlock>
+                    <PasswordBox Grid.Row="3" Height="60" FontSize="36" Password="{Binding Path=Password, Mode=TwoWay}"
+                                 HorizontalAlignment="Stretch" Margin="5" IsPasswordRevealButtonEnabled="True"
+                                 IsEnabled="{Binding Path=IsAuto, Converter={StaticResource BoolNegate}}" />
+
+                    <Grid Grid.Row="4" MaxWidth="800" Margin="5,30,5,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Row="0" Grid.Column="0" Margin="5" FontSize="28" 
+                                HorizontalAlignment="Stretch" Height="60" Click="LoginClick">
+                            <Viewbox HorizontalAlignment="Center">
+                                <TextBlock Width="200" TextAlignment="Center">Login</TextBlock>
+                            </Viewbox>
+                        </Button>
+                        <Button Grid.Row="0" Grid.Column="1" Margin="5" FontSize="28" 
+                                HorizontalAlignment="Stretch" Height="60">
+                            <Viewbox HorizontalAlignment="Center">
+                                <TextBlock Width="200" TextAlignment="Center">Create account</TextBlock>
+                            </Viewbox>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="2">
+                <Grid.Resources>
+                    <DataTemplate x:Key="SessionTemplate">
+                        <Border Width="140" Height="170" Background="#A7F0F0F0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition Height="30" />
+                                </Grid.RowDefinitions>
+                                <Image Source="{Binding Path=Avatar.Normal}"
+                                       Opacity="{Binding Path=UIMetadata[Selected].Value,
+                                       Converter={StaticResource DoubleToggle}, ConverterParameter=1;0.8}" />
+                                <Viewbox Grid.Row="1">
+                                    <TextBlock Text="{Binding Path=Name}" Foreground="Black" FontSize="24"/>
+                                </Viewbox>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </Grid.Resources>
+                <GridView Name="SessionGrid" ItemTemplate="{StaticResource SessionTemplate}"
+                          SelectionMode="Single" IsSwipeEnabled="True" SelectionChanged="SessionGrid_OnSelectionChanged"/>
+            </Grid>
+        </Grid>
+    </controls:RootGrid>
+
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroup>
+            <VisualState />
+        </VisualStateGroup>
+    </VisualStateManager.VisualStateGroups>
+</common:LayoutAwarePage>

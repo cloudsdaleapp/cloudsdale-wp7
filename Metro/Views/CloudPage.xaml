@@ -1,0 +1,191 @@
+﻿<common:LayoutAwarePage
+    x:Class="Cloudsdale_Metro.Views.CloudPage"
+    DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:Cloudsdale_Metro.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Cloudsdale_Metro.Views.Controls" 
+    xmlns:views="using:Cloudsdale_Metro.Views" 
+    xmlns:chatConverters="using:Cloudsdale_Metro.Views.ChatConverters"
+    SizeChanged="CloudPage_OnSizeChanged"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <CollectionViewSource
+            x:Name="ItemsViewSource"
+            Source="{Binding Items}"/>
+        <CollectionViewSource
+            x:Name="CloudsItemsViewSource"
+            Source="{Binding Clouds}"/>
+
+        <views:MessageTemplateSelector x:Key="MessageTemplateSelector" />
+        <chatConverters:CloudNameColorConverter x:Key="NameColor" />
+        <chatConverters:StatusColorConverter x:Key="StatusColor" />
+        <chatConverters:ShowTag x:Key="ShowTag" />
+        <chatConverters:TagText x:Key="TagText" />
+        <chatConverters:TagColor x:Key="TagColor" />
+
+        <DataTemplate x:Key="StandardChatTemplate">
+            <controls:StandardMessageView />
+        </DataTemplate>
+        <DataTemplate x:Key="ActionChatTemplate">
+            <controls:ActionMessageView />
+        </DataTemplate>
+        <Visibility x:Key="DropVisibility">Visible</Visibility>
+    </Page.Resources>
+    <Page.Transitions>
+        <TransitionCollection>
+            <EdgeUIThemeTransition Edge="Right" />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <controls:RootGrid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <Storyboard x:Name="CloudListExpand" Completed="CloudListExpand_OnCompleted">
+                    <DoubleAnimation Storyboard.TargetName="CloudListTransform" 
+                                 Storyboard.TargetProperty="X"
+                                 From="-320" To="0" Duration="0:0:0.7">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase Oscillations="1" EasingMode="EaseOut" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetName="BackButtonProjection" 
+                                 Storyboard.TargetProperty="RotationZ" Duration="0:0:0.7"
+                                 From="-180" To="0">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase Oscillations="1" Springiness="2" EasingMode="EaseInOut" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloudGrid" Duration="0:0:0.7"
+                                               Storyboard.TargetProperty="Width">
+                        <DiscreteObjectKeyFrame KeyTime="0" Value="320" />
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+                <Storyboard x:Name="CloudListCollapse">
+                    <DoubleAnimation Storyboard.TargetName="CloudListTransform" 
+                                 Storyboard.TargetProperty="X"
+                                 From="0" To="-320" Duration="0:0:0.6">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase Oscillations="1" EasingMode="EaseIn" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetName="BackButtonProjection" 
+                                 Storyboard.TargetProperty="RotationZ" Duration="0:0:0.7"
+                                 From="0" To="-180">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase Oscillations="1" Springiness="2" EasingMode="EaseInOut" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloudGrid" 
+                                               Storyboard.TargetProperty="Width" Duration="0:0:0.7">
+                        <DiscreteObjectKeyFrame KeyTime="0:0:0.7" Value="1" />
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+            </Grid.Resources>
+
+            <Grid x:Name="CloudGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.RenderTransform>
+                    <TranslateTransform x:Name="CloudListTransform" X="-320" />
+                </Grid.RenderTransform>
+                
+                <StackPanel Orientation="Horizontal" Height="70" Margin="5">
+                    <Button Click="GoHome">Home</Button>
+                </StackPanel>
+                
+                <ListView
+                    x:Name="CloudListView"
+                    AutomationProperties.AutomationId="CloudListView"
+                    AutomationProperties.Name="Clouds"
+                    TabIndex="1"
+                    Width="320"
+                    Grid.Row="1"
+                    Margin="0,0,0,0"
+                    Padding="10,10,0,60"
+                    ItemsSource="{Binding Source={StaticResource CloudsItemsViewSource}}"
+                    ItemTemplate="{StaticResource CloudSnappedTemplate}"
+                    SelectionChanged="CloudListView_OnSelectionChanged"
+                    SelectionMode="Single"
+                    IsSwipeEnabled="false"
+                    ItemClick="CloudItemClicked"
+                    IsItemClickEnabled="True"/>
+            </Grid>
+
+            <Grid Column="1" Background="#F7F0F0F0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Background="#1A91DB">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="10" />
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="BackButton" Style="{StaticResource PortraitBackButtonStyle}" 
+                            Click="GoBack" Margin="16" Padding="5">
+                        <Button.Projection>
+                            <PlaneProjection x:Name="BackButtonProjection" CenterOfRotationX="0.5" 
+                                         CenterOfRotationY="0.5" RotationZ="180" />
+                        </Button.Projection>
+                    </Button>
+
+                    <Button Grid.Column="2" Margin="5" Width="70" Height="70" Padding="2" Click="UsersListClick">
+                        <StackPanel>
+                            <Image Source="/Assets/user.png" Height="30" HorizontalAlignment="Center" />
+                            <TextBlock FontSize="16" Foreground="White"
+                                       HorizontalAlignment="Center">Users</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Grid.Column="3" Margin="5" Width="70" Height="70" Padding="2">
+                        <StackPanel>
+                            <Image Source="/Assets/drop.png" Height="30" HorizontalAlignment="Center" />
+                            <TextBlock FontSize="16" Foreground="White"
+                                       HorizontalAlignment="Center">Drops</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Grid.Column="4" Margin="5" Width="70" Height="70" Padding="2" Click="CloudInfoClick">
+                        <StackPanel>
+                            <Image Source="/Assets/circle_info.png" Height="30" HorizontalAlignment="Center" />
+                            <TextBlock FontSize="16" Foreground="White"
+                                       HorizontalAlignment="Center">Info</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ScrollViewer Name="ChatScroll" SizeChanged="ChatScroll_OnSizeChanged" 
+                          ZoomMode="Disabled" HorizontalScrollMode="Disabled" Grid.Row="0">
+                        <ItemsControl ItemsSource="{Binding Source={StaticResource ItemsViewSource}}"
+                              ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
+                              x:Name="ChatList" SizeChanged="ChatList_OnSizeChanged"/>
+                    </ScrollViewer>
+
+                    <TextBox Grid.Row="1" Margin="10" FontSize="20" IsTextPredictionEnabled="True" TextWrapping="Wrap" 
+                     MaxHeight="200" IsSpellCheckEnabled="True" x:Name="SendBox" FontFamily="Verdana" />
+                </Grid>
+                
+                <Grid Background="#2F000000" x:Name="OverlayGrid" Grid.Row="1">
+                    <ProgressRing Height="100" Width="100" Foreground="#1a91db" IsActive="True" />
+                </Grid>
+            </Grid>
+        </Grid>
+    </controls:RootGrid>
+</common:LayoutAwarePage>

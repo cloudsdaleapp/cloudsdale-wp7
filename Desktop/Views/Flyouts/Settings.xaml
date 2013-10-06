@@ -1,0 +1,42 @@
+﻿<Page x:Class="CloudsdaleWin7.Views.Flyouts.Settings"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d"
+	Title="Settings" Width="250" d:DesignHeight="413.774" FontFamily="Nirmala UI">
+
+    <Grid>
+        <TextBlock HorizontalAlignment="Left" Margin="10,127,0,0" TextWrapping="Wrap" Text="Name:" VerticalAlignment="Top" Width="82">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+        <TextBox x:Name="NameBlock" Height="23" Margin="10,148,10,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Settings" VerticalAlignment="Top" Height="36" Width="130" FontSize="18" FontWeight="SemiBold">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+        <TextBlock HorizontalAlignment="Left" Margin="10,187,0,0" TextWrapping="Wrap" Text="Username:" VerticalAlignment="Top">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+        <TextBox x:Name="UsernameBlock" Height="23" Margin="10,208,10,0" TextWrapping="Wrap" VerticalAlignment="Top" KeyDown="ChangeName"/>
+        <Separator Height="28" Margin="10,293,10,0" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,249,0,0" TextWrapping="Wrap" Text="Skype Name:" VerticalAlignment="Top">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+        <TextBox x:Name="SkypeBlock" Height="23" Margin="10,270,10,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <Image x:Name="AvatarImage" HorizontalAlignment="Left" Height="82" Margin="10,45,0,0" VerticalAlignment="Top" Width="82"/>
+        <ComboBox x:Name="Status" HorizontalAlignment="Left" Margin="120,46,0,0" VerticalAlignment="Top" Width="120">
+            <ComboBoxItem Content="Online"/>
+            <ComboBoxItem Content="Offline"/>
+            <ComboBoxItem Content="Busy"/>
+            <ComboBoxItem Content="Away"/>
+        </ComboBox>
+    </Grid>
+</Page>

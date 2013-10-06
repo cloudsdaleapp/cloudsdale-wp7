@@ -1,0 +1,25 @@
+﻿<Page
+    x:Class="Cloudsdale_Metro.Views.LoadPages.Connecting"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Cloudsdale_Metro.Views.Controls"
+    mc:Ignorable="d" Foreground="White">
+
+    <controls:RootGrid>
+        <controls:CloudCanvas x:Name="CloudCanvas" CloudCount="10" BaseTime="10" RandomTime="110" />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock FontSize="36" Grid.Row="1" HorizontalAlignment="Center">
+            Connecting
+            </TextBlock>
+            <ProgressRing Width="100" Height="100" IsActive="True" Grid.Row="2" Foreground="White" HorizontalAlignment="Center" />
+        </Grid>
+    </controls:RootGrid>
+</Page>

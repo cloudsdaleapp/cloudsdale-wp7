@@ -1,0 +1,63 @@
+﻿<Page x:Class="CloudsdaleWin7.Views.Flyouts.CloudFlyouts.DropView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="300"
+	Title="DropView" Width="250">
+
+    <Grid>
+        <DockPanel Height="36" LastChildFill="False" VerticalAlignment="Top">
+            <DockPanel.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <LinearGradientBrush.RelativeTransform>
+                        <TransformGroup>
+                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                            <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                            <RotateTransform Angle="90" CenterY="0.5" CenterX="0.5"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </LinearGradientBrush.RelativeTransform>
+                    <GradientStop Color="#FF1C7ECB" Offset="0"/>
+                    <GradientStop Color="{DynamicResource PrimaryBlue}" Offset="1"/>
+                    <GradientStop Color="{DynamicResource PrimaryBlue}" Offset="0.335"/>
+                </LinearGradientBrush>
+            </DockPanel.Background>
+            <TextBlock TextWrapping="Wrap" Text="Drops" Width="61" Margin="40,4,0,1" FontSize="20" FontWeight="SemiBold" FontFamily="Nirmala UI">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+                </TextBlock.Foreground>
+            </TextBlock>
+        </DockPanel>
+        <Button Content="X" HorizontalAlignment="Left" Margin="215,5,0,0" VerticalAlignment="Top" Width="25" Height="25" Background="{x:Null}" BorderThickness="2" FontWeight="SemiBold" Click="Hide">
+            <Button.Foreground>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </Button.Foreground>
+            <Button.BorderBrush>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </Button.BorderBrush>
+        </Button>
+        <ListView x:Name="DropCollection" Margin="0,36,0,0">
+            <ListView.Background>
+                <SolidColorBrush Color="{DynamicResource PrimaryBackground}"/>
+            </ListView.Background>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="100" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" CornerRadius="50">
+                            <Image x:Name="DropPreview" Source="{Binding Path=Preview}" MouseDown="Launch" DataContext="{Binding Path=Url}">
+                                <Image.Clip>
+                                    <RectangleGeometry Rect="0,0,98,98" RadiusX="70" RadiusY="70"/>
+                                </Image.Clip>
+                            </Image>
+                        </Border>
+                        <TextBlock x:Name="DropTitle" HorizontalAlignment="Center" Margin="0,128,0,0" TextWrapping="Wrap" Text="{Binding Path=Title}" VerticalAlignment="Top" FontWeight="SemiBold"/>
+                        <Separator/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+    </Grid>
+</Page>

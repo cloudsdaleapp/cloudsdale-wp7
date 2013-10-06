@@ -1,0 +1,19 @@
+﻿<Page x:Class="CloudsdaleWin7.Views.LoadingViews.LoadLogin"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="594.248" d:DesignWidth="300"
+	Title="LoadLogin">
+
+    <Grid Background="Black">
+        <MediaElement x:Name="LoadingMovie" Margin="67,186,67,0" Source="../../Assets/cd_icon_color_for_mlv (1).mp4" Height="169" VerticalAlignment="Top" LoadedBehavior="Manual" MediaEnded="Loop"/>
+        <TextBlock x:Name="LoadingMessage" Margin="118,355,115,0" Text="Logging in..." TextWrapping="Wrap" HorizontalAlignment="Center" Height="16" VerticalAlignment="Top" Width="67">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{DynamicResource PrimaryBlue}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+
+    </Grid>
+</Page>

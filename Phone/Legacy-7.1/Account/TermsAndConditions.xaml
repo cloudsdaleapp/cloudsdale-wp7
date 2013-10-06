@@ -1,0 +1,32 @@
+﻿<phone:PhoneApplicationPage 
+    x:Class="Cloudsdale.Account.TermsAndConditions"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="Segoe WP Bold"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="#3a3a3a"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
+    shell:SystemTray.IsVisible="True"
+    shell:SystemTray.Opacity="0">
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="#EAEAEA">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <phone:WebBrowser Source="http://www.cloudsdale.org/terms-and-conditions?layout=mobile" />
+        <Grid Grid.Row="1">
+            <Button Margin="0,0,240,0" Foreground="Green" BorderBrush="Green" Background="Transparent"
+                    Click="AcceptClick">Accept</Button>
+            <Button Margin="240,0,0,0" Foreground="Red" BorderBrush="Red" Background="Transparent"
+                    Click="RejectClick">Reject</Button>
+        </Grid>
+    </Grid>
+
+</phone:PhoneApplicationPage>

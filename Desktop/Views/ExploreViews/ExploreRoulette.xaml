@@ -1,0 +1,25 @@
+﻿<Page x:Class="CloudsdaleWin7.Views.ExploreViews.ExploreRoulette"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:gif="http://wpfanimatedgif.codeplex.com"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="ExploreRoulette">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="33*"/>
+            <RowDefinition Height="17*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="LoadingUi" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="67*"/>
+                <RowDefinition Height="33*"/>
+            </Grid.RowDefinitions>
+            <Image gif:ImageBehavior.AnimatedSource="/Cloudsdale;component/Assets/cd_icon_animation.gif" gif:ImageBehavior.AutoStart="True" HorizontalAlignment="Center" Height="100" Margin="100,0,100,1" VerticalAlignment="Bottom" Width="100"/>
+            <TextBlock x:Name="CurrentStatus" HorizontalAlignment="Center" Margin="0,11,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" FontSize="16" FontWeight="Thin" Grid.Row="1"/>
+        </Grid>
+
+    </Grid>
+</Page>

@@ -1,0 +1,17 @@
+﻿<UserControl
+    x:Class="Cloudsdale_Metro.Views.Controls.View_Controls.SkypeControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+    
+    <Grid x:Name="RootGrid" Visibility="Collapsed">
+        <Button x:Name="SkypeButton" Background="#1a91db" Click="SkypeButton_OnClick">Chat on Skype</Button>
+        <TextBlock FontSize="16" x:Name="SkypeText">
+            Skype: <Run Text="{Binding}" />
+        </TextBlock>
+    </Grid>
+</UserControl>
